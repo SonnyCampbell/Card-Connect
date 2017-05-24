@@ -3,3 +3,7 @@ canvas{
   background-color: #007d00;
 }
 
+#test {
+  position: absolute;
+  left: 100px;
+}

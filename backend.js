@@ -115,6 +115,11 @@ io.on('connection', (socket) => {
         io.emit('chat message', msg );
     });
 
+    socket.on('shuffleDeck', function(msg){
+        console.log(msg + ' message received');
+        io.emit('chat message', msg );
+    });
+
     socket.on('disconnect', () => {
         console.log('User disconnected');
     });

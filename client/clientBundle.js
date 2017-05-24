@@ -4258,6 +4258,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_Card__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Game_Deck__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_socket_io_client__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_socket_io_client__);
+
 
 
 
@@ -4265,6 +4268,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 function init() {
   var s = new __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__["a" /* default */](document.getElementById('canvas'));
+  var socket = __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default()();
 
   let theDeck = new __WEBPACK_IMPORTED_MODULE_2__Game_Deck__["a" /* default */]();
   theDeck.Shuffle();
@@ -4273,6 +4277,11 @@ function init() {
     //hand[i].rotation = 90 * i * Math.PI / 180;
     s.addCard(theDeck.Cards()[i]);
   }
+
+  var p = document.getElementById("test");
+  p.onclick = function () {
+    socket.emit('shuffleDeck', 'shuffleDeck');
+  };
 }
 
 init();
