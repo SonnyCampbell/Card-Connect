@@ -71,8 +71,8 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__serverCard__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__serverCard__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(5);
 
 
 
@@ -227,8 +227,7 @@ module.exports = require("path");
 module.exports = require("socket.io");
 
 /***/ }),
-/* 5 */,
-/* 6 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -244,58 +243,7 @@ class CONST {
 /* unused harmony default export */ var _unused_webpack_default_export = (CONST);
 
 /***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Game_serverDeck__ = __webpack_require__(0);
-
-let deck = new __WEBPACK_IMPORTED_MODULE_0__Game_serverDeck__["a" /* default */]();
-
-var express = __webpack_require__(1);
-var app = express();
-
-var http = __webpack_require__(2).createServer(app);
-var io = __webpack_require__(4)(http);
-var path = __webpack_require__(3);
-
-app.use(express.static(path.join(__dirname, './client')));
-
-app.get('/', function(req, res){
-    res.sendFile(path.join(__dirname, './client/index.html'));
-});
-
-io.on('connection', (socket) => {
-    console.log('A user connected1');
-
-    // socket.on('chat message', function(msg){
-    //     console.log(msg + 'serverside update');
-    //     io.emit('chat message', msg );
-    // });
-
-    // socket.on('private message', function(msg){
-    //     console.log(msg);
-    //     socket.emit('private message', 'This should be private ' + socket.id );
-    // });
-
-    socket.on('ShuffleDeck', function(msg){
-        console.log(msg + ' shuffled the deck.');
-        deck.Shuffle();
-        io.emit('ShuffleDeck', msg + ' shuffled the deck.');
-    });
-
-    socket.on('disconnect', () => {
-        console.log('User disconnected');
-    });
-});
-
-http.listen(3000, () => {
-    console.log('listening on *:3000');
-});
-
-/***/ }),
-/* 8 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -352,6 +300,57 @@ function Card(xPos, yPos, width, height, suit, value) {
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Card);
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Game_serverDeck__ = __webpack_require__(0);
+
+let deck = new __WEBPACK_IMPORTED_MODULE_0__Game_serverDeck__["a" /* default */]();
+
+var express = __webpack_require__(1);
+var app = express();
+
+var http = __webpack_require__(2).createServer(app);
+var io = __webpack_require__(4)(http);
+var path = __webpack_require__(3);
+
+app.use(express.static(path.join(__dirname, './client')));
+
+app.get('/', function(req, res){
+    res.sendFile(path.join(__dirname, './client/index.html'));
+});
+
+io.on('connection', (socket) => {
+    console.log('A user connected1');
+
+    // socket.on('chat message', function(msg){
+    //     console.log(msg + 'serverside update');
+    //     io.emit('chat message', msg );
+    // });
+
+    // socket.on('private message', function(msg){
+    //     console.log(msg);
+    //     socket.emit('private message', 'This should be private ' + socket.id );
+    // });
+
+    socket.on('ShuffleDeck', function(msg){
+        console.log(msg + ' shuffled the deck.');
+        deck.Shuffle();
+        io.emit('ShuffleDeck', msg + ' shuffled the deck.');
+    });
+
+    socket.on('disconnect', () => {
+        console.log('User disconnected');
+    });
+});
+
+http.listen(3000, () => {
+    console.log('listening on *:3000');
+});
 
 /***/ })
 /******/ ])));
