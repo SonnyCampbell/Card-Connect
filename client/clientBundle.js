@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 29);
+/******/ 	return __webpack_require__(__webpack_require__.s = 30);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -270,15 +270,15 @@ Emitter.prototype.hasListeners = function(event){
  * Module dependencies.
  */
 
-var keys = __webpack_require__(40);
+var keys = __webpack_require__(41);
 var hasBinary = __webpack_require__(14);
-var sliceBuffer = __webpack_require__(27);
-var after = __webpack_require__(26);
-var utf8 = __webpack_require__(41);
+var sliceBuffer = __webpack_require__(28);
+var after = __webpack_require__(27);
+var utf8 = __webpack_require__(42);
 
 var base64encoder;
 if (global && global.ArrayBuffer) {
-  base64encoder = __webpack_require__(31);
+  base64encoder = __webpack_require__(32);
 }
 
 /**
@@ -336,7 +336,7 @@ var err = { type: 'error', data: 'parser error' };
  * Create a blob api even for blob builder when vendor prefixes exist
  */
 
-var Blob = __webpack_require__(32);
+var Blob = __webpack_require__(33);
 
 /**
  * Encodes a packet.
@@ -885,7 +885,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(33);
+exports = module.exports = __webpack_require__(34);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -1440,7 +1440,7 @@ Transport.prototype.onClose = function () {
 
 /* WEBPACK VAR INJECTION */(function(global) {// browser shim for xmlhttprequest module
 
-var hasCORS = __webpack_require__(42);
+var hasCORS = __webpack_require__(43);
 
 module.exports = function (opts) {
   var xdomain = opts.xdomain;
@@ -1948,9 +1948,25 @@ function Card(xPos, yPos, width, height, imageSrc, suit, value) {
   let _suit = suit;
   let _value = value;
 
+  this.DrawOnLoad = ctx => {
+    if (this.image.complete) {
+      this.Draw(ctx);
+    } else {
+      this.ctx = ctx;
+      this.image.onload = this.DrawWhenReady;
+    }
+  };
+
+  this.DrawWhenReady = () => {
+    this.ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+  };
+
   this.Draw = ctx => {
     //ctx.fillStyle = this.fill;
     //ctx.fillRect(this.x, this.y, this.w, this.h);
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 0.01;
+    ctx.strokeRect(this.x, this.y, this.w, this.h);
     ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
   };
 
@@ -1991,6 +2007,10 @@ function Card(xPos, yPos, width, height, imageSrc, suit, value) {
 
   this.ToString = () => {
     return `The ${this.GetValueString()} of ${this.GetSuitString()}.`;
+  };
+
+  this.ValueSuit = () => {
+    return _value.ToString() + _suit;
   };
 }
 
@@ -2034,9 +2054,9 @@ module.exports = function(obj, fn){
  */
 
 var XMLHttpRequest = __webpack_require__(7);
-var XHR = __webpack_require__(38);
-var JSONP = __webpack_require__(37);
-var websocket = __webpack_require__(39);
+var XHR = __webpack_require__(39);
+var JSONP = __webpack_require__(38);
+var websocket = __webpack_require__(40);
 
 /**
  * Export transports.
@@ -2675,7 +2695,7 @@ process.umask = function() { return 0; };
  * Module dependencies.
  */
 
-var eio = __webpack_require__(34);
+var eio = __webpack_require__(35);
 var Socket = __webpack_require__(21);
 var Emitter = __webpack_require__(1);
 var parser = __webpack_require__(9);
@@ -2683,7 +2703,7 @@ var on = __webpack_require__(20);
 var bind = __webpack_require__(11);
 var debug = __webpack_require__(5)('socket.io-client:manager');
 var indexOf = __webpack_require__(15);
-var Backoff = __webpack_require__(30);
+var Backoff = __webpack_require__(31);
 
 /**
  * IE6+ hasOwnProperty
@@ -3796,13 +3816,7 @@ module.exports = yeast;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_socket_io_client__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_socket_io_client___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_socket_io_client__);
-
-
-function CanvasState(canvas) {
-    var socket = __WEBPACK_IMPORTED_MODULE_0_socket_io_client___default()();
-
+function CanvasState(canvas, socket) {
     this.canvas = canvas;
     this.width = canvas.width;
     this.height = canvas.height;
@@ -3814,6 +3828,8 @@ function CanvasState(canvas) {
     this.selection = null;
     this.dragoffx = 0;
     this.dragoffy = 0;
+
+    this.socket = socket;
 
     //-----------------------------------------------------------------------------
     // Padding and border offets
@@ -3857,7 +3873,7 @@ function CanvasState(canvas) {
                 theState.selection = selectedCard;
                 theState.valid = false;
 
-                socket.emit('chat message', 'test update');
+                socket.emit('chat message', 'A client-side message ');
 
                 //theState.animateTo(selectedCard, (new Date()).getTime(), 200, 200);
                 return;
@@ -3889,7 +3905,7 @@ function CanvasState(canvas) {
     this.selectionWidth = 2;
     this.interval = 30;
     setInterval(function () {
-        theState.draw();
+        theState.Draw();
     }, theState.interval);
 
     //Add new shape on 'dblclick'
@@ -3917,6 +3933,8 @@ CanvasState.prototype.getMouse = function (e) {
 };
 
 CanvasState.prototype.addCard = function (card) {
+    card.x += this.cards.length / 4;
+    card.y += this.cards.length / 4;
     this.cards.push(card);
     this.valid = false;
 };
@@ -3925,7 +3943,7 @@ CanvasState.prototype.clear = function () {
     this.ctx.clearRect(0, 0, this.width, this.height);
 };
 
-CanvasState.prototype.draw = function () {
+CanvasState.prototype.Draw = function () {
     if (!this.valid) {
         let ctx = this.ctx;
         let cards = this.cards;
@@ -3950,10 +3968,10 @@ CanvasState.prototype.draw = function () {
                 ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
             }
 
-            card.Draw(ctx);
+            card.DrawOnLoad(ctx);
 
             ctx.restore();
-            console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
+            //console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
         }
 
         if (this.selection != null) {
@@ -3986,7 +4004,7 @@ CanvasState.prototype.animate = function (card, startTime) {
     }
 
     this.clear();
-    this.draw();
+    this.Draw();
 
     requestAnimationFrame(() => {
         this.animate(card, startTime);
@@ -4025,7 +4043,7 @@ CanvasState.prototype.animateTo = function (card, startTime, duration, destX, de
 
     card.rotation += 20 * Math.PI / 180;
     this.clear();
-    this.draw();
+    this.Draw();
 
     requestAnimationFrame(() => {
         this.animateTo(card, startTime, duration, destX, destY);
@@ -4040,7 +4058,7 @@ CanvasState.prototype.animateTo = function (card, startTime, duration, destX, de
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(29);
 
 
 
@@ -4105,7 +4123,7 @@ function DeckOfCards() {
 function CreateDeck() {
     let cards = [];
 
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](200, 200, 100, 150, '/images/Cards/2_of_clubs.png', 'C', 2));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/2_of_clubs.png', 'C', 2));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/3_of_clubs.png', 'C', 3));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/4_of_clubs.png', 'C', 4));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/5_of_clubs.png', 'C', 5));
@@ -4168,6 +4186,121 @@ function CreateDeck() {
 
 /***/ }),
 /* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/**
+ * Module dependencies.
+ */
+
+var url = __webpack_require__(46);
+var parser = __webpack_require__(9);
+var Manager = __webpack_require__(19);
+var debug = __webpack_require__(5)('socket.io-client');
+
+/**
+ * Module exports.
+ */
+
+module.exports = exports = lookup;
+
+/**
+ * Managers cache.
+ */
+
+var cache = exports.managers = {};
+
+/**
+ * Looks up an existing `Manager` for multiplexing.
+ * If the user summons:
+ *
+ *   `io('http://localhost/a');`
+ *   `io('http://localhost/b');`
+ *
+ * We reuse the existing instance based on same scheme/port/host,
+ * and we initialize sockets for each namespace.
+ *
+ * @api public
+ */
+
+function lookup (uri, opts) {
+  if (typeof uri === 'object') {
+    opts = uri;
+    uri = undefined;
+  }
+
+  opts = opts || {};
+
+  var parsed = url(uri);
+  var source = parsed.source;
+  var id = parsed.id;
+  var path = parsed.path;
+  var sameNamespace = cache[id] && path in cache[id].nsps;
+  var newConnection = opts.forceNew || opts['force new connection'] ||
+                      false === opts.multiplex || sameNamespace;
+
+  var io;
+
+  if (newConnection) {
+    debug('ignoring socket cache for %s', source);
+    io = Manager(source, opts);
+  } else {
+    if (!cache[id]) {
+      debug('new io instance for %s', source);
+      cache[id] = Manager(source, opts);
+    }
+    io = cache[id];
+  }
+  if (parsed.query && !opts.query) {
+    opts.query = parsed.query;
+  } else if (opts && 'object' === typeof opts.query) {
+    opts.query = encodeQueryString(opts.query);
+  }
+  return io.socket(parsed.path, opts);
+}
+/**
+ *  Helper method to parse query objects to string.
+ * @param {object} query
+ * @returns {string}
+ */
+function encodeQueryString (obj) {
+  var str = [];
+  for (var p in obj) {
+    if (obj.hasOwnProperty(p)) {
+      str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]));
+    }
+  }
+  return str.join('&');
+}
+/**
+ * Protocol version.
+ *
+ * @api public
+ */
+
+exports.protocol = parser.protocol;
+
+/**
+ * `connect`.
+ *
+ * @param {String} uri
+ * @api public
+ */
+
+exports.connect = lookup;
+
+/**
+ * Expose constructors for standalone build.
+ *
+ * @api public
+ */
+
+exports.Manager = __webpack_require__(19);
+exports.Socket = __webpack_require__(21);
+
+
+/***/ }),
+/* 27 */
 /***/ (function(module, exports) {
 
 module.exports = after
@@ -4201,7 +4334,7 @@ function noop() {}
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports) {
 
 /**
@@ -4236,7 +4369,7 @@ module.exports = function(arraybuffer, start, end) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4250,7 +4383,7 @@ class CONST {
 /* unused harmony default export */ var _unused_webpack_default_export = (CONST);
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4258,7 +4391,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_Card__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Game_Deck__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_socket_io_client__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_socket_io_client__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_socket_io_client__);
 
 
@@ -4267,8 +4400,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 // import Vector from './lib/Vector'
 
 function init() {
-  var s = new __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__["a" /* default */](document.getElementById('canvas'));
   var socket = __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default()();
+  var s = new __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__["a" /* default */](document.getElementById('canvas'), socket);
 
   let theDeck = new __WEBPACK_IMPORTED_MODULE_2__Game_Deck__["a" /* default */]();
   theDeck.Shuffle();
@@ -4277,17 +4410,22 @@ function init() {
     //hand[i].rotation = 90 * i * Math.PI / 180;
     s.addCard(theDeck.Cards()[i]);
   }
+  s.Draw();
 
   var p = document.getElementById("test");
   p.onclick = function () {
-    socket.emit('shuffleDeck', 'shuffleDeck');
+    socket.emit('ShuffleDeck', 'Player: ' + socket.id);
   };
+
+  socket.on('ShuffleDeck', function (msg) {
+    console.log(msg);
+  });
 }
 
 init();
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports) {
 
 
@@ -4378,7 +4516,7 @@ Backoff.prototype.setJitter = function(jitter){
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports) {
 
 /*
@@ -4451,7 +4589,7 @@ Backoff.prototype.setJitter = function(jitter){
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -4554,7 +4692,7 @@ module.exports = (function() {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -4570,7 +4708,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = __webpack_require__(43);
+exports.humanize = __webpack_require__(44);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -4762,19 +4900,19 @@ function coerce(val) {
 
 
 /***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-module.exports = __webpack_require__(35);
-
-
-/***/ }),
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 module.exports = __webpack_require__(36);
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+module.exports = __webpack_require__(37);
 
 /**
  * Exports parser
@@ -4786,7 +4924,7 @@ module.exports.parser = __webpack_require__(2);
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -4799,7 +4937,7 @@ var debug = __webpack_require__(3)('engine.io-client:socket');
 var index = __webpack_require__(15);
 var parser = __webpack_require__(2);
 var parseuri = __webpack_require__(17);
-var parsejson = __webpack_require__(44);
+var parsejson = __webpack_require__(45);
 var parseqs = __webpack_require__(8);
 
 /**
@@ -5537,7 +5675,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -5775,7 +5913,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -6195,7 +6333,7 @@ function unloadHandler () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -6488,7 +6626,7 @@ WS.prototype.check = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports) {
 
 
@@ -6513,7 +6651,7 @@ module.exports = Object.keys || function keys (obj){
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/utf8js v2.1.2 by @mathias */
@@ -6774,7 +6912,7 @@ module.exports = Object.keys || function keys (obj){
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(51)(module), __webpack_require__(0)))
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports) {
 
 
@@ -6797,7 +6935,7 @@ try {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports) {
 
 /**
@@ -6955,7 +7093,7 @@ function plural(ms, n, name) {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -6991,121 +7129,6 @@ module.exports = function parsejson(data) {
   }
 };
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 45 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/**
- * Module dependencies.
- */
-
-var url = __webpack_require__(46);
-var parser = __webpack_require__(9);
-var Manager = __webpack_require__(19);
-var debug = __webpack_require__(5)('socket.io-client');
-
-/**
- * Module exports.
- */
-
-module.exports = exports = lookup;
-
-/**
- * Managers cache.
- */
-
-var cache = exports.managers = {};
-
-/**
- * Looks up an existing `Manager` for multiplexing.
- * If the user summons:
- *
- *   `io('http://localhost/a');`
- *   `io('http://localhost/b');`
- *
- * We reuse the existing instance based on same scheme/port/host,
- * and we initialize sockets for each namespace.
- *
- * @api public
- */
-
-function lookup (uri, opts) {
-  if (typeof uri === 'object') {
-    opts = uri;
-    uri = undefined;
-  }
-
-  opts = opts || {};
-
-  var parsed = url(uri);
-  var source = parsed.source;
-  var id = parsed.id;
-  var path = parsed.path;
-  var sameNamespace = cache[id] && path in cache[id].nsps;
-  var newConnection = opts.forceNew || opts['force new connection'] ||
-                      false === opts.multiplex || sameNamespace;
-
-  var io;
-
-  if (newConnection) {
-    debug('ignoring socket cache for %s', source);
-    io = Manager(source, opts);
-  } else {
-    if (!cache[id]) {
-      debug('new io instance for %s', source);
-      cache[id] = Manager(source, opts);
-    }
-    io = cache[id];
-  }
-  if (parsed.query && !opts.query) {
-    opts.query = parsed.query;
-  } else if (opts && 'object' === typeof opts.query) {
-    opts.query = encodeQueryString(opts.query);
-  }
-  return io.socket(parsed.path, opts);
-}
-/**
- *  Helper method to parse query objects to string.
- * @param {object} query
- * @returns {string}
- */
-function encodeQueryString (obj) {
-  var str = [];
-  for (var p in obj) {
-    if (obj.hasOwnProperty(p)) {
-      str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]));
-    }
-  }
-  return str.join('&');
-}
-/**
- * Protocol version.
- *
- * @api public
- */
-
-exports.protocol = parser.protocol;
-
-/**
- * `connect`.
- *
- * @param {String} uri
- * @api public
- */
-
-exports.connect = lookup;
-
-/**
- * Expose constructors for standalone build.
- *
- * @api public
- */
-
-exports.Manager = __webpack_require__(19);
-exports.Socket = __webpack_require__(21);
-
 
 /***/ }),
 /* 46 */

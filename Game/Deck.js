@@ -65,7 +65,7 @@ function DeckOfCards() {
 function CreateDeck() {
     let cards = [];
 
-    cards.push(new Card(200, 200, 100, 150, '/images/Cards/2_of_clubs.png' , 'C', 2 ));
+    cards.push(new Card(0, 0, 100, 150, '/images/Cards/2_of_clubs.png' , 'C', 2 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/3_of_clubs.png' , 'C', 3 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/4_of_clubs.png' , 'C', 4 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/5_of_clubs.png' , 'C', 5 ));

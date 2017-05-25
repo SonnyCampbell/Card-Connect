@@ -1,9 +1,5 @@
-import io from 'socket.io-client'
-
-function CanvasState(canvas)
+function CanvasState(canvas, socket)
 {
-  var socket = io();
-
   this.canvas = canvas;
   this.width = canvas.width;
   this.height = canvas.height;
@@ -15,6 +11,8 @@ function CanvasState(canvas)
   this.selection = null;
   this.dragoffx = 0;
   this.dragoffy = 0;
+
+  this.socket = socket;
 
   //-----------------------------------------------------------------------------
   // Padding and border offets
@@ -56,7 +54,7 @@ function CanvasState(canvas)
         theState.selection = selectedCard;
         theState.valid = false;
 
-        socket.emit('chat message','test update');
+        socket.emit('chat message','A client-side message ');
 
         //theState.animateTo(selectedCard, (new Date()).getTime(), 200, 200);
         return;
@@ -87,7 +85,7 @@ function CanvasState(canvas)
   this.selectionColor = '#CC0000';
   this.selectionWidth = 2;
   this.interval = 30;
-  setInterval(function() { theState.draw(); }, theState.interval);
+  setInterval(function() { theState.Draw(); }, theState.interval);
   
   //Add new shape on 'dblclick'
 }
@@ -114,6 +112,8 @@ CanvasState.prototype.getMouse = function(e){
 }
 
 CanvasState.prototype.addCard = function(card){
+    card.x += this.cards.length / 4;
+    card.y += this.cards.length / 4;
     this.cards.push(card);
     this.valid = false;
 }
@@ -122,7 +122,7 @@ CanvasState.prototype.clear = function(){
     this.ctx.clearRect(0, 0, this.width, this.height);
 }
 
-CanvasState.prototype.draw = function(){
+CanvasState.prototype.Draw = function(){
     if(!this.valid){
         let ctx = this.ctx;
         let cards = this.cards;
@@ -148,10 +148,10 @@ CanvasState.prototype.draw = function(){
                 ctx.translate(-card.x -(card.w/2), -card.y - (card.h/2));
             }            
             
-            card.Draw(ctx);
+            card.DrawOnLoad(ctx);
             
             ctx.restore();
-            console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
+            //console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
         }
 
         if(this.selection != null){
@@ -184,7 +184,7 @@ CanvasState.prototype.animate = function(card, startTime){
     }
 
     this.clear();
-    this.draw();
+    this.Draw();
 
     requestAnimationFrame(() => {
         this.animate(card, startTime);
@@ -223,7 +223,7 @@ CanvasState.prototype.animateTo = function(card, startTime, duration, destX, des
 
     card.rotation += 20*Math.PI/180;
     this.clear();
-    this.draw();
+    this.Draw();
 
     requestAnimationFrame(() => {
         this.animateTo(card, startTime, duration, destX, destY);

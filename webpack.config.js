@@ -17,7 +17,7 @@ fs.readdirSync('node_modules')
 };
 
 let serverConfig = Object.assign({}, config,{
-  entry: './server/main.js',
+  entry: './server/main.1.js',
   target: 'node',
   node: {
     __filename: false,
