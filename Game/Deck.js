@@ -5,7 +5,9 @@ function DeckOfCards() {
     let _cardCount = 52;
     let _cardsUsed = 0;
 
-    let cards = CreateDeck();
+    this.deckDict = {};
+
+    let cards = CreateDeck(this.deckDict);
     let discardPile = [];
 
     // for (let i = 0; i < CONST.SUITS().length; i++)
@@ -15,6 +17,8 @@ function DeckOfCards() {
     //         cards.push(new Card(CONST.SUITS()[i], value));
     //     }
     // }
+
+    
 
 
     this.Shuffle = () => {
@@ -62,7 +66,7 @@ function DeckOfCards() {
 }
 
 
-function CreateDeck() {
+function CreateDeck(deckDict) {
     let cards = [];
 
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/2_of_clubs.png' , 'C', 2 ));
@@ -120,6 +124,10 @@ function CreateDeck() {
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/queen_of_diamonds2.png' , 'D', 12 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/king_of_diamonds2.png' , 'D', 13 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/ace_of_diamonds.png' , 'D', 1 ));
+
+    cards.forEach(function(card) {
+        deckDict[card.SuitValue()] = card;
+    }, this);
 
     return cards;
 }

@@ -45,8 +45,8 @@ function Card(xPos, yPos, width, height, suit, value) {
     return `The ${this.GetValueString()} of ${this.GetSuitString()}.`;
   }
 
-  this.ValueSuit = () => {
-      return _value.ToString() + _suit;
+  this.SuitValue = () => {
+      return  _suit + _value;
   }
 }
 

@@ -1932,7 +1932,7 @@ function error() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-function Card(xPos, yPos, width, height, imageSrc, suit, value) {
+function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
   // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
   // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
   // But we aren't checking anything else! We could put "Lalala" for the value of x 
@@ -1942,23 +1942,26 @@ function Card(xPos, yPos, width, height, imageSrc, suit, value) {
   this.h = height || 1;
   this.rotation = 0;
 
-  this.image = new Image();
-  this.image.src = imageSrc;
+  this.faceImage = new Image();
+  this.faceImage.src = faceImageSrc;
+  this.backImage = new Image();
+  this.backImage.src = '/images/Cards/card_back2.png';
+  this.displayImage = this.backImage;
 
   let _suit = suit;
   let _value = value;
 
   this.DrawOnLoad = ctx => {
-    if (this.image.complete) {
+    if (this.backImage.complete) {
       this.Draw(ctx);
     } else {
       this.ctx = ctx;
-      this.image.onload = this.DrawWhenReady;
+      this.backImage.onload = this.DrawWhenReady;
     }
   };
 
   this.DrawWhenReady = () => {
-    this.ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+    this.ctx.drawImage(this.backImage, this.x, this.y, this.w, this.h);
   };
 
   this.Draw = ctx => {
@@ -1967,7 +1970,7 @@ function Card(xPos, yPos, width, height, imageSrc, suit, value) {
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 0.01;
     ctx.strokeRect(this.x, this.y, this.w, this.h);
-    ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+    ctx.drawImage(this.displayImage, this.x, this.y, this.w, this.h);
   };
 
   // Determine if a point is inside the shape's bounds
@@ -2009,8 +2012,8 @@ function Card(xPos, yPos, width, height, imageSrc, suit, value) {
     return `The ${this.GetValueString()} of ${this.GetSuitString()}.`;
   };
 
-  this.ValueSuit = () => {
-    return _value.ToString() + _suit;
+  this.SuitValue = () => {
+    return _suit + _value;
   };
 }
 
@@ -3866,14 +3869,13 @@ function CanvasState(canvas, socket) {
         for (let i = cards.length - 1; i >= 0; i--) {
             if (cards[i].Contains(mx, my)) {
                 let selectedCard = cards[i];
+                selectedCard.displayImage = selectedCard.faceImage;
                 // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
                 theState.dragoffx = mx - selectedCard.x;
                 theState.dragoffy = my - selectedCard.y;
                 theState.dragging = true;
                 theState.selection = selectedCard;
                 theState.valid = false;
-
-                socket.emit('chat message', 'A client-side message ');
 
                 //theState.animateTo(selectedCard, (new Date()).getTime(), 200, 200);
                 return;
@@ -4066,7 +4068,9 @@ function DeckOfCards() {
     let _cardCount = 52;
     let _cardsUsed = 0;
 
-    let cards = CreateDeck();
+    this.deckDict = {};
+
+    let cards = CreateDeck(this.deckDict);
     let discardPile = [];
 
     // for (let i = 0; i < CONST.SUITS().length; i++)
@@ -4120,7 +4124,7 @@ function DeckOfCards() {
     };
 }
 
-function CreateDeck() {
+function CreateDeck(deckDict) {
     let cards = [];
 
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/2_of_clubs.png', 'C', 2));
@@ -4178,6 +4182,10 @@ function CreateDeck() {
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/queen_of_diamonds2.png', 'D', 12));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/king_of_diamonds2.png', 'D', 13));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/ace_of_diamonds.png', 'D', 1));
+
+    cards.forEach(function (card) {
+        deckDict[card.SuitValue()] = card;
+    }, this);
 
     return cards;
 }
@@ -4401,24 +4409,47 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 function init() {
   var socket = __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default()();
-  var s = new __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__["a" /* default */](document.getElementById('canvas'), socket);
-
   let theDeck = new __WEBPACK_IMPORTED_MODULE_2__Game_Deck__["a" /* default */]();
-  theDeck.Shuffle();
+  var gameCanvas = new __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__["a" /* default */](document.getElementById('canvas'), socket);
+  gameCanvas.Draw();
 
-  for (let i = 0; i < theDeck.Cards().length; i++) {
-    //hand[i].rotation = 90 * i * Math.PI / 180;
-    s.addCard(theDeck.Cards()[i]);
-  }
-  s.Draw();
+  let iptRoomName = document.getElementById("iptRoomName");
+  var btnJoinGame = document.getElementById("btnJoinGame");
+  var btnShuffleDeck = document.getElementById("btnShuffleDeck");
+  btnShuffleDeck.classList.add('hide');
+  var btnGameStart = document.getElementById("btnGameStart");
+  btnGameStart.classList.add('hide');
 
-  var p = document.getElementById("test");
-  p.onclick = function () {
-    socket.emit('ShuffleDeck', 'Player: ' + socket.id);
+  btnJoinGame.onclick = function () {
+    socket.emit('JoinGame', iptRoomName.value);
+
+    btnGameStart.classList.remove('hide');
+    btnJoinGame.classList.add('hide');
+    iptRoomName.classList.add('hide');
   };
 
-  socket.on('ShuffleDeck', function (msg) {
+  btnGameStart.onclick = function () {
+    socket.emit('StartGame');
+
+    btnShuffleDeck.classList.remove('hide');
+    btnGameStart.classList.add('hide');
+  };
+
+  socket.on('PlayerJoinedGame', function (msg) {
     console.log(msg);
+  });
+
+  socket.on('StartGame', function (msg) {
+    console.log(msg);
+    btnShuffleDeck.classList.remove('hide');
+    btnGameStart.classList.add('hide');
+
+    theDeck.Shuffle();
+    for (let i = 0; i < theDeck.Cards().length; i++) {
+      gameCanvas.addCard(theDeck.Cards()[i]);
+    }
+    gameCanvas.Draw();
+    console.log(theDeck.deckDict[theDeck.Cards()[0].SuitValue()].ToString());
   });
 }
 

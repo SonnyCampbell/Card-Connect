@@ -1,4 +1,4 @@
-function Card(xPos, yPos, width, height, imageSrc, suit, value) {
+function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
   // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
   // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
   // But we aren't checking anything else! We could put "Lalala" for the value of x 
@@ -8,26 +8,29 @@ function Card(xPos, yPos, width, height, imageSrc, suit, value) {
   this.h = height || 1;
   this.rotation = 0;
 
-  this.image = new Image();
-  this.image.src = imageSrc;
+  this.faceImage = new Image();
+  this.faceImage.src = faceImageSrc;
+  this.backImage = new Image();
+  this.backImage.src = '/images/Cards/card_back2.png';
+  this.displayImage = this.backImage;
 
   let _suit = suit;
   let _value = value;
 
   this.DrawOnLoad = (ctx) => {
-      if(this.image.complete)
+      if(this.backImage.complete)
       {
           this.Draw(ctx);
       }
       else
       {
           this.ctx = ctx;
-          this.image.onload = this.DrawWhenReady;
+          this.backImage.onload = this.DrawWhenReady;
       }
   }
 
   this.DrawWhenReady = () => {
-      this.ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+      this.ctx.drawImage(this.backImage, this.x, this.y, this.w, this.h);
   }
 
 
@@ -37,7 +40,7 @@ function Card(xPos, yPos, width, height, imageSrc, suit, value) {
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 0.01;
     ctx.strokeRect(this.x, this.y, this.w, this.h);
-    ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+    ctx.drawImage(this.displayImage, this.x, this.y, this.w, this.h);
   }
 
   // Determine if a point is inside the shape's bounds
@@ -81,8 +84,8 @@ function Card(xPos, yPos, width, height, imageSrc, suit, value) {
     return `The ${this.GetValueString()} of ${this.GetSuitString()}.`;
   }
 
-  this.ValueSuit = () => {
-      return _value.ToString() + _suit;
+  this.SuitValue = () => {
+      return  _suit + _value;
   }
 }
 

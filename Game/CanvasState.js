@@ -47,14 +47,13 @@ function CanvasState(canvas, socket)
     for(let i = cards.length - 1; i >= 0; i--){
       if (cards[i].Contains(mx, my)){
         let selectedCard = cards[i];
+        selectedCard.displayImage = selectedCard.faceImage;
         // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
         theState.dragoffx = mx - selectedCard.x;
         theState.dragoffy = my - selectedCard.y;
         theState.dragging = true;
         theState.selection = selectedCard;
         theState.valid = false;
-
-        socket.emit('chat message','A client-side message ');
 
         //theState.animateTo(selectedCard, (new Date()).getTime(), 200, 200);
         return;
@@ -63,8 +62,8 @@ function CanvasState(canvas, socket)
 
     // havent returned means we have failed to select anything. If there was an object selected, we deselect it
     if(theState.selection){
-    theState.selection = null;
-    theState.valid = false;
+        theState.selection = null;
+        theState.valid = false;
     }
   }, false);
   

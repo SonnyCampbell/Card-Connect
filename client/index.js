@@ -6,25 +6,49 @@ import io from 'socket.io-client'
 
 function init() {
   var socket = io();
-  var s = new CanvasState(document.getElementById('canvas'), socket);
-
-
   let theDeck = new Deck();
-  theDeck.Shuffle()
+  var gameCanvas = new CanvasState(document.getElementById('canvas'), socket);
+  gameCanvas.Draw();
 
-  for(let i = 0; i < theDeck.Cards().length; i++){
-      //hand[i].rotation = 90 * i * Math.PI / 180;
-      s.addCard(theDeck.Cards()[i]);
+  let iptRoomName = document.getElementById("iptRoomName");
+  var btnJoinGame = document.getElementById("btnJoinGame");
+  var btnShuffleDeck = document.getElementById("btnShuffleDeck");
+  btnShuffleDeck.classList.add('hide');
+  var btnGameStart = document.getElementById("btnGameStart");
+  btnGameStart.classList.add('hide');
+
+  btnJoinGame.onclick = function(){
+    socket.emit('JoinGame', iptRoomName.value);
+
+    btnGameStart.classList.remove('hide');
+    btnJoinGame.classList.add('hide');
+    iptRoomName.classList.add('hide');
   }
-  s.Draw();
 
-  var p = document.getElementById("test");
-  p.onclick = function(){
-    socket.emit('ShuffleDeck', 'Player: ' + socket.id);
+  btnGameStart.onclick = function(){
+    socket.emit('StartGame');
+
+    btnShuffleDeck.classList.remove('hide');
+    btnGameStart.classList.add('hide');
   }
 
-  socket.on('ShuffleDeck', function(msg){
-        console.log(msg);
+  socket.on('PlayerJoinedGame', function(msg){
+    console.log(msg);
+  });
+
+  socket.on('StartGame', function(msg){
+    console.log(msg);   
+    btnShuffleDeck.classList.remove('hide');
+    btnGameStart.classList.add('hide');
+
+    theDeck.Shuffle()
+    for(let i = 0; i < theDeck.Cards().length; i++){
+      gameCanvas.addCard(theDeck.Cards()[i]);
+    }
+    gameCanvas.Draw();
+    console.log(theDeck.deckDict[theDeck.Cards()[0].SuitValue()].ToString());
+  
+
   });
 
 }

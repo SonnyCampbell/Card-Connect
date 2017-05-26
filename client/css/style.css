@@ -3,7 +3,11 @@ canvas{
   background-color: #007d00;
 }
 
-#test {
-  position: absolute;
+#btnShuffleDeck {
+  position: relative;
   left: 300px;
+}
+
+.hide {
+  display: none;
 }

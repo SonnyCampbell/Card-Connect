@@ -1,5 +1,4 @@
-import Deck from '../Game/serverDeck'
-let deck = new Deck();
+import Game from '../Game/Game'
 
 var express = require('express');
 var app = express();
@@ -14,26 +13,25 @@ app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, './client/index.html'));
 });
 
+let players = {};
+
 io.on('connection', (socket) => {
-    console.log('A user connected1');
+    console.log('User ' + socket.id + ' connected to server.');
 
-    // socket.on('chat message', function(msg){
-    //     console.log(msg + 'serverside update');
-    //     io.emit('chat message', msg );
-    // });
+    socket.on('JoinGame', function(roomName){
+        players[socket.id] = 'player' + (Object.keys(players).length + 1);
+        console.log(players[socket.id] + ' joined the game.');
+        console.log(roomName);
+        socket.broadcast.emit('PlayerJoinedGame', players[socket.id] + ' joined the game.');
+    });
 
-    // socket.on('private message', function(msg){
-    //     console.log(msg);
-    //     socket.emit('private message', 'This should be private ' + socket.id );
-    // });
-
-    socket.on('ShuffleDeck', function(msg){
-        console.log(msg + ' shuffled the deck.');
-        deck.Shuffle();
-        io.emit('ShuffleDeck', msg + ' shuffled the deck.');
+    socket.on('StartGame', function(){
+        console.log(players[socket.id] + ' started the game.');
+        io.emit('StartGame', players[socket.id] + ' started the game.');
     });
 
     socket.on('disconnect', () => {
+        //delete players[socket.id];
         console.log('User disconnected');
     });
 });
