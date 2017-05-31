@@ -1,3 +1,5 @@
+import Deck from './Deck'
+
 function CanvasState(canvas, socket)
 {
   this.canvas = canvas;
@@ -13,6 +15,8 @@ function CanvasState(canvas, socket)
   this.dragoffy = 0;
 
   this.socket = socket;
+
+  this.theDeck = new Deck();
 
   //-----------------------------------------------------------------------------
   // Padding and border offets
@@ -36,7 +40,37 @@ function CanvasState(canvas, socket)
   //-----------------------------------------------------------------------------
   canvas.addEventListener('selectstart', function(e) {e.preventDefault(); return false;}, false);
   
-  canvas.addEventListener('mousedown', function(e){
+//   canvas.addEventListener('mousedown', function(e){
+//     let mouse = theState.getMouse(e);
+//     let mx = mouse.x;
+//     let my = mouse.y;
+//     let cards = theState.cards;
+
+//     console.log(mouse);
+    
+//     for(let i = cards.length - 1; i >= 0; i--){
+//       if (cards[i].Contains(mx, my)){
+//         let selectedCard = cards[i];
+//         selectedCard.displayImage = selectedCard.faceImage;
+//         // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
+//         theState.dragoffx = mx - selectedCard.x;
+//         theState.dragoffy = my - selectedCard.y;
+//         theState.dragging = true;
+//         theState.selection = selectedCard;
+//         theState.valid = false;
+
+//         //theState.animateTo(selectedCard, (new Date()).getTime(), 200, 200);
+//         return;
+//       }
+//     }
+
+//     // havent returned means we have failed to select anything. If there was an object selected, we deselect it
+//     if(theState.selection){
+//         theState.selection = null;
+//         theState.valid = false;
+//     }
+//   }, false);
+canvas.addEventListener('mousedown', function(e){
     let mouse = theState.getMouse(e);
     let mx = mouse.x;
     let my = mouse.y;
@@ -45,19 +79,11 @@ function CanvasState(canvas, socket)
     console.log(mouse);
     
     for(let i = cards.length - 1; i >= 0; i--){
-      if (cards[i].Contains(mx, my)){
-        let selectedCard = cards[i];
-        selectedCard.displayImage = selectedCard.faceImage;
-        // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
-        theState.dragoffx = mx - selectedCard.x;
-        theState.dragoffy = my - selectedCard.y;
-        theState.dragging = true;
-        theState.selection = selectedCard;
-        theState.valid = false;
-
-        //theState.animateTo(selectedCard, (new Date()).getTime(), 200, 200);
-        return;
-      }
+        if (cards[i].isFaceDown && cards[i].Contains(mx, my)){
+            console.log('start deal card client side');
+            socket.emit('DealCard');
+            return;
+        }
     }
 
     // havent returned means we have failed to select anything. If there was an object selected, we deselect it
@@ -87,6 +113,50 @@ function CanvasState(canvas, socket)
   setInterval(function() { theState.Draw(); }, theState.interval);
   
   //Add new shape on 'dblclick'
+}
+
+CanvasState.prototype.DealCard = function(cardSV){
+    console.log('client side attempting to deal card ' + cardSV);
+    let card = this.theDeck.deckDict[cardSV];
+    for(let i = 0; i < this.theDeck.Cards().length; i++){
+        if (card.SuitValue() == this.theDeck.Cards()[i].SuitValue()){
+            this.theDeck.Cards().splice(i, 1);
+            break;
+        }
+        if (i == this.theDeck.Cards().length){
+            console.log('Couldn\' find the card in the deck. Something probably went wrong');
+        }
+    }
+
+    this.cards = this.theDeck.Cards();
+    this.cards.push(card);
+    card.displayImage = card.faceImage;
+    // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
+    // this.dragoffx = mx - card.x;
+    // this.dragoffy = my - card.y;
+    // this.dragging = true;
+    this.selection = card;
+    this.valid = false;
+
+    // havent returned means we have failed to select anything. If there was an object selected, we deselect it
+    if(this.selection){
+        this.selection = null;
+        this.valid = false;
+    }
+
+    //this.animateTo(card, (new Date()).getTime(), 200, 200);
+    return;
+
+    //TODO: sort out cards used, cards left, etc. here
+    //return card;
+}
+
+CanvasState.prototype.StartGame = function() {  
+    this.theDeck.Shuffle()
+    for(let i = 0; i < this.theDeck.Cards().length; i++){
+      this.addCard(this.theDeck.Cards()[i]);
+    }
+    this.Draw();
 }
 
 CanvasState.prototype.getMouse = function(e){
@@ -131,7 +201,7 @@ CanvasState.prototype.Draw = function(){
         //Do background stuff
         //-------------------
 
-
+        console.log(this.cards);
         //Draw each card
         for(let i = 0; i < cards.length; i++){
             let card = cards[i];
@@ -199,10 +269,10 @@ CanvasState.prototype.animateTo = function(card, startTime, duration, destX, des
 
     let t = Math.min(1, time / duration);
 
-    let linearSpeed = 20;
-    let normalDirection = Vector.normalVector(card.x, card.y, destX, destY);
-    let movement = { x: normalDirection.x * linearSpeed * time / 1000,
-                     y: normalDirection.y * linearSpeed * time / 1000 };
+    // let linearSpeed = 20;
+    // let normalDirection = Vector.normalVector(card.x, card.y, destX, destY);
+    // let movement = { x: normalDirection.x * linearSpeed * time / 1000,
+    //                  y: normalDirection.y * linearSpeed * time / 1000 };
 
     if( t < 1) {
         card.x = card.sx * (1 - t) + destX * t;

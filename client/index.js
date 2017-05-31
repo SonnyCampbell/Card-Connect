@@ -6,7 +6,7 @@ import io from 'socket.io-client'
 
 function init() {
   var socket = io();
-  let theDeck = new Deck();
+  
   var gameCanvas = new CanvasState(document.getElementById('canvas'), socket);
   gameCanvas.Draw();
 
@@ -24,14 +24,28 @@ function init() {
     btnGameStart.classList.remove('hide');
     btnJoinGame.classList.add('hide');
     iptRoomName.classList.add('hide');
-  }
+  };
 
   btnGameStart.onclick = () => {
     socket.emit('StartGame');
 
     btnShuffleDeck.classList.remove('hide');
     btnGameStart.classList.add('hide');
-  }
+  };
+
+  socket.on('StartGame', function(msg){
+    console.log(msg);   
+    btnShuffleDeck.classList.remove('hide');
+    btnGameStart.classList.add('hide');
+
+    gameCanvas.StartGame();
+  });
+
+  socket.on('DealCard', function(cardSuitValue) {
+    console.log('deal card client side received: ' + cardSuitValue);
+    gameCanvas.DealCard(cardSuitValue);
+  });
+
 
   btnShuffleDeck.onclick = () => {
     socket.emit('ShuffleDeck');
@@ -41,18 +55,7 @@ function init() {
     console.log(msg);
   });
 
-  socket.on('StartGame', function(msg){
-    console.log(msg);   
-    btnShuffleDeck.classList.remove('hide');
-    btnGameStart.classList.add('hide');
 
-    theDeck.Shuffle()
-    for(let i = 0; i < theDeck.Cards().length; i++){
-      gameCanvas.addCard(theDeck.Cards()[i]);
-    }
-    gameCanvas.Draw();
-    console.log(theDeck.deckDict[theDeck.Cards()[0].SuitValue()].ToString());
-  });
 
   socket.on('ShuffleDeck', function(msg) {
     console.log(msg);

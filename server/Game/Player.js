@@ -6,6 +6,8 @@ function Player(socket, username) {
     let _roomName = '';
     let _hand = [];
 
+    this.isTurn = false;
+
     // Getters and Setters
     this.getSocket = () => {
         return  _socket;
@@ -20,7 +22,7 @@ function Player(socket, username) {
     this.setUsername = (username) => {
         _username = username;
     }
-    
+
     this.getRoomName = () => {
         return  _roomName;
     }

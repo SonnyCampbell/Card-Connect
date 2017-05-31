@@ -31,7 +31,12 @@ io.on('connection', (socket) => {
 
     socket.on('ShuffleDeck', function() {
         conn.ShuffleDeck(socket);
-    })
+    });
+
+    socket.on('DealCard', function() {
+        console.log('deal card server side received');
+        conn.DealCard(socket);
+    });
 
     socket.on('disconnect', () => {
         console.log('User disconnected');

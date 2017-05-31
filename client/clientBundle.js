@@ -1947,6 +1947,7 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
   this.backImage = new Image();
   this.backImage.src = '/images/Cards/card_back2.png';
   this.displayImage = this.backImage;
+  this.isFaceDown = true;
 
   let _suit = suit;
   let _value = value;
@@ -3819,6 +3820,9 @@ module.exports = yeast;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Deck__ = __webpack_require__(25);
+
+
 function CanvasState(canvas, socket) {
     this.canvas = canvas;
     this.width = canvas.width;
@@ -3833,6 +3837,8 @@ function CanvasState(canvas, socket) {
     this.dragoffy = 0;
 
     this.socket = socket;
+
+    this.theDeck = new __WEBPACK_IMPORTED_MODULE_0__Deck__["a" /* default */]();
 
     //-----------------------------------------------------------------------------
     // Padding and border offets
@@ -3858,6 +3864,36 @@ function CanvasState(canvas, socket) {
         e.preventDefault();return false;
     }, false);
 
+    //   canvas.addEventListener('mousedown', function(e){
+    //     let mouse = theState.getMouse(e);
+    //     let mx = mouse.x;
+    //     let my = mouse.y;
+    //     let cards = theState.cards;
+
+    //     console.log(mouse);
+
+    //     for(let i = cards.length - 1; i >= 0; i--){
+    //       if (cards[i].Contains(mx, my)){
+    //         let selectedCard = cards[i];
+    //         selectedCard.displayImage = selectedCard.faceImage;
+    //         // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
+    //         theState.dragoffx = mx - selectedCard.x;
+    //         theState.dragoffy = my - selectedCard.y;
+    //         theState.dragging = true;
+    //         theState.selection = selectedCard;
+    //         theState.valid = false;
+
+    //         //theState.animateTo(selectedCard, (new Date()).getTime(), 200, 200);
+    //         return;
+    //       }
+    //     }
+
+    //     // havent returned means we have failed to select anything. If there was an object selected, we deselect it
+    //     if(theState.selection){
+    //         theState.selection = null;
+    //         theState.valid = false;
+    //     }
+    //   }, false);
     canvas.addEventListener('mousedown', function (e) {
         let mouse = theState.getMouse(e);
         let mx = mouse.x;
@@ -3867,17 +3903,9 @@ function CanvasState(canvas, socket) {
         console.log(mouse);
 
         for (let i = cards.length - 1; i >= 0; i--) {
-            if (cards[i].Contains(mx, my)) {
-                let selectedCard = cards[i];
-                selectedCard.displayImage = selectedCard.faceImage;
-                // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
-                theState.dragoffx = mx - selectedCard.x;
-                theState.dragoffy = my - selectedCard.y;
-                theState.dragging = true;
-                theState.selection = selectedCard;
-                theState.valid = false;
-
-                //theState.animateTo(selectedCard, (new Date()).getTime(), 200, 200);
+            if (cards[i].isFaceDown && cards[i].Contains(mx, my)) {
+                console.log('start deal card client side');
+                socket.emit('DealCard');
                 return;
             }
         }
@@ -3912,6 +3940,50 @@ function CanvasState(canvas, socket) {
 
     //Add new shape on 'dblclick'
 }
+
+CanvasState.prototype.DealCard = function (cardSV) {
+    console.log('client side attempting to deal card ' + cardSV);
+    let card = this.theDeck.deckDict[cardSV];
+    for (let i = 0; i < this.theDeck.Cards().length; i++) {
+        if (card.SuitValue() == this.theDeck.Cards()[i].SuitValue()) {
+            this.theDeck.Cards().splice(i, 1);
+            break;
+        }
+        if (i == this.theDeck.Cards().length) {
+            console.log('Couldn\' find the card in the deck. Something probably went wrong');
+        }
+    }
+
+    this.cards = this.theDeck.Cards();
+    this.cards.push(card);
+    card.displayImage = card.faceImage;
+    // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
+    // this.dragoffx = mx - card.x;
+    // this.dragoffy = my - card.y;
+    // this.dragging = true;
+    this.selection = card;
+    this.valid = false;
+
+    // havent returned means we have failed to select anything. If there was an object selected, we deselect it
+    if (this.selection) {
+        this.selection = null;
+        this.valid = false;
+    }
+
+    //this.animateTo(card, (new Date()).getTime(), 200, 200);
+    return;
+
+    //TODO: sort out cards used, cards left, etc. here
+    //return card;
+};
+
+CanvasState.prototype.StartGame = function () {
+    this.theDeck.Shuffle();
+    for (let i = 0; i < this.theDeck.Cards().length; i++) {
+        this.addCard(this.theDeck.Cards()[i]);
+    }
+    this.Draw();
+};
 
 CanvasState.prototype.getMouse = function (e) {
     let theCanvas = this.canvas;
@@ -3955,7 +4027,7 @@ CanvasState.prototype.Draw = function () {
         //Do background stuff
         //-------------------
 
-
+        console.log(this.cards);
         //Draw each card
         for (let i = 0; i < cards.length; i++) {
             let card = cards[i];
@@ -4022,10 +4094,10 @@ CanvasState.prototype.animateTo = function (card, startTime, duration, destX, de
 
     let t = Math.min(1, time / duration);
 
-    let linearSpeed = 20;
-    let normalDirection = Vector.normalVector(card.x, card.y, destX, destY);
-    let movement = { x: normalDirection.x * linearSpeed * time / 1000,
-        y: normalDirection.y * linearSpeed * time / 1000 };
+    // let linearSpeed = 20;
+    // let normalDirection = Vector.normalVector(card.x, card.y, destX, destY);
+    // let movement = { x: normalDirection.x * linearSpeed * time / 1000,
+    //                  y: normalDirection.y * linearSpeed * time / 1000 };
 
     if (t < 1) {
         card.x = card.sx * (1 - t) + destX * t;
@@ -4409,7 +4481,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 function init() {
   var socket = __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default()();
-  let theDeck = new __WEBPACK_IMPORTED_MODULE_2__Game_Deck__["a" /* default */]();
+
   var gameCanvas = new __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__["a" /* default */](document.getElementById('canvas'), socket);
   gameCanvas.Draw();
 
@@ -4436,25 +4508,25 @@ function init() {
     btnGameStart.classList.add('hide');
   };
 
+  socket.on('StartGame', function (msg) {
+    console.log(msg);
+    btnShuffleDeck.classList.remove('hide');
+    btnGameStart.classList.add('hide');
+
+    gameCanvas.StartGame();
+  });
+
+  socket.on('DealCard', function (cardSuitValue) {
+    console.log('deal card client side received: ' + cardSuitValue);
+    gameCanvas.DealCard(cardSuitValue);
+  });
+
   btnShuffleDeck.onclick = () => {
     socket.emit('ShuffleDeck');
   };
 
   socket.on('PlayerJoinedGame', function (msg) {
     console.log(msg);
-  });
-
-  socket.on('StartGame', function (msg) {
-    console.log(msg);
-    btnShuffleDeck.classList.remove('hide');
-    btnGameStart.classList.add('hide');
-
-    theDeck.Shuffle();
-    for (let i = 0; i < theDeck.Cards().length; i++) {
-      gameCanvas.addCard(theDeck.Cards()[i]);
-    }
-    gameCanvas.Draw();
-    console.log(theDeck.deckDict[theDeck.Cards()[0].SuitValue()].ToString());
   });
 
   socket.on('ShuffleDeck', function (msg) {

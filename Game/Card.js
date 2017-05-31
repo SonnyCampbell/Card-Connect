@@ -13,6 +13,7 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
   this.backImage = new Image();
   this.backImage.src = '/images/Cards/card_back2.png';
   this.displayImage = this.backImage;
+  this.isFaceDown = true;
 
   let _suit = suit;
   let _value = value;
