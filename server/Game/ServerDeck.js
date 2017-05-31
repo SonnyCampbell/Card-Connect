@@ -1,5 +1,5 @@
-import Card from './serverCard'
-import CONST from './constants'
+import Card from './ServerCard'
+import CONST from './Constants'
 
 function DeckOfCards() {  
     let _cardCount = 52;

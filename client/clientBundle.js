@@ -4413,6 +4413,7 @@ function init() {
   var gameCanvas = new __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__["a" /* default */](document.getElementById('canvas'), socket);
   gameCanvas.Draw();
 
+  let iptUsername = document.getElementById("iptUsername");
   let iptRoomName = document.getElementById("iptRoomName");
   var btnJoinGame = document.getElementById("btnJoinGame");
   var btnShuffleDeck = document.getElementById("btnShuffleDeck");
@@ -4420,19 +4421,23 @@ function init() {
   var btnGameStart = document.getElementById("btnGameStart");
   btnGameStart.classList.add('hide');
 
-  btnJoinGame.onclick = function () {
-    socket.emit('JoinGame', iptRoomName.value);
+  btnJoinGame.onclick = () => {
+    socket.emit('JoinRoom', iptUsername.value, iptRoomName.value);
 
     btnGameStart.classList.remove('hide');
     btnJoinGame.classList.add('hide');
     iptRoomName.classList.add('hide');
   };
 
-  btnGameStart.onclick = function () {
+  btnGameStart.onclick = () => {
     socket.emit('StartGame');
 
     btnShuffleDeck.classList.remove('hide');
     btnGameStart.classList.add('hide');
+  };
+
+  btnShuffleDeck.onclick = () => {
+    socket.emit('ShuffleDeck');
   };
 
   socket.on('PlayerJoinedGame', function (msg) {
@@ -4450,6 +4455,10 @@ function init() {
     }
     gameCanvas.Draw();
     console.log(theDeck.deckDict[theDeck.Cards()[0].SuitValue()].ToString());
+  });
+
+  socket.on('ShuffleDeck', function (msg) {
+    console.log(msg);
   });
 }
 

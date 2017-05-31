@@ -63,78 +63,396 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */,
-/* 1 */
-/***/ (function(module, exports) {
+/* 0 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-module.exports = require("express");
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ServerCard__ = __webpack_require__(1);
+
+
+function Player(socket, username) {
+    let _username = username;
+    let _socket = socket;
+    let _roomName = '';
+    let _hand = [];
+
+    // Getters and Setters
+    this.getSocket = () => {
+        return  _socket;
+    }
+    this.setSocket = (socket) => {
+        _socket = socket;
+    }
+
+    this.getUsername = () => {
+        return  _username;
+    }
+    this.setUsername = (username) => {
+        _username = username;
+    }
+    
+    this.getRoomName = () => {
+        return  _roomName;
+    }
+    this.setRoomName = (roomName) => {
+        _roomName = roomName;
+    }
+
+    this.getHand = () => {
+        return _hand;
+    }
+    this.setHand = (hand) => {
+        _hand = hand;
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Player);
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+function Card(xPos, yPos, width, height, suit, value) {
+  // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
+  // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
+  // But we aren't checking anything else! We could put "Lalala" for the value of x 
+  this.x = xPos || 0;
+  this.y = yPos || 0;
+  this.w = width || 1;
+  this.h = height || 1;
+  this.rotation = 0;
+
+  let _suit = suit;
+  let _value = value;
+
+
+  this.GetSuitString = () => {
+    switch(_suit){
+        case 'S':
+            return 'Spades';
+        case 'C':
+            return 'Clubs';
+        case 'H':
+            return 'Hearts';
+        case 'D':
+            return 'Diamonds';
+    }
+  }
+
+  this.GetValueString = () => {
+    switch(_value){
+        case 1:
+            return 'Ace';
+        case 11:
+            return 'Jack';
+        case 12:
+            return 'Queen';
+        case 13:
+            return 'King';
+        default:
+            return _value;
+    }
+  }
+
+
+  this.ToString = () => {
+    return `The ${this.GetValueString()} of ${this.GetSuitString()}.`;
+  }
+
+  this.SuitValue = () => {
+      return  _suit + _value;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Card);
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-module.exports = require("http");
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ServerDeck__ = __webpack_require__(9);
+
+
+function Game(){
+    let _deck = new __WEBPACK_IMPORTED_MODULE_0__ServerDeck__["a" /* default */]();
+
+    this.ShuffleDeck = () => {
+        _deck.Shuffle();
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Game);
+
+
+
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-module.exports = require("path");
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Player__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game__ = __webpack_require__(2);
+
+
+
+function GameConnection(io) {
+    let _io = io;
+
+    let _players = {};
+    let _games = {};
+
+    this.JoinRoom = (socket, username, roomName) => {
+        let player = new __WEBPACK_IMPORTED_MODULE_0__Player__["a" /* default */](socket, username);
+        _players[socket.id]  = player;
+        player.setRoomName(roomName);
+        console.log(player.getUsername() + ' joined the game.');
+        socket.join(roomName, function() {
+            socket.to(roomName).emit('PlayerJoinedGame', player.getUsername() + ' joined the room ' + roomName + '.');
+        });
+    }
+
+    this.StartGame = (socket) => {
+        let player = _players[socket.id];
+        _games[player.getRoomName()] = new __WEBPACK_IMPORTED_MODULE_1__Game__["a" /* default */]();
+        console.log(player.getUsername() + ' started the game.');
+        //io.to(player.getRoomName()).emit('StartGame', player.getUsername() + ' started the game.');
+        this.EmitToRoom(player.getRoomName(), 'StartGame', player.getUsername() + ' started the game.');
+    }
+
+    this.ShuffleDeck = (socket) => {
+        let player = _players[socket.id];
+        let game = _games[player.getRoomName()];
+        game.ShuffleDeck();
+        this.EmitToRoom(player.getRoomName(), 'ShuffleDeck', player.getUsername() + ' shuffled the deck.');
+    }
+
+    this.EmitToRoom = (room, event, msg) => {
+        io.to(room).emit(event, msg);
+    }
+}
+
+
+/* harmony default export */ __webpack_exports__["a"] = (GameConnection);
 
 /***/ }),
 /* 4 */
 /***/ (function(module, exports) {
 
+module.exports = require("express");
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+module.exports = require("http");
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
 module.exports = require("socket.io");
 
 /***/ }),
-/* 5 */,
-/* 6 */,
-/* 7 */
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class CONST {
+    
+    static SUITS() {
+        return ['S','C','H','D'];
+    } 
+}
+
+
+
+/* unused harmony default export */ var _unused_webpack_default_export = (CONST);
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ServerCard__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Constants__ = __webpack_require__(8);
+
+
+
+function DeckOfCards() {  
+    let _cardCount = 52;
+    let _cardsUsed = 0;
+
+    let cards = CreateDeck();
+    let discardPile = [];
+
+    this.Shuffle = () => {
+        for(let i = 0; i < cards.length; i++){
+            let k = Math.floor(Math.random() * cards.length);
+            let temp = cards[i];
+            cards[i] = cards[k];
+            cards[k] = temp;
+        }
+    }
+
+    this.Cards = () => {
+        return cards;
+    }
+
+    this.Deal = () => {
+        if(_cardsUsed >= cards.length)
+        {
+            throw new Error("No cards left in the deck!");
+        }
+        return cards[_cardsUsed++];
+    }
+
+    this.CardsUsed = () => {
+        return _cardsUsed;
+    }
+
+    this.CardsLeft = () => {
+        return _cardCount - _cardsUsed;
+    }
+
+    this.PutInDiscardPile = (theCard) => {
+        discardPile.push(theCard);
+    }
+
+    this.TakeTopOfDiscardPile = () => {
+        if (discardPile.length > 0){
+            return discardPile.pop();
+        } else {
+            console.log('Discard pile is empty!');
+            return null;
+        }
+    }
+   
+}
+
+
+function CreateDeck() {
+    let cards = [];
+
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 2 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 3 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 4 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 5 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 6 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 7 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 8 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 9 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 10 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 11 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 12 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 13 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 1 ));
+
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 2 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 3 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 4 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 5 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 6 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 7 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 8 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 9 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 10 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 11 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 12 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 13 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 1 ));
+
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 2 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 3 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 4 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 5 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 6 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 7 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 8 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 9 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 10 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 11 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 12 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 13 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 1 ));
+
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 2 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 3 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 4 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 5 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 6 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 7 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 8 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 9 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 10 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 11 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 12 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 13 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 1 ));
+
+    return cards;
+}
+
+
+/* harmony default export */ __webpack_exports__["a"] = (DeckOfCards);
+
+/***/ }),
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Game_Game__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Game_Game___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__Game_Game__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Game_Game__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_Player__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Game_GameConnection__ = __webpack_require__(3);
 
 
-var express = __webpack_require__(1);
+
+
+var path = __webpack_require__(6);
+
+var express = __webpack_require__(4);
 var app = express();
+var http = __webpack_require__(5).createServer(app);
+var io = __webpack_require__(7)(http);
 
-var http = __webpack_require__(2).createServer(app);
-var io = __webpack_require__(4)(http);
-var path = __webpack_require__(3);
 
 app.use(express.static(path.join(__dirname, './client')));
-
 app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, './client/index.html'));
 });
 
+let conn = new __WEBPACK_IMPORTED_MODULE_2__Game_GameConnection__["a" /* default */](io);
 let players = {};
 
 io.on('connection', (socket) => {
     console.log('User ' + socket.id + ' connected to server.');
 
-    socket.on('JoinGame', function(roomName){
-        players[socket.id] = 'player' + (Object.keys(players).length + 1);
-        console.log(players[socket.id] + ' joined the game.');
-        console.log(roomName);
-        socket.broadcast.emit('PlayerJoinedGame', players[socket.id] + ' joined the game.');
+    socket.on('JoinRoom', function(username, roomName){
+        conn.JoinRoom(socket, username,roomName);
     });
 
     socket.on('StartGame', function(){
-        console.log(players[socket.id] + ' started the game.');
-        io.emit('StartGame', players[socket.id] + ' started the game.');
+        conn.StartGame(socket);
     });
 
+    socket.on('ShuffleDeck', function() {
+        conn.ShuffleDeck(socket);
+    })
+
     socket.on('disconnect', () => {
-        //delete players[socket.id];
         console.log('User disconnected');
     });
 });
@@ -142,12 +460,6 @@ io.on('connection', (socket) => {
 http.listen(3000, () => {
     console.log('listening on *:3000');
 });
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-
 
 /***/ })
 /******/ ])));
