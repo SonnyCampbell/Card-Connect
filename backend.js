@@ -82,7 +82,7 @@ function Game(){
     }
 
     this.DealCard = () => {
-        return _deck.Cards()[0];
+        return _deck.Deal();
     }
 }
 
@@ -253,6 +253,7 @@ function GameConnection(io) {
         let player = _players[socket.id];
         let game = _games[player.getRoomName()];
         socket.emit('DealCard', game.DealCard().SuitValue());
+        socket.to(player.getRoomName()).emit('PlayerDealtCard');
     }
 
     this.EmitToRoom = (room, event, msg) => {
@@ -338,7 +339,10 @@ function DeckOfCards() {
         {
             throw new Error("No cards left in the deck!");
         }
-        return cards[_cardsUsed++];
+
+        let returnCard =  cards[cards.length - _cardsUsed - 1];
+        _cardsUsed++;
+        return returnCard;
     }
 
     this.CardsUsed = () => {

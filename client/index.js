@@ -46,6 +46,10 @@ function init() {
     gameCanvas.DealCard(cardSuitValue);
   });
 
+  socket.on('PlayerDealtCard', () => {
+    gameCanvas.DealPlayerCard();
+  });
+
 
   btnShuffleDeck.onclick = () => {
     socket.emit('ShuffleDeck');

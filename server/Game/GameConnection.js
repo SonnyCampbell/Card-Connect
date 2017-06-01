@@ -46,6 +46,7 @@ function GameConnection(io) {
         let player = _players[socket.id];
         let game = _games[player.getRoomName()];
         socket.emit('DealCard', game.DealCard().SuitValue());
+        socket.to(player.getRoomName()).emit('PlayerDealtCard');
     }
 
     this.EmitToRoom = (room, event, msg) => {

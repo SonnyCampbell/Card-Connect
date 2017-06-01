@@ -62,6 +62,18 @@ function DeckOfCards() {
             return null;
         }
     }
+
+    this.RemoveCard = (card) => {
+        for(let i = 0; i < this.Cards().length; i++){
+            if (card.SuitValue() == this.Cards()[i].SuitValue()){
+                this.Cards().splice(i, 1);
+                break;
+            }
+            if (i == this.Cards().length){
+                console.log('Couldn\' find the card in the deck. Something probably went wrong');
+            }
+        }
+    }
    
 }
 

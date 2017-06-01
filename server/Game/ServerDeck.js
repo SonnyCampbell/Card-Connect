@@ -26,7 +26,10 @@ function DeckOfCards() {
         {
             throw new Error("No cards left in the deck!");
         }
-        return cards[_cardsUsed++];
+
+        let returnCard =  cards[cards.length - _cardsUsed - 1];
+        _cardsUsed++;
+        return returnCard;
     }
 
     this.CardsUsed = () => {

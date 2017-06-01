@@ -8,7 +8,7 @@ function Game(){
     }
 
     this.DealCard = () => {
-        return _deck.Cards()[0];
+        return _deck.Deal();
     }
 }
 

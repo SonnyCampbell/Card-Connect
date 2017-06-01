@@ -79,10 +79,25 @@ canvas.addEventListener('mousedown', function(e){
     console.log(mouse);
     
     for(let i = cards.length - 1; i >= 0; i--){
-        if (cards[i].isFaceDown && cards[i].Contains(mx, my)){
-            console.log('start deal card client side');
-            socket.emit('DealCard');
-            return;
+        if (cards[i].Contains(mx, my)){
+            if (cards[i].isFaceDown){
+                console.log('start deal card client side');
+                socket.emit('DealCard');
+                return;
+            }
+            else {
+                let selectedCard = cards[i];
+                selectedCard.displayImage = selectedCard.faceImage;
+                // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
+                theState.dragoffx = mx - selectedCard.x;
+                theState.dragoffy = my - selectedCard.y;
+                theState.dragging = true;
+                theState.selection = selectedCard;
+                theState.valid = false;
+
+                //theState.animateTo(selectedCard, (new Date()).getTime(), 200, 200);
+                return;
+            }
         }
     }
 
@@ -118,37 +133,24 @@ canvas.addEventListener('mousedown', function(e){
 CanvasState.prototype.DealCard = function(cardSV){
     console.log('client side attempting to deal card ' + cardSV);
     let card = this.theDeck.deckDict[cardSV];
-    for(let i = 0; i < this.theDeck.Cards().length; i++){
-        if (card.SuitValue() == this.theDeck.Cards()[i].SuitValue()){
-            this.theDeck.Cards().splice(i, 1);
-            break;
-        }
-        if (i == this.theDeck.Cards().length){
-            console.log('Couldn\' find the card in the deck. Something probably went wrong');
-        }
-    }
+    this.theDeck.RemoveCard(card);
 
     this.cards = this.theDeck.Cards();
     this.cards.push(card);
+
     card.displayImage = card.faceImage;
-    // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
-    // this.dragoffx = mx - card.x;
-    // this.dragoffy = my - card.y;
-    // this.dragging = true;
+    card.isFaceDown = false;
     this.selection = card;
     this.valid = false;
 
-    // havent returned means we have failed to select anything. If there was an object selected, we deselect it
-    if(this.selection){
-        this.selection = null;
-        this.valid = false;
-    }
-
-    //this.animateTo(card, (new Date()).getTime(), 200, 200);
     return;
+}
 
-    //TODO: sort out cards used, cards left, etc. here
-    //return card;
+CanvasState.prototype.DealPlayerCard = function(){
+    this.cards = this.theDeck.Cards();
+    this.cards[0].x = 100;
+    this.cards[0].y = 100;
+    this.valid = false;
 }
 
 CanvasState.prototype.StartGame = function() {  
@@ -201,7 +203,7 @@ CanvasState.prototype.Draw = function(){
         //Do background stuff
         //-------------------
 
-        console.log(this.cards);
+        //console.log(this.cards);
         //Draw each card
         for(let i = 0; i < cards.length; i++){
             let card = cards[i];
