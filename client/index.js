@@ -29,6 +29,8 @@ function init() {
   btnGameStart.onclick = () => {
     socket.emit('StartGame');
 
+    socket.emit('DealHands', 5);
+
     btnShuffleDeck.classList.remove('hide');
     btnGameStart.classList.add('hide');
   };
@@ -46,8 +48,8 @@ function init() {
     gameCanvas.DealCard(cardSuitValue);
   });
 
-  socket.on('PlayerDealtCard', () => {
-    gameCanvas.DealPlayerCard();
+  socket.on('OppPlayerDealtCard', () => {
+    gameCanvas.DealOppPlayerCard();
   });
 
 

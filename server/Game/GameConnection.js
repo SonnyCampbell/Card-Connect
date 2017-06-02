@@ -1,4 +1,4 @@
-import Player from './Player'
+import Player from './ServerPlayer'
 import Game from './Game'
 
 function GameConnection(io) {
@@ -34,6 +34,21 @@ function GameConnection(io) {
         this.EmitToRoom(player.getRoomName(), 'StartGame', player.getUsername() + ' started the game.');
     }
 
+    this.DealHands = (socket, numOfCards) => {
+        let player = _players[socket.id];
+        let game = _games[player.getRoomName()];
+        io.in(player.getRoomName()).clients(function(error, clients){
+            console.log(clients);
+            for(let i = 0; i < clients.length; i++){
+                game.players.push(_players[clients[i]]);
+            }
+            
+        });
+
+        console.log(game.players);
+        
+    }
+
     this.ShuffleDeck = (socket) => {
         let player = _players[socket.id];
         let game = _games[player.getRoomName()];
@@ -46,7 +61,7 @@ function GameConnection(io) {
         let player = _players[socket.id];
         let game = _games[player.getRoomName()];
         socket.emit('DealCard', game.DealCard().SuitValue());
-        socket.to(player.getRoomName()).emit('PlayerDealtCard');
+        socket.to(player.getRoomName()).emit('OppPlayerDealtCard');
     }
 
     this.EmitToRoom = (room, event, msg) => {

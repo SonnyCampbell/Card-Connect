@@ -1,5 +1,5 @@
 import Game from './Game/Game'
-import Player from './Game/Player'
+import Player from './Game/ServerPlayer'
 import GameConnection from './Game/GameConnection'
 
 var path = require('path');
@@ -27,6 +27,10 @@ io.on('connection', (socket) => {
 
     socket.on('StartGame', function(){
         conn.StartGame(socket);
+    });
+
+    socket.on('DealHands', function(numOfCards){
+        conn.DealHands(socket, numOfCards);
     });
 
     socket.on('ShuffleDeck', function() {
