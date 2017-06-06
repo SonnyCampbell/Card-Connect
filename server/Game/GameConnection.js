@@ -37,15 +37,22 @@ function GameConnection(io) {
     this.DealHands = (socket, numOfCards) => {
         let player = _players[socket.id];
         let game = _games[player.getRoomName()];
+
+        // let room = io.sockets.adapter.rooms[player.getRoomName()];
+        // console.log(room);
+        // for(let i = 0; i < room.length; i++){
+        //     game.players.push(_players[room[i]]);
+        // }
+        
         io.in(player.getRoomName()).clients(function(error, clients){
-            console.log(clients);
             for(let i = 0; i < clients.length; i++){
                 game.players.push(_players[clients[i]]);
             }
+
+            game.DealHands(numOfCards);
             
         });
-
-        console.log(game.players);
+        
         
     }
 

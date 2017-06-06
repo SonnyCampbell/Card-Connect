@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 30);
+/******/ 	return __webpack_require__(__webpack_require__.s = 31);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -270,15 +270,15 @@ Emitter.prototype.hasListeners = function(event){
  * Module dependencies.
  */
 
-var keys = __webpack_require__(41);
+var keys = __webpack_require__(42);
 var hasBinary = __webpack_require__(15);
 var sliceBuffer = __webpack_require__(28);
 var after = __webpack_require__(27);
-var utf8 = __webpack_require__(42);
+var utf8 = __webpack_require__(43);
 
 var base64encoder;
 if (global && global.ArrayBuffer) {
-  base64encoder = __webpack_require__(32);
+  base64encoder = __webpack_require__(33);
 }
 
 /**
@@ -336,7 +336,7 @@ var err = { type: 'error', data: 'parser error' };
  * Create a blob api even for blob builder when vendor prefixes exist
  */
 
-var Blob = __webpack_require__(33);
+var Blob = __webpack_require__(34);
 
 /**
  * Encodes a packet.
@@ -885,7 +885,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(34);
+exports = module.exports = __webpack_require__(35);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -1089,7 +1089,7 @@ module.exports = function(a, b){
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(47);
+exports = module.exports = __webpack_require__(48);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -1273,6 +1273,99 @@ function localstorage() {
 
 /***/ }),
 /* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
+  // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
+  // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
+  // But we aren't checking anything else! We could put "Lalala" for the value of x 
+  this.x = xPos || 0;
+  this.y = yPos || 0;
+  this.w = width || 1;
+  this.h = height || 1;
+  this.rotation = 0;
+
+  this.faceImage = new Image();
+  this.faceImage.src = faceImageSrc;
+  this.backImage = new Image();
+  this.backImage.src = '/images/Cards/card_back2.png';
+  this.displayImage = this.backImage;
+  this.isFaceDown = true;
+
+  let _suit = suit;
+  let _value = value;
+
+  this.DrawOnLoad = ctx => {
+    if (this.backImage.complete) {
+      this.Draw(ctx);
+    } else {
+      this.ctx = ctx;
+      this.backImage.onload = this.DrawWhenReady;
+    }
+  };
+
+  this.DrawWhenReady = () => {
+    this.ctx.drawImage(this.backImage, this.x, this.y, this.w, this.h);
+  };
+
+  this.Draw = ctx => {
+    //ctx.fillStyle = this.fill;
+    //ctx.fillRect(this.x, this.y, this.w, this.h);
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 0.01;
+    ctx.strokeRect(this.x, this.y, this.w, this.h);
+    ctx.drawImage(this.displayImage, this.x, this.y, this.w, this.h);
+  };
+
+  // Determine if a point is inside the shape's bounds
+  this.Contains = function (mx, my) {
+    // All we have to do is make sure the Mouse X,Y fall in the area between
+    // the shape's X and (X + Width) and its Y and (Y + Height)
+    return this.x <= mx && this.x + this.w >= mx && this.y <= my && this.y + this.h >= my;
+  };
+
+  this.GetSuitString = () => {
+    switch (_suit) {
+      case 'S':
+        return 'Spades';
+      case 'C':
+        return 'Clubs';
+      case 'H':
+        return 'Hearts';
+      case 'D':
+        return 'Diamonds';
+    }
+  };
+
+  this.GetValueString = () => {
+    switch (_value) {
+      case 1:
+        return 'Ace';
+      case 11:
+        return 'Jack';
+      case 12:
+        return 'Queen';
+      case 13:
+        return 'King';
+      default:
+        return _value;
+    }
+  };
+
+  this.ToString = () => {
+    return `The ${this.GetValueString()} of ${this.GetSuitString()}.`;
+  };
+
+  this.SuitValue = () => {
+    return _suit + _value;
+  };
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Card);
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -1435,12 +1528,12 @@ Transport.prototype.onClose = function () {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {// browser shim for xmlhttprequest module
 
-var hasCORS = __webpack_require__(43);
+var hasCORS = __webpack_require__(44);
 
 module.exports = function (opts) {
   var xdomain = opts.xdomain;
@@ -1479,7 +1572,7 @@ module.exports = function (opts) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 /**
@@ -1522,7 +1615,7 @@ exports.decode = function(qs){
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1533,7 +1626,7 @@ exports.decode = function(qs){
 var debug = __webpack_require__(3)('socket.io-parser');
 var Emitter = __webpack_require__(1);
 var hasBin = __webpack_require__(15);
-var binary = __webpack_require__(49);
+var binary = __webpack_require__(50);
 var isBuf = __webpack_require__(23);
 
 /**
@@ -1928,105 +2021,12 @@ function error() {
 
 
 /***/ }),
-/* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
-  // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
-  // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
-  // But we aren't checking anything else! We could put "Lalala" for the value of x 
-  this.x = xPos || 0;
-  this.y = yPos || 0;
-  this.w = width || 1;
-  this.h = height || 1;
-  this.rotation = 0;
-
-  this.faceImage = new Image();
-  this.faceImage.src = faceImageSrc;
-  this.backImage = new Image();
-  this.backImage.src = '/images/Cards/card_back2.png';
-  this.displayImage = this.backImage;
-  this.isFaceDown = true;
-
-  let _suit = suit;
-  let _value = value;
-
-  this.DrawOnLoad = ctx => {
-    if (this.backImage.complete) {
-      this.Draw(ctx);
-    } else {
-      this.ctx = ctx;
-      this.backImage.onload = this.DrawWhenReady;
-    }
-  };
-
-  this.DrawWhenReady = () => {
-    this.ctx.drawImage(this.backImage, this.x, this.y, this.w, this.h);
-  };
-
-  this.Draw = ctx => {
-    //ctx.fillStyle = this.fill;
-    //ctx.fillRect(this.x, this.y, this.w, this.h);
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 0.01;
-    ctx.strokeRect(this.x, this.y, this.w, this.h);
-    ctx.drawImage(this.displayImage, this.x, this.y, this.w, this.h);
-  };
-
-  // Determine if a point is inside the shape's bounds
-  this.Contains = function (mx, my) {
-    // All we have to do is make sure the Mouse X,Y fall in the area between
-    // the shape's X and (X + Width) and its Y and (Y + Height)
-    return this.x <= mx && this.x + this.w >= mx && this.y <= my && this.y + this.h >= my;
-  };
-
-  this.GetSuitString = () => {
-    switch (_suit) {
-      case 'S':
-        return 'Spades';
-      case 'C':
-        return 'Clubs';
-      case 'H':
-        return 'Hearts';
-      case 'D':
-        return 'Diamonds';
-    }
-  };
-
-  this.GetValueString = () => {
-    switch (_value) {
-      case 1:
-        return 'Ace';
-      case 11:
-        return 'Jack';
-      case 12:
-        return 'Queen';
-      case 13:
-        return 'King';
-      default:
-        return _value;
-    }
-  };
-
-  this.ToString = () => {
-    return `The ${this.GetValueString()} of ${this.GetSuitString()}.`;
-  };
-
-  this.SuitValue = () => {
-    return _suit + _value;
-  };
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Card);
-
-/***/ }),
 /* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(30);
 
 
 
@@ -2207,10 +2207,10 @@ module.exports = function(obj, fn){
  * Module dependencies
  */
 
-var XMLHttpRequest = __webpack_require__(7);
-var XHR = __webpack_require__(39);
-var JSONP = __webpack_require__(38);
-var websocket = __webpack_require__(40);
+var XMLHttpRequest = __webpack_require__(8);
+var XHR = __webpack_require__(40);
+var JSONP = __webpack_require__(39);
+var websocket = __webpack_require__(41);
 
 /**
  * Export transports.
@@ -2267,8 +2267,8 @@ function polling (opts) {
  * Module dependencies.
  */
 
-var Transport = __webpack_require__(6);
-var parseqs = __webpack_require__(8);
+var Transport = __webpack_require__(7);
+var parseqs = __webpack_require__(9);
 var parser = __webpack_require__(2);
 var inherit = __webpack_require__(4);
 var yeast = __webpack_require__(24);
@@ -2285,7 +2285,7 @@ module.exports = Polling;
  */
 
 var hasXHR2 = (function () {
-  var XMLHttpRequest = __webpack_require__(7);
+  var XMLHttpRequest = __webpack_require__(8);
   var xhr = new XMLHttpRequest({ xdomain: false });
   return null != xhr.responseType;
 })();
@@ -2849,15 +2849,15 @@ process.umask = function() { return 0; };
  * Module dependencies.
  */
 
-var eio = __webpack_require__(35);
+var eio = __webpack_require__(36);
 var Socket = __webpack_require__(22);
 var Emitter = __webpack_require__(1);
-var parser = __webpack_require__(9);
+var parser = __webpack_require__(10);
 var on = __webpack_require__(21);
 var bind = __webpack_require__(12);
 var debug = __webpack_require__(5)('socket.io-client:manager');
 var indexOf = __webpack_require__(16);
-var Backoff = __webpack_require__(31);
+var Backoff = __webpack_require__(32);
 
 /**
  * IE6+ hasOwnProperty
@@ -3458,9 +3458,9 @@ function on (obj, ev, fn) {
  * Module dependencies.
  */
 
-var parser = __webpack_require__(9);
+var parser = __webpack_require__(10);
 var Emitter = __webpack_require__(1);
-var toArray = __webpack_require__(50);
+var toArray = __webpack_require__(51);
 var on = __webpack_require__(21);
 var bind = __webpack_require__(12);
 var debug = __webpack_require__(5)('socket.io-client:socket');
@@ -3971,7 +3971,7 @@ module.exports = yeast;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Deck__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Player__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Player__ = __webpack_require__(29);
 
 
 
@@ -3993,6 +3993,10 @@ function CanvasState(canvas, socket) {
     this.theDeck = new __WEBPACK_IMPORTED_MODULE_0__Deck__["a" /* default */]();
     this.cards = [];
     this.gameStarted = false;
+    this.players = [];
+
+    this.playerHand = [];
+    this.oppPlayerHand = [];
     //-----------------------------------------------------------------------------
     // Padding and border offets
     //-----------------------------------------------------------------------------
@@ -4084,12 +4088,17 @@ CanvasState.prototype.DealCard = function (cardSV) {
     this.theDeck.RemoveCard(card);
 
     this.cards = this.theDeck.Cards();
-    this.cards.push(card);
+    //this.cards.push(card);
 
     card.displayImage = card.faceImage;
     card.isFaceDown = false;
     this.selection = card;
     this.valid = false;
+
+    //card.x = 200 + (this.playerHand.length * 20)
+    //card.y = 300
+    this.playerHand.push(card);
+    this.animateTo(card, new Date().getTime(), 10, 200 + this.playerHand.length * 20, 300);
 
     return;
 };
@@ -4097,6 +4106,7 @@ CanvasState.prototype.DealCard = function (cardSV) {
 CanvasState.prototype.DealHands = function (numOfCards) {};
 
 CanvasState.prototype.DealOppPlayerCard = function () {
+    //TODO: put cards in opp player hand
     this.cards[0].x = 200;
     this.cards[0].y = 100;
     this.valid = false;
@@ -4173,6 +4183,24 @@ CanvasState.prototype.Draw = function () {
             //console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
         }
 
+        for (let i = 0; i < this.playerHand.length; i++) {
+            let card = this.playerHand[i];
+
+            if (card.x > this.width || card.y > this.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
+
+            //ctx.rotate(90 * Math.PI / 180);
+            ctx.save();
+            if (card.rotation != 0) {
+                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
+                ctx.rotate(card.rotation);
+                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
+            }
+
+            card.DrawOnLoad(ctx);
+
+            ctx.restore();
+        }
+
         if (this.selection != null) {
             ctx.strokeStyle = this.selectionColor;
             ctx.lineWidth = this.selectionWidth;
@@ -4221,8 +4249,8 @@ CanvasState.prototype.animateTo = function (card, startTime, duration, destX, de
     //                  y: normalDirection.y * linearSpeed * time / 1000 };
 
     if (t < 1) {
-        card.x = card.sx * (1 - t) + destX * t;
-        card.y = card.sy * (1 - t) + destY * t;
+        card.x = card.x * (1 - t) + destX * t;
+        card.y = card.y * (1 - t) + destY * t;
         isMoving = true;
         this.valid = false;
     }
@@ -4236,7 +4264,7 @@ CanvasState.prototype.animateTo = function (card, startTime, duration, destX, de
         return;
     }
 
-    card.rotation += 20 * Math.PI / 180;
+    //card.rotation += 20*Math.PI/180;
     this.clear();
     this.Draw();
 
@@ -4256,8 +4284,8 @@ CanvasState.prototype.animateTo = function (card, startTime, duration, destX, de
  * Module dependencies.
  */
 
-var url = __webpack_require__(46);
-var parser = __webpack_require__(9);
+var url = __webpack_require__(47);
+var parser = __webpack_require__(10);
 var Manager = __webpack_require__(20);
 var debug = __webpack_require__(5)('socket.io-client');
 
@@ -4436,6 +4464,54 @@ module.exports = function(arraybuffer, start, end) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(6);
+
+
+function Player(socket, username) {
+    let _username = username;
+    let _socket = socket;
+    let _roomName = '';
+    let _hand = [];
+
+    this.isTurn = false;
+
+    // Getters and Setters
+    this.getSocket = () => {
+        return _socket;
+    };
+    this.setSocket = socket => {
+        _socket = socket;
+    };
+
+    this.getUsername = () => {
+        return _username;
+    };
+    this.setUsername = username => {
+        _username = username;
+    };
+
+    this.getRoomName = () => {
+        return _roomName;
+    };
+    this.setRoomName = roomName => {
+        _roomName = roomName;
+    };
+
+    this.getHand = () => {
+        return _hand;
+    };
+    this.setHand = hand => {
+        _hand = hand;
+    };
+}
+
+/* unused harmony default export */ var _unused_webpack_default_export = (Player);
+
+/***/ }),
+/* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 class CONST {
 
     static SUITS() {
@@ -4446,13 +4522,13 @@ class CONST {
 /* unused harmony default export */ var _unused_webpack_default_export = (CONST);
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_Card__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_Card__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Game_Deck__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_socket_io_client__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_socket_io_client__);
@@ -4526,7 +4602,7 @@ function init() {
 init();
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports) {
 
 
@@ -4617,7 +4693,7 @@ Backoff.prototype.setJitter = function(jitter){
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports) {
 
 /*
@@ -4690,7 +4766,7 @@ Backoff.prototype.setJitter = function(jitter){
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -4793,7 +4869,7 @@ module.exports = (function() {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -4809,7 +4885,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = __webpack_require__(44);
+exports.humanize = __webpack_require__(45);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -5001,19 +5077,19 @@ function coerce(val) {
 
 
 /***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-module.exports = __webpack_require__(36);
-
-
-/***/ }),
 /* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 module.exports = __webpack_require__(37);
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+module.exports = __webpack_require__(38);
 
 /**
  * Exports parser
@@ -5025,7 +5101,7 @@ module.exports.parser = __webpack_require__(2);
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -5038,8 +5114,8 @@ var debug = __webpack_require__(3)('engine.io-client:socket');
 var index = __webpack_require__(16);
 var parser = __webpack_require__(2);
 var parseuri = __webpack_require__(18);
-var parsejson = __webpack_require__(45);
-var parseqs = __webpack_require__(8);
+var parsejson = __webpack_require__(46);
+var parseqs = __webpack_require__(9);
 
 /**
  * Module exports.
@@ -5172,7 +5248,7 @@ Socket.protocol = parser.protocol; // this is an int
  */
 
 Socket.Socket = Socket;
-Socket.Transport = __webpack_require__(6);
+Socket.Transport = __webpack_require__(7);
 Socket.transports = __webpack_require__(13);
 Socket.parser = __webpack_require__(2);
 
@@ -5776,7 +5852,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -6014,14 +6090,14 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
  * Module requirements.
  */
 
-var XMLHttpRequest = __webpack_require__(7);
+var XMLHttpRequest = __webpack_require__(8);
 var Polling = __webpack_require__(14);
 var Emitter = __webpack_require__(1);
 var inherit = __webpack_require__(4);
@@ -6434,16 +6510,16 @@ function unloadHandler () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
  * Module dependencies.
  */
 
-var Transport = __webpack_require__(6);
+var Transport = __webpack_require__(7);
 var parser = __webpack_require__(2);
-var parseqs = __webpack_require__(8);
+var parseqs = __webpack_require__(9);
 var inherit = __webpack_require__(4);
 var yeast = __webpack_require__(24);
 var debug = __webpack_require__(3)('engine.io-client:websocket');
@@ -6451,7 +6527,7 @@ var BrowserWebSocket = global.WebSocket || global.MozWebSocket;
 var NodeWebSocket;
 if (typeof window === 'undefined') {
   try {
-    NodeWebSocket = __webpack_require__(52);
+    NodeWebSocket = __webpack_require__(53);
   } catch (e) { }
 }
 
@@ -6727,7 +6803,7 @@ WS.prototype.check = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports) {
 
 
@@ -6752,7 +6828,7 @@ module.exports = Object.keys || function keys (obj){
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/utf8js v2.1.2 by @mathias */
@@ -7010,10 +7086,10 @@ module.exports = Object.keys || function keys (obj){
 
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(51)(module), __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(52)(module), __webpack_require__(0)))
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports) {
 
 
@@ -7036,7 +7112,7 @@ try {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports) {
 
 /**
@@ -7194,7 +7270,7 @@ function plural(ms, n, name) {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -7232,7 +7308,7 @@ module.exports = function parsejson(data) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -7314,7 +7390,7 @@ function url (uri, loc) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -7330,7 +7406,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = __webpack_require__(48);
+exports.humanize = __webpack_require__(49);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -7522,7 +7598,7 @@ function coerce(val) {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports) {
 
 /**
@@ -7677,7 +7753,7 @@ function plural(ms, n, name) {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/*global Blob,File*/
@@ -7825,7 +7901,7 @@ exports.removeBlobs = function(data, callback) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports) {
 
 module.exports = toArray
@@ -7844,7 +7920,7 @@ function toArray(list, index) {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -7872,58 +7948,10 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
-
-/***/ }),
-/* 53 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(10);
-
-
-function Player(socket, username) {
-    let _username = username;
-    let _socket = socket;
-    let _roomName = '';
-    let _hand = [];
-
-    this.isTurn = false;
-
-    // Getters and Setters
-    this.getSocket = () => {
-        return _socket;
-    };
-    this.setSocket = socket => {
-        _socket = socket;
-    };
-
-    this.getUsername = () => {
-        return _username;
-    };
-    this.setUsername = username => {
-        _username = username;
-    };
-
-    this.getRoomName = () => {
-        return _roomName;
-    };
-    this.setRoomName = roomName => {
-        _roomName = roomName;
-    };
-
-    this.getHand = () => {
-        return _hand;
-    };
-    this.setHand = hand => {
-        _hand = hand;
-    };
-}
-
-/* unused harmony default export */ var _unused_webpack_default_export = (Player);
 
 /***/ })
 /******/ ]);

@@ -86,6 +86,23 @@ function Game(){
     this.DealCard = () => {
         return _deck.Deal();
     }
+
+    this.DealHands = function(numOfCards){
+        
+        for(let j = 0; j < this.players.length; j++){
+            let player = this.players[j];
+
+            for(let i = 0; i < numOfCards; i++){
+                player.getHand().push(_deck.Deal());
+            }
+
+            for(let i = 0; i < player.getHand().length; i++){
+                //console.log(this.players[j].getHand()[i].ToString());
+                player.getSocket().emit('DealCard', player.getHand()[i].SuitValue());
+                player.getSocket().to(player.getRoomName()).emit('OppPlayerDealtCard');
+            }
+        };
+    }
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Game);
@@ -94,7 +111,54 @@ function Game(){
 
 
 /***/ }),
-/* 1 */,
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ServerCard__ = __webpack_require__(2);
+
+
+function Player(socket, username) {
+    let _username = username;
+    let _socket = socket;
+    let _roomName = '';
+    let _hand = [];
+
+    this.isTurn = false;
+
+    // Getters and Setters
+    this.getSocket = () => {
+        return  _socket;
+    }
+    this.setSocket = (socket) => {
+        _socket = socket;
+    }
+
+    this.getUsername = () => {
+        return  _username;
+    }
+    this.setUsername = (username) => {
+        _username = username;
+    }
+
+    this.getRoomName = () => {
+        return  _roomName;
+    }
+    this.setRoomName = (roomName) => {
+        _roomName = roomName;
+    }
+
+    this.getHand = () => {
+        return _hand;
+    }
+    this.setHand = (hand) => {
+        _hand = hand;
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Player);
+
+/***/ }),
 /* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -158,7 +222,7 @@ function Card(xPos, yPos, width, height, suit, value) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ServerPlayer__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ServerPlayer__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game__ = __webpack_require__(0);
 
 
@@ -199,15 +263,22 @@ function GameConnection(io) {
     this.DealHands = (socket, numOfCards) => {
         let player = _players[socket.id];
         let game = _games[player.getRoomName()];
+
+        // let room = io.sockets.adapter.rooms[player.getRoomName()];
+        // console.log(room);
+        // for(let i = 0; i < room.length; i++){
+        //     game.players.push(_players[room[i]]);
+        // }
+        
         io.in(player.getRoomName()).clients(function(error, clients){
-            console.log(clients);
             for(let i = 0; i < clients.length; i++){
                 game.players.push(_players[clients[i]]);
             }
+
+            game.DealHands(numOfCards);
             
         });
-
-        console.log(game.players);
+        
         
     }
 
@@ -411,7 +482,7 @@ function CreateDeck() {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Game_Game__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_ServerPlayer__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_ServerPlayer__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Game_GameConnection__ = __webpack_require__(3);
 
 
@@ -445,6 +516,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('DealHands', function(numOfCards){
+        console.log('Dealing Hands');
         conn.DealHands(socket, numOfCards);
     });
 
@@ -465,54 +537,6 @@ io.on('connection', (socket) => {
 http.listen(3000, () => {
     console.log('listening on *:3000');
 });
-
-/***/ }),
-/* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ServerCard__ = __webpack_require__(2);
-
-
-function Player(socket, username) {
-    let _username = username;
-    let _socket = socket;
-    let _roomName = '';
-    let _hand = [];
-
-    this.isTurn = false;
-
-    // Getters and Setters
-    this.getSocket = () => {
-        return  _socket;
-    }
-    this.setSocket = (socket) => {
-        _socket = socket;
-    }
-
-    this.getUsername = () => {
-        return  _username;
-    }
-    this.setUsername = (username) => {
-        _username = username;
-    }
-
-    this.getRoomName = () => {
-        return  _roomName;
-    }
-    this.setRoomName = (roomName) => {
-        _roomName = roomName;
-    }
-
-    this.getHand = () => {
-        return _hand;
-    }
-    this.setHand = (hand) => {
-        _hand = hand;
-    }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Player);
 
 /***/ })
 /******/ ])));

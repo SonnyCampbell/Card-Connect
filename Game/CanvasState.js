@@ -20,6 +20,10 @@ function CanvasState(canvas, socket)
   this.theDeck = new Deck();
   this.cards = [];
   this.gameStarted = false;
+  this.players = [];
+
+  this.playerHand = [];
+  this.oppPlayerHand = [];
   //-----------------------------------------------------------------------------
   // Padding and border offets
   //-----------------------------------------------------------------------------
@@ -108,12 +112,18 @@ CanvasState.prototype.DealCard = function(cardSV){
     this.theDeck.RemoveCard(card);
 
     this.cards = this.theDeck.Cards();
-    this.cards.push(card);
+    //this.cards.push(card);
 
     card.displayImage = card.faceImage;
     card.isFaceDown = false;
     this.selection = card;
     this.valid = false;
+
+    //card.x = 200 + (this.playerHand.length * 20)
+    //card.y = 300
+    this.playerHand.push(card);
+    this.animateTo(card, (new Date()).getTime(), 10, 200 + (this.playerHand.length * 20), 300);
+    
 
     return;
 }
@@ -123,6 +133,7 @@ CanvasState.prototype.DealHands = function(numOfCards){
 }
 
 CanvasState.prototype.DealOppPlayerCard = function(){
+    //TODO: put cards in opp player hand
     this.cards[0].x = 200;
     this.cards[0].y = 100;
     this.valid = false;
@@ -200,6 +211,25 @@ CanvasState.prototype.Draw = function(){
             //console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
         }
 
+        for(let i = 0; i < this.playerHand.length; i++){
+            let card = this.playerHand[i];
+
+            if (card.x > this.width || card.y > this.height || card.x + card.w < 0 || card.y + card.h < 0) 
+                continue;
+            
+            //ctx.rotate(90 * Math.PI / 180);
+            ctx.save();
+            if(card.rotation != 0){
+                ctx.translate(card.x + (card.w/2), card.y + (card.h/2));
+                ctx.rotate(card.rotation);
+                ctx.translate(-card.x -(card.w/2), -card.y - (card.h/2));
+            }            
+            
+            card.DrawOnLoad(ctx);
+            
+            ctx.restore();
+        }
+
         if(this.selection != null){
             ctx.strokeStyle = this.selectionColor;
             ctx.lineWidth = this.selectionWidth;
@@ -248,8 +278,8 @@ CanvasState.prototype.animateTo = function(card, startTime, duration, destX, des
     //                  y: normalDirection.y * linearSpeed * time / 1000 };
 
     if( t < 1) {
-        card.x = card.sx * (1 - t) + destX * t;
-        card.y = card.sy * (1 - t) + destY * t;
+        card.x = card.x * (1 - t) + destX * t;
+        card.y = card.y * (1 - t) + destY * t;
         isMoving = true;
         this.valid = false;
     }
@@ -263,7 +293,7 @@ CanvasState.prototype.animateTo = function(card, startTime, duration, destX, des
         return;
      }   
 
-    card.rotation += 20*Math.PI/180;
+    //card.rotation += 20*Math.PI/180;
     this.clear();
     this.Draw();
 

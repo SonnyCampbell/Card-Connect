@@ -30,6 +30,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('DealHands', function(numOfCards){
+        console.log('Dealing Hands');
         conn.DealHands(socket, numOfCards);
     });
 
