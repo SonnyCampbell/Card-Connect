@@ -48,8 +48,8 @@ function init() {
     gameCanvas.DealCard(cardSuitValue);
   });
 
-  socket.on('OppPlayerDealtCard', () => {
-    gameCanvas.DealOppPlayerCard();
+  socket.on('OppPlayerDealtCard', (cardSuitValue) => {
+    gameCanvas.DealOppPlayerCard(cardSuitValue);
   });
 
 

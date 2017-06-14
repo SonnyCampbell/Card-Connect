@@ -3718,20 +3718,33 @@ CanvasState.prototype.DealCard = function (cardSV) {
 
     //card.x = 200 + (this.playerHand.length * 20)
     //card.y = 300
-    this.playerHand.push(card);
+
     this.animateTo(card, new Date().getTime(), 10, 200 + this.playerHand.length * 20, 300);
+    this.playerHand.push(card);
 
     return;
 };
 
-CanvasState.prototype.DealHands = function (numOfCards) {};
-
-CanvasState.prototype.DealOppPlayerCard = function () {
+CanvasState.prototype.DealOppPlayerCard = function (cardSV) {
+    console.log('Dealing opp: ' + cardSV);
     //TODO: put cards in opp player hand
-    this.cards[0].x = 200;
-    this.cards[0].y = 100;
-    this.valid = false;
+    let card = this.theDeck.deckDict[cardSV];
+    this.theDeck.RemoveCard(card);
+    this.cards = this.theDeck.Cards();
+    // this.valid = false;
+
+    // //this.oppPlayerHand.push(card);
+    // this.animateTo(card, (new Date()).getTime(), 10, 200 + (this.oppPlayerHand.length * 20), 100);
+    // //this.valid = false;
+    this.animateTo(card, new Date().getTime(), 10, 200 + this.oppPlayerHand.length * 20, 100);
+    this.oppPlayerHand.push(card);
+
+    //this.cards[0].x = 200;
+    //this.cards[0].y = 100;
+    //this.valid = false;
 };
+
+CanvasState.prototype.DealHands = function (numOfCards) {};
 
 CanvasState.prototype.StartGame = function () {
     this.theDeck.Shuffle();
@@ -3806,6 +3819,24 @@ CanvasState.prototype.Draw = function () {
 
         for (let i = 0; i < this.playerHand.length; i++) {
             let card = this.playerHand[i];
+
+            if (card.x > this.width || card.y > this.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
+
+            //ctx.rotate(90 * Math.PI / 180);
+            ctx.save();
+            if (card.rotation != 0) {
+                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
+                ctx.rotate(card.rotation);
+                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
+            }
+
+            card.DrawOnLoad(ctx);
+
+            ctx.restore();
+        }
+
+        for (let i = 0; i < this.oppPlayerHand.length; i++) {
+            let card = this.oppPlayerHand[i];
 
             if (card.x > this.width || card.y > this.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
 
@@ -4188,8 +4219,8 @@ function init() {
     gameCanvas.DealCard(cardSuitValue);
   });
 
-  socket.on('OppPlayerDealtCard', () => {
-    gameCanvas.DealOppPlayerCard();
+  socket.on('OppPlayerDealtCard', cardSuitValue => {
+    gameCanvas.DealOppPlayerCard(cardSuitValue);
   });
 
   btnShuffleDeck.onclick = () => {

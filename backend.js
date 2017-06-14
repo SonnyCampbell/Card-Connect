@@ -98,8 +98,9 @@ function Game(){
 
             for(let i = 0; i < player.getHand().length; i++){
                 //console.log(this.players[j].getHand()[i].ToString());
-                player.getSocket().emit('DealCard', player.getHand()[i].SuitValue());
-                player.getSocket().to(player.getRoomName()).emit('OppPlayerDealtCard');
+                let dealtCard = player.getHand()[i];
+                player.getSocket().emit('DealCard', dealtCard.SuitValue());
+                player.getSocket().to(player.getRoomName()).emit('OppPlayerDealtCard', dealtCard.SuitValue());
             }
         };
     }
@@ -284,8 +285,10 @@ function GameConnection(io) {
     this.DealCard = (socket) => {
         let player = _players[socket.id];
         let game = _games[player.getRoomName()];
-        socket.emit('DealCard', game.DealCard().SuitValue());
-        socket.to(player.getRoomName()).emit('OppPlayerDealtCard');
+        let dealtCard = game.DealCard();
+        socket.emit('DealCard', dealtCard.SuitValue());
+        socket.to(player.getRoomName()).emit('OppPlayerDealtCard', dealtCard.SuitValue());
+
     }
 
     this.EmitToRoom = (room, event, msg) => {
