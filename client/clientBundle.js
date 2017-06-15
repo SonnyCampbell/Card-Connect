@@ -1144,6 +1144,9 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
   this.displayImage = this.backImage;
   this.isFaceDown = true;
 
+  this.hovered = false;
+  this.selected = false;
+
   let _suit = suit;
   let _value = value;
 
@@ -1163,10 +1166,15 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
   this.Draw = ctx => {
     //ctx.fillStyle = this.fill;
     //ctx.fillRect(this.x, this.y, this.w, this.h);
+    let hoverRaise = 0;
+    if (this.hovered || this.selected) {
+      hoverRaise = 10;
+    }
+
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 0.01;
     ctx.strokeRect(this.x, this.y, this.w, this.h);
-    ctx.drawImage(this.displayImage, this.x, this.y, this.w, this.h);
+    ctx.drawImage(this.displayImage, this.x, this.y - hoverRaise, this.w, this.h);
   };
 
   // Determine if a point is inside the shape's bounds
@@ -3672,7 +3680,22 @@ function CanvasState(canvas, socket) {
             }
         }
 
-        // havent returned means we have failed to select anything. If there was an object selected, we deselect it
+        for (let i = theState.playerHand.length - 1; i >= 0; i--) {
+            if (theState.playerHand[i].hovered) {
+                let selectedCard = theState.playerHand[i];
+                //selectedCard.displayImage = selectedCard.faceImage;
+                // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
+                theState.dragoffx = mx - selectedCard.x;
+                theState.dragoffy = my - selectedCard.y;
+                theState.dragging = true;
+                theState.selection = selectedCard;
+                theState.valid = false;
+
+                return;
+            }
+        }
+
+        //havent returned means we have failed to select anything. If there was an object selected, we deselect it
         if (theState.selection) {
             theState.selection = null;
             theState.valid = false;
@@ -3684,12 +3707,29 @@ function CanvasState(canvas, socket) {
     }, false);
 
     canvas.addEventListener('mousemove', function (e) {
-        if (theState.dragging) {
-            let mouse = theState.getMouse(e);
+        let mouse = theState.getMouse(e);
+        let mx = mouse.x;
+        let my = mouse.y;
 
+        if (theState.dragging) {
             theState.selection.x = mouse.x - theState.dragoffx;
             theState.selection.y = mouse.y - theState.dragoffy;
             theState.valid = false;
+        }
+
+        let hovering = false;
+
+        for (let i = theState.playerHand.length - 1; i >= 0; i--) {
+
+            if (!hovering && theState.playerHand[i].Contains(mx, my)) {
+                console.log(theState.playerHand[i].ToString());
+                hovering = true;
+                theState.playerHand[i].hovered = true;
+                theState.valid = false;
+            } else if (theState.playerHand[i].hovered) {
+                theState.playerHand[i].hovered = false;
+                theState.valid = false;
+            }
         }
     }, false);
 
@@ -3709,17 +3749,13 @@ CanvasState.prototype.DealCard = function (cardSV) {
     this.theDeck.RemoveCard(card);
 
     this.cards = this.theDeck.Cards();
-    //this.cards.push(card);
 
     card.displayImage = card.faceImage;
     card.isFaceDown = false;
     this.selection = card;
     this.valid = false;
 
-    //card.x = 200 + (this.playerHand.length * 20)
-    //card.y = 300
-
-    this.animateTo(card, new Date().getTime(), 10, 200 + this.playerHand.length * 20, 300);
+    this.animateTo(card, new Date().getTime(), 0.75, 200 + this.playerHand.length * 20, 300, card.x, card.y);
     this.playerHand.push(card);
 
     return;
@@ -3727,21 +3763,13 @@ CanvasState.prototype.DealCard = function (cardSV) {
 
 CanvasState.prototype.DealOppPlayerCard = function (cardSV) {
     console.log('Dealing opp: ' + cardSV);
-    //TODO: put cards in opp player hand
+
     let card = this.theDeck.deckDict[cardSV];
     this.theDeck.RemoveCard(card);
     this.cards = this.theDeck.Cards();
-    // this.valid = false;
 
-    // //this.oppPlayerHand.push(card);
-    // this.animateTo(card, (new Date()).getTime(), 10, 200 + (this.oppPlayerHand.length * 20), 100);
-    // //this.valid = false;
-    this.animateTo(card, new Date().getTime(), 10, 200 + this.oppPlayerHand.length * 20, 100);
+    this.animateTo(card, new Date().getTime(), 0.75, 200 + this.oppPlayerHand.length * 20, 100, card.x, card.y);
     this.oppPlayerHand.push(card);
-
-    //this.cards[0].x = 200;
-    //this.cards[0].y = 100;
-    //this.valid = false;
 };
 
 CanvasState.prototype.DealHands = function (numOfCards) {};
@@ -3795,6 +3823,11 @@ CanvasState.prototype.Draw = function () {
         //-------------------
         //Do background stuff
         //-------------------
+        ctx.save();
+        ctx.strokeStyle = this.selectionColor;
+        ctx.lineWidth = this.selectionWidth;
+        ctx.strokeRect(150, 0, 120, 170);
+        ctx.restore();
 
         //console.log(this.cards);
         //Draw each card
@@ -3817,24 +3850,6 @@ CanvasState.prototype.Draw = function () {
             //console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
         }
 
-        for (let i = 0; i < this.playerHand.length; i++) {
-            let card = this.playerHand[i];
-
-            if (card.x > this.width || card.y > this.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
-
-            //ctx.rotate(90 * Math.PI / 180);
-            ctx.save();
-            if (card.rotation != 0) {
-                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
-                ctx.rotate(card.rotation);
-                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
-            }
-
-            card.DrawOnLoad(ctx);
-
-            ctx.restore();
-        }
-
         for (let i = 0; i < this.oppPlayerHand.length; i++) {
             let card = this.oppPlayerHand[i];
 
@@ -3853,6 +3868,25 @@ CanvasState.prototype.Draw = function () {
             ctx.restore();
         }
 
+        for (let i = 0; i < this.playerHand.length; i++) {
+            let card = this.playerHand[i];
+
+            if (card.x > this.width || card.y > this.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
+
+            //ctx.rotate(90 * Math.PI / 180);
+            ctx.save();
+            if (card.rotation != 0) {
+                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
+                ctx.rotate(card.rotation);
+                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
+            }
+
+            card.DrawOnLoad(ctx);
+
+            ctx.restore();
+        }
+
+        //card outline
         if (this.selection != null) {
             ctx.strokeStyle = this.selectionColor;
             ctx.lineWidth = this.selectionWidth;
@@ -3886,42 +3920,31 @@ CanvasState.prototype.animate = function (card, startTime) {
     });
 };
 
-CanvasState.prototype.animateTo = function (card, startTime, duration, destX, destY) {
+CanvasState.prototype.animateTo = function (card, startTime, duration, destX, destY, startX, startY) {
     let canvas = this.canvas;
     let ctx = this.ctx;
     let isMoving = false;
 
     let time = (new Date().getTime() - startTime) / 1000;
-
     let t = Math.min(1, time / duration);
 
-    // let linearSpeed = 20;
-    // let normalDirection = Vector.normalVector(card.x, card.y, destX, destY);
-    // let movement = { x: normalDirection.x * linearSpeed * time / 1000,
-    //                  y: normalDirection.y * linearSpeed * time / 1000 };
-
     if (t < 1) {
-        card.x = card.x * (1 - t) + destX * t;
-        card.y = card.y * (1 - t) + destY * t;
+        card.x = startX * (1 - t) + destX * t;
+        card.y = startY * (1 - t) + destY * t;
         isMoving = true;
         this.valid = false;
-    }
-    // if (Math.abs(card.y - destY) > 5){
-    //     card.y += movement.y;
-    //     isMoving = true;
-    //     this.valid = false;
-    // }
-
-    if (!isMoving) {
+    } else {
+        card.x = destX;
+        card.y = destY;
+        this.valid = false;
         return;
     }
 
-    //card.rotation += 20*Math.PI/180;
     this.clear();
     this.Draw();
 
     requestAnimationFrame(() => {
-        this.animateTo(card, startTime, duration, destX, destY);
+        this.animateTo(card, startTime, duration, destX, destY, startX, startY);
     });
 };
 

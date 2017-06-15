@@ -15,6 +15,9 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
   this.displayImage = this.backImage;
   this.isFaceDown = true;
 
+  this.hovered = false;
+  this.selected = false;
+
   let _suit = suit;
   let _value = value;
 
@@ -38,10 +41,15 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
   this.Draw = (ctx) => {
     //ctx.fillStyle = this.fill;
     //ctx.fillRect(this.x, this.y, this.w, this.h);
+    let hoverRaise = 0;
+    if(this.hovered || this.selected){
+        hoverRaise = 10;
+    }
+
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 0.01;
     ctx.strokeRect(this.x, this.y, this.w, this.h);
-    ctx.drawImage(this.displayImage, this.x, this.y, this.w, this.h);
+    ctx.drawImage(this.displayImage, this.x, this.y - hoverRaise, this.w, this.h);
   }
 
   // Determine if a point is inside the shape's bounds
