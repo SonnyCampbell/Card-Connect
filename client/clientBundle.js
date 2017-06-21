@@ -1167,7 +1167,7 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
     //ctx.fillStyle = this.fill;
     //ctx.fillRect(this.x, this.y, this.w, this.h);
     let hoverRaise = 0;
-    if (this.hovered || this.selected) {
+    if (this.hovered && !this.selected) {
       hoverRaise = 10;
     }
 
@@ -3600,7 +3600,9 @@ module.exports = yeast;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Deck__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Player__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__DiscardPile__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Player__ = __webpack_require__(27);
+
 
 
 
@@ -3620,12 +3622,15 @@ function CanvasState(canvas, socket) {
     this.socket = socket;
 
     this.theDeck = new __WEBPACK_IMPORTED_MODULE_0__Deck__["a" /* default */]();
+    this.discardPile = new __WEBPACK_IMPORTED_MODULE_1__DiscardPile__["a" /* default */]();
+
     this.cards = [];
     this.gameStarted = false;
     this.players = [];
 
     this.playerHand = [];
     this.oppPlayerHand = [];
+
     //-----------------------------------------------------------------------------
     // Padding and border offets
     //-----------------------------------------------------------------------------
@@ -3651,12 +3656,10 @@ function CanvasState(canvas, socket) {
     }, false);
 
     canvas.addEventListener('mousedown', function (e) {
-        let mouse = theState.getMouse(e);
+        let mouse = theState.GetMouse(e);
         let mx = mouse.x;
         let my = mouse.y;
         let cards = theState.cards;
-
-        console.log(mouse);
 
         for (let i = cards.length - 1; i >= 0; i--) {
             if (cards[i].Contains(mx, my)) {
@@ -3679,6 +3682,7 @@ function CanvasState(canvas, socket) {
                 }
             }
         }
+        let cardSelected = false;
 
         for (let i = theState.playerHand.length - 1; i >= 0; i--) {
             if (theState.playerHand[i].hovered) {
@@ -3691,12 +3695,15 @@ function CanvasState(canvas, socket) {
                 theState.selection = selectedCard;
                 theState.valid = false;
 
-                return;
+                selectedCard.selected = true;
+                cardSelected = true;
+            } else {
+                theState.playerHand[i].selected = false;
             }
         }
 
         //havent returned means we have failed to select anything. If there was an object selected, we deselect it
-        if (theState.selection) {
+        if (!cardSelected) {
             theState.selection = null;
             theState.valid = false;
         }
@@ -3704,10 +3711,30 @@ function CanvasState(canvas, socket) {
 
     canvas.addEventListener('mouseup', function (e) {
         theState.dragging = false;
+
+        let mouse = theState.GetMouse(e);
+        let mx = mouse.x;
+        let my = mouse.y;
+        let card = theState.selection;
+
+        if (theState.discardPile.Contains(mx, my)) {
+            for (let i = 0; i < theState.playerHand.length; i++) {
+                if (card.SuitValue() == theState.playerHand[i].SuitValue()) {
+                    theState.playerHand.splice(i, 1);
+                    theState.discardPile.DiscardCard(card);
+                    theState.selection = null;
+                    theState.valid = false;
+                    break;
+                }
+                if (i == theState.playerHand.length) {
+                    console.log('Couldn\' find the card in the deck. Something probably went wrong');
+                }
+            }
+        }
     }, false);
 
     canvas.addEventListener('mousemove', function (e) {
-        let mouse = theState.getMouse(e);
+        let mouse = theState.GetMouse(e);
         let mx = mouse.x;
         let my = mouse.y;
 
@@ -3775,14 +3802,15 @@ CanvasState.prototype.DealOppPlayerCard = function (cardSV) {
 CanvasState.prototype.DealHands = function (numOfCards) {};
 
 CanvasState.prototype.StartGame = function () {
+    this.gameStarted = true;
     this.theDeck.Shuffle();
     for (let i = 0; i < this.theDeck.Cards().length; i++) {
-        this.addCard(this.theDeck.Cards()[i]);
+        this.AddCard(this.theDeck.Cards()[i]);
     }
     this.Draw();
 };
 
-CanvasState.prototype.getMouse = function (e) {
+CanvasState.prototype.GetMouse = function (e) {
     let theCanvas = this.canvas;
     let offsetX = 0;
     let offsetY = 0;
@@ -3803,14 +3831,14 @@ CanvasState.prototype.getMouse = function (e) {
     return { x: mx, y: my };
 };
 
-CanvasState.prototype.addCard = function (card) {
+CanvasState.prototype.AddCard = function (card) {
     card.x += this.cards.length / 4;
     card.y += this.cards.length / 4;
     this.cards.push(card);
     this.valid = false;
 };
 
-CanvasState.prototype.clear = function () {
+CanvasState.prototype.Clear = function () {
     this.ctx.clearRect(0, 0, this.width, this.height);
 };
 
@@ -3818,19 +3846,19 @@ CanvasState.prototype.Draw = function () {
     if (!this.valid) {
         let ctx = this.ctx;
         let cards = this.cards;
-        this.clear();
+        let discardPile = this.discardPile;
+        this.Clear();
 
         //-------------------
         //Do background stuff
         //-------------------
-        ctx.save();
-        ctx.strokeStyle = this.selectionColor;
-        ctx.lineWidth = this.selectionWidth;
-        ctx.strokeRect(150, 0, 120, 170);
-        ctx.restore();
 
-        //console.log(this.cards);
-        //Draw each card
+        //Draw Discard Pile
+        if (this.gameStarted) {
+            discardPile.Draw(ctx);
+        }
+
+        //Draw Each card
         for (let i = 0; i < cards.length; i++) {
             let card = cards[i];
 
@@ -3850,6 +3878,7 @@ CanvasState.prototype.Draw = function () {
             //console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
         }
 
+        // Draw Opponents Hand
         for (let i = 0; i < this.oppPlayerHand.length; i++) {
             let card = this.oppPlayerHand[i];
 
@@ -3868,6 +3897,7 @@ CanvasState.prototype.Draw = function () {
             ctx.restore();
         }
 
+        //Draw Player Hand
         for (let i = 0; i < this.playerHand.length; i++) {
             let card = this.playerHand[i];
 
@@ -3886,7 +3916,7 @@ CanvasState.prototype.Draw = function () {
             ctx.restore();
         }
 
-        //card outline
+        //Draw Selected Card Outline
         if (this.selection != null) {
             ctx.strokeStyle = this.selectionColor;
             ctx.lineWidth = this.selectionWidth;
@@ -3912,7 +3942,7 @@ CanvasState.prototype.animate = function (card, startTime) {
         this.valid = false;
     }
 
-    this.clear();
+    this.Clear();
     this.Draw();
 
     requestAnimationFrame(() => {
@@ -3940,7 +3970,7 @@ CanvasState.prototype.animateTo = function (card, startTime, duration, destX, de
         return;
     }
 
-    this.clear();
+    this.Clear();
     this.Draw();
 
     requestAnimationFrame(() => {
@@ -4199,17 +4229,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 // import Vector from './lib/Vector'
 
 function init() {
-  var socket = __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default()();
+  let socket = __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default()();
 
-  var gameCanvas = new __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__["a" /* default */](document.getElementById('canvas'), socket);
+  let gameCanvas = new __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__["a" /* default */](document.getElementById('canvas'), socket);
   gameCanvas.Draw();
 
   let iptUsername = document.getElementById("iptUsername");
   let iptRoomName = document.getElementById("iptRoomName");
-  var btnJoinGame = document.getElementById("btnJoinGame");
-  var btnShuffleDeck = document.getElementById("btnShuffleDeck");
+  let btnJoinGame = document.getElementById("btnJoinGame");
+  let btnShuffleDeck = document.getElementById("btnShuffleDeck");
   btnShuffleDeck.classList.add('hide');
-  var btnGameStart = document.getElementById("btnGameStart");
+  let btnGameStart = document.getElementById("btnGameStart");
   btnGameStart.classList.add('hide');
 
   btnJoinGame.onclick = () => {
@@ -7439,6 +7469,66 @@ module.exports = function(module) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 51 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(28);
+
+
+
+function DiscardPile() {
+    this.x = 150;
+    this.y = 10;
+    this.w = 110;
+    this.h = 160;
+    this.lineWidth = 2;
+    this.selectionColor = '#c3c9c6';
+
+    this.cards = [];
+
+    this.Draw = function (ctx) {
+        ctx.save();
+        ctx.strokeStyle = this.selectionColor;
+        ctx.lineWidth = this.lineWidth;
+        ctx.strokeRect(this.x, this.y, this.w, this.h);
+        ctx.restore();
+
+        //Draw Discarded Cards
+        for (let i = 0; i < this.cards.length; i++) {
+            let card = this.cards[i];
+
+            ctx.save();
+            if (card.rotation != 0) {
+                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
+                ctx.rotate(card.rotation);
+                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
+            }
+
+            card.DrawOnLoad(ctx);
+
+            ctx.restore();
+        }
+    };
+
+    this.DiscardCard = function (card) {
+        card.x = this.x + 5;
+        card.y = this.y + 5;
+        this.cards.push(card);
+    };
+
+    // Determine if a point is inside the shape's bounds
+    this.Contains = function (mx, my) {
+        // All we have to do is make sure the Mouse X,Y fall in the area between
+        // the shape's X and (X + Width) and its Y and (Y + Height)
+        return this.x <= mx && this.x + this.w >= mx && this.y <= my && this.y + this.h >= my;
+    };
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (DiscardPile);
 
 /***/ })
 /******/ ]);

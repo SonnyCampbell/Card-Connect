@@ -5,17 +5,17 @@ import io from 'socket.io-client'
 // import Vector from './lib/Vector'
 
 function init() {
-  var socket = io();
+  let socket = io();
   
-  var gameCanvas = new CanvasState(document.getElementById('canvas'), socket);
+  let gameCanvas = new CanvasState(document.getElementById('canvas'), socket);
   gameCanvas.Draw();
 
   let iptUsername = document.getElementById("iptUsername");
   let iptRoomName = document.getElementById("iptRoomName");
-  var btnJoinGame = document.getElementById("btnJoinGame");
-  var btnShuffleDeck = document.getElementById("btnShuffleDeck");
+  let btnJoinGame = document.getElementById("btnJoinGame");
+  let btnShuffleDeck = document.getElementById("btnShuffleDeck");
   btnShuffleDeck.classList.add('hide');
-  var btnGameStart = document.getElementById("btnGameStart");
+  let btnGameStart = document.getElementById("btnGameStart");
   btnGameStart.classList.add('hide');
 
   btnJoinGame.onclick = () => {
