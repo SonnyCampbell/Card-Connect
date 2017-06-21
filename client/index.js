@@ -45,11 +45,11 @@ function init() {
 
   socket.on('DealCard', function(cardSuitValue) {
     console.log('deal card client side received: ' + cardSuitValue);
-    gameCanvas.DealCard(cardSuitValue);
+    gameCanvas.game.DealCardToPlayer(cardSuitValue);
   });
 
   socket.on('OppPlayerDealtCard', (cardSuitValue) => {
-    gameCanvas.DealOppPlayerCard(cardSuitValue);
+    gameCanvas.game.DealCardToOppPlayer(cardSuitValue);
   });
 
 
