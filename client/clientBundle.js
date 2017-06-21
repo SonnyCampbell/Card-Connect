@@ -1128,97 +1128,93 @@ exports.decode = function(qs){
 
 "use strict";
 function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
-  // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
-  // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
-  // But we aren't checking anything else! We could put "Lalala" for the value of x 
-  this.x = xPos || 0;
-  this.y = yPos || 0;
-  this.w = width || 1;
-  this.h = height || 1;
-  this.rotation = 0;
+    // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
+    // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
+    // But we aren't checking anything else! We could put "Lalala" for the value of x 
+    this.x = xPos || 0;
+    this.y = yPos || 0;
+    this.w = width || 1;
+    this.h = height || 1;
+    this.rotation = 0;
 
-  this.faceImage = new Image();
-  this.faceImage.src = faceImageSrc;
-  this.backImage = new Image();
-  this.backImage.src = '/images/Cards/card_back2.png';
-  this.displayImage = this.backImage;
-  this.isFaceDown = true;
+    this.faceImage = new Image();
+    this.faceImage.src = faceImageSrc;
+    this.backImage = new Image();
+    this.backImage.src = '/images/Cards/card_back2.png';
+    this.displayImage = this.backImage;
+    this.isFaceDown = true;
 
-  this.hovered = false;
-  this.selected = false;
+    this.hovered = false;
+    this.selected = false;
 
-  let _suit = suit;
-  let _value = value;
+    let _suit = suit;
+    let _value = value;
 
-  this.DrawOnLoad = ctx => {
-    if (this.backImage.complete) {
-      this.Draw(ctx);
-    } else {
-      this.ctx = ctx;
-      this.backImage.onload = this.DrawWhenReady;
-    }
-  };
+    this.DrawOnLoad = ctx => {
+        if (this.backImage.complete) {
+            this.Draw(ctx);
+        } else {
+            this.ctx = ctx;
+            this.backImage.onload = this.ctx.drawImage(this.backImage, this.x, this.y, this.w, this.h);
+        }
+    };
 
-  this.DrawWhenReady = () => {
-    this.ctx.drawImage(this.backImage, this.x, this.y, this.w, this.h);
-  };
+    this.Draw = ctx => {
+        //ctx.fillStyle = this.fill;
+        //ctx.fillRect(this.x, this.y, this.w, this.h);
+        let hoverRaise = 0;
+        if (this.hovered && !this.selected) {
+            hoverRaise = 10;
+        }
 
-  this.Draw = ctx => {
-    //ctx.fillStyle = this.fill;
-    //ctx.fillRect(this.x, this.y, this.w, this.h);
-    let hoverRaise = 0;
-    if (this.hovered && !this.selected) {
-      hoverRaise = 10;
-    }
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 0.01;
+        ctx.strokeRect(this.x, this.y, this.w, this.h);
+        ctx.drawImage(this.displayImage, this.x, this.y - hoverRaise, this.w, this.h);
+    };
 
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 0.01;
-    ctx.strokeRect(this.x, this.y, this.w, this.h);
-    ctx.drawImage(this.displayImage, this.x, this.y - hoverRaise, this.w, this.h);
-  };
+    // Determine if a point is inside the shape's bounds
+    this.Contains = function (mx, my) {
+        // All we have to do is make sure the Mouse X,Y fall in the area between
+        // the shape's X and (X + Width) and its Y and (Y + Height)
+        return this.x <= mx && this.x + this.w >= mx && this.y <= my && this.y + this.h >= my;
+    };
 
-  // Determine if a point is inside the shape's bounds
-  this.Contains = function (mx, my) {
-    // All we have to do is make sure the Mouse X,Y fall in the area between
-    // the shape's X and (X + Width) and its Y and (Y + Height)
-    return this.x <= mx && this.x + this.w >= mx && this.y <= my && this.y + this.h >= my;
-  };
+    this.GetSuitString = () => {
+        switch (_suit) {
+            case 'S':
+                return 'Spades';
+            case 'C':
+                return 'Clubs';
+            case 'H':
+                return 'Hearts';
+            case 'D':
+                return 'Diamonds';
+        }
+    };
 
-  this.GetSuitString = () => {
-    switch (_suit) {
-      case 'S':
-        return 'Spades';
-      case 'C':
-        return 'Clubs';
-      case 'H':
-        return 'Hearts';
-      case 'D':
-        return 'Diamonds';
-    }
-  };
+    this.GetValueString = () => {
+        switch (_value) {
+            case 1:
+                return 'Ace';
+            case 11:
+                return 'Jack';
+            case 12:
+                return 'Queen';
+            case 13:
+                return 'King';
+            default:
+                return _value;
+        }
+    };
 
-  this.GetValueString = () => {
-    switch (_value) {
-      case 1:
-        return 'Ace';
-      case 11:
-        return 'Jack';
-      case 12:
-        return 'Queen';
-      case 13:
-        return 'King';
-      default:
-        return _value;
-    }
-  };
+    this.ToString = () => {
+        return `The ${this.GetValueString()} of ${this.GetSuitString()}.`;
+    };
 
-  this.ToString = () => {
-    return `The ${this.GetValueString()} of ${this.GetSuitString()}.`;
-  };
-
-  this.SuitValue = () => {
-    return _suit + _value;
-  };
+    this.SuitValue = () => {
+        return _suit + _value;
+    };
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Card);
@@ -3625,17 +3621,6 @@ function CanvasState(canvas, socket) {
 
     this.socket = socket;
 
-    this.theDeck = new __WEBPACK_IMPORTED_MODULE_0__Deck__["a" /* default */]();
-    this.discardPile = new __WEBPACK_IMPORTED_MODULE_1__DiscardPile__["a" /* default */]();
-
-    this.selectedCard = null;
-    this.cards = [];
-    this.gameStarted = false;
-    this.players = [];
-
-    this.playerHand = [];
-    this.oppPlayerHand = [];
-
     //-----------------------------------------------------------------------------
     // Padding and border offets
     //-----------------------------------------------------------------------------
@@ -3676,22 +3661,23 @@ function CanvasState(canvas, socket) {
         let mouse = this.GetMouse(e);
         let mx = mouse.x;
         let my = mouse.y;
+
         let game = this.game;
         let cards = this.game.cards;
 
         for (let i = cards.length - 1; i >= 0; i--) {
             if (cards[i].Contains(mx, my)) {
                 console.log('start deal card client side');
-                socket.emit('DealCard');
+                this.socket.emit('DealCard');
                 return;
             }
         }
-        let cardSelected = false;
 
+        let cardSelected = false;
         for (let i = game.playerHand.length - 1; i >= 0; i--) {
             if (game.playerHand[i].hovered) {
                 let selectedCard = game.playerHand[i];
-                //selectedCard.displayImage = selectedCard.faceImage;
+
                 // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
                 this.dragoffx = mx - selectedCard.x;
                 this.dragoffy = my - selectedCard.y;
@@ -3707,7 +3693,6 @@ function CanvasState(canvas, socket) {
             }
         }
 
-        //havent returned means we have failed to select anything. If there was an object selected, we deselect it
         if (!cardSelected) {
             game.selectedCard = null;
             this.valid = false;
@@ -3724,22 +3709,11 @@ function CanvasState(canvas, socket) {
         let mouse = this.GetMouse(e);
         let mx = mouse.x;
         let my = mouse.y;
+
         let game = this.game;
-        let card = game.selectedCard;
 
         if (game.discardPile.Contains(mx, my) && game.selectedCard != null) {
-            for (let i = 0; i < game.playerHand.length; i++) {
-                if (card.SuitValue() == game.playerHand[i].SuitValue()) {
-                    game.playerHand.splice(i, 1);
-                    game.discardPile.DiscardCard(card);
-                    game.selectedCard = null;
-                    this.valid = false;
-                    break;
-                }
-                if (i == game.playerHand.length) {
-                    console.log('Couldn\' find the card in the deck. Something probably went wrong');
-                }
-            }
+            game.DiscardSelectedCard();
         }
     };
 
@@ -3751,6 +3725,7 @@ function CanvasState(canvas, socket) {
         let mouse = this.GetMouse(e);
         let mx = mouse.x;
         let my = mouse.y;
+
         let game = this.game;
 
         if (this.dragging) {
@@ -3764,7 +3739,6 @@ function CanvasState(canvas, socket) {
         for (let i = game.playerHand.length - 1; i >= 0; i--) {
 
             if (!hovering && game.playerHand[i].Contains(mx, my)) {
-                console.log(game.playerHand[i].ToString());
                 hovering = true;
                 game.playerHand[i].hovered = true;
                 this.valid = false;
@@ -3803,123 +3777,19 @@ CanvasState.prototype.Clear = function () {
     this.ctx.clearRect(0, 0, this.width, this.height);
 };
 
+// TODO: Need to actually shuffle the deck server-side
 CanvasState.prototype.StartGame = function () {
-    // this.gameStarted = true;  
-    // this.theDeck.Shuffle()
-    // for(let i = 0; i < this.theDeck.Cards().length; i++){
-    //   this.AddCard(this.theDeck.Cards()[i]);
-    // }
+
     this.game.StartGame();
     this.Draw();
 };
 
 CanvasState.prototype.Draw = function () {
     if (!this.valid) {
-        let ctx = this.ctx;
-        let game = this.game;
-        let cards = this.game.cards;
-        let discardPile = this.game.discardPile;
         this.Clear();
-
-        //-------------------
-        //Do background stuff
-        //-------------------
-
-        //Draw Discard Pile
-        if (game.gameStarted) {
-            discardPile.Draw(ctx);
-        }
-
-        //Draw Each card
-        for (let i = 0; i < cards.length; i++) {
-            let card = cards[i];
-
-            if (card.x > this.width || card.y > this.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
-
-            //ctx.rotate(90 * Math.PI / 180);
-            ctx.save();
-            if (card.rotation != 0) {
-                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
-                ctx.rotate(card.rotation);
-                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
-            }
-
-            card.DrawOnLoad(ctx);
-
-            ctx.restore();
-            //console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
-        }
-
-        // Draw Opponents Hand
-        for (let i = 0; i < game.oppPlayerHand.length; i++) {
-            let card = game.oppPlayerHand[i];
-
-            if (card.x > this.width || card.y > this.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
-
-            //ctx.rotate(90 * Math.PI / 180);
-            ctx.save();
-            if (card.rotation != 0) {
-                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
-                ctx.rotate(card.rotation);
-                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
-            }
-
-            card.DrawOnLoad(ctx);
-
-            ctx.restore();
-        }
-
-        //Draw Player Hand
-        for (let i = 0; i < game.playerHand.length; i++) {
-            let card = game.playerHand[i];
-
-            if (card.x > this.width || card.y > this.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
-
-            //ctx.rotate(90 * Math.PI / 180);
-            ctx.save();
-            if (card.rotation != 0) {
-                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
-                ctx.rotate(card.rotation);
-                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
-            }
-
-            card.DrawOnLoad(ctx);
-
-            ctx.restore();
-        }
-
-        //Draw Selected Card Outline
-        if (game.selectedCard != null) {
-            ctx.strokeStyle = this.selectionColor;
-            ctx.lineWidth = this.selectionWidth;
-            let myCard = game.selectedCard;
-            ctx.strokeRect(myCard.x, myCard.y, myCard.w, myCard.h);
-        }
-
+        this.game.Draw(this.ctx);
         this.valid = true;
     }
-};
-
-CanvasState.prototype.animate = function (card, startTime) {
-    let canvas = this.canvas;
-    let ctx = this.ctx;
-
-    let time = new Date().getTime() - startTime;
-
-    let linearSpeed = 10;
-    let newX = linearSpeed * time / 1000;
-
-    if (newX < canvas.width - card.w) {
-        card.x += newX;
-        this.valid = false;
-    }
-
-    this.Clear();
-    this.Draw();
-
-    requestAnimationFrame(() => {
-        this.animate(card, startTime);
-    });
 };
 
 CanvasState.prototype.animateTo = function (card, startTime, duration, destX, destY, startX, startY) {
@@ -3950,6 +3820,27 @@ CanvasState.prototype.animateTo = function (card, startTime, duration, destX, de
     });
 };
 
+CanvasState.prototype.animate = function (card, startTime) {
+    let canvas = this.canvas;
+    let ctx = this.ctx;
+
+    let time = new Date().getTime() - startTime;
+
+    let linearSpeed = 10;
+    let newX = linearSpeed * time / 1000;
+
+    if (newX < canvas.width - card.w) {
+        card.x += newX;
+        this.valid = false;
+    }
+
+    this.Clear();
+    this.Draw();
+
+    requestAnimationFrame(() => {
+        this.animate(card, startTime);
+    });
+};
 /* harmony default export */ __webpack_exports__["a"] = (CanvasState);
 
 /***/ }),
@@ -4246,6 +4137,10 @@ function init() {
 
   socket.on('OppPlayerDealtCard', cardSuitValue => {
     gameCanvas.game.DealCardToOppPlayer(cardSuitValue);
+  });
+
+  socket.on('OppPlayerDiscardedCard', cardSuitValue => {
+    gameCanvas.game.OppPlayerDiscardedCard(cardSuitValue);
   });
 
   btnShuffleDeck.onclick = () => {
@@ -7560,7 +7455,7 @@ function Game(canvasState, socket) {
         this.selectedCard = card;
 
         this.canvasState.valid = false;
-        this.canvasState.animateTo(card, new Date().getTime(), 0.75, 200 + this.playerHand.length * 20, 300, card.x, card.y);
+        this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + this.playerHand.length * 20, 300, card.x, card.y);
 
         this.playerHand.push(card);
     };
@@ -7572,8 +7467,120 @@ function Game(canvasState, socket) {
         this.theDeck.RemoveCard(card);
         this.cards = this.theDeck.Cards();
 
-        this.canvasState.animateTo(card, new Date().getTime(), 0.75, 200 + this.oppPlayerHand.length * 20, 100, card.x, card.y);
+        this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + this.oppPlayerHand.length * 20, 100, card.x, card.y);
         this.oppPlayerHand.push(card);
+    };
+
+    this.DiscardSelectedCard = function () {
+        let cardToDiscard = this.selectedCard;
+        for (let i = 0; i < this.playerHand.length; i++) {
+            if (cardToDiscard.SuitValue() == this.playerHand[i].SuitValue()) {
+                this.playerHand.splice(i, 1);
+                this.discardPile.DiscardCard(cardToDiscard);
+                this.selectedCard = null;
+                this.canvasState.valid = false;
+                this.socket.emit('DiscardCard', cardToDiscard.SuitValue());
+                break;
+            }
+            if (i == this.playerHand.length) {
+                console.log('Couldn\'t find the card in the deck. Something probably went wrong');
+            }
+        }
+    };
+
+    this.OppPlayerDiscardedCard = function (discardedcardSV) {
+        let cardToDiscard = this.theDeck.deckDict[discardedcardSV];
+        for (let i = 0; i < this.oppPlayerHand.length; i++) {
+            if (cardToDiscard.SuitValue() == this.oppPlayerHand[i].SuitValue()) {
+                this.oppPlayerHand.splice(i, 1);
+                cardToDiscard.displayImage = cardToDiscard.faceImage;
+                this.canvasState.animateTo(cardToDiscard, new Date().getTime(), 0.5, this.discardPile.x + 5, this.discardPile.y + 5, cardToDiscard.x, cardToDiscard.y);
+                this.discardPile.cards.push(cardToDiscard);
+                this.canvasState.valid = false;
+                break;
+            }
+            if (i == this.oppPlayerHand.length) {
+                console.log('Couldn\'t find the card in the deck. Something probably went wrong');
+            }
+        }
+        console.log(discardedcardSV);
+    };
+
+    this.Draw = function (ctx) {
+        let cards = this.cards;
+        let canvasState = this.canvasState;
+        let discardPile = this.discardPile;
+
+        //Draw Discard Pile
+        if (this.gameStarted) {
+            this.discardPile.Draw(ctx);
+        }
+
+        //Draw Each card
+        for (let i = 0; i < cards.length; i++) {
+            let card = cards[i];
+
+            if (card.x > canvasState.width || card.y > canvasState.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
+
+            //ctx.rotate(90 * Math.PI / 180);
+            ctx.save();
+            if (card.rotation != 0) {
+                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
+                ctx.rotate(card.rotation);
+                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
+            }
+
+            card.DrawOnLoad(ctx);
+
+            ctx.restore();
+            //console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
+        }
+
+        // Draw Opponents Hand
+        for (let i = 0; i < this.oppPlayerHand.length; i++) {
+            let card = this.oppPlayerHand[i];
+
+            if (card.x > canvasState.width || card.y > canvasState.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
+
+            //ctx.rotate(90 * Math.PI / 180);
+            ctx.save();
+            if (card.rotation != 0) {
+                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
+                ctx.rotate(card.rotation);
+                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
+            }
+
+            card.DrawOnLoad(ctx);
+
+            ctx.restore();
+        }
+
+        //Draw Player Hand
+        for (let i = 0; i < this.playerHand.length; i++) {
+            let card = this.playerHand[i];
+
+            if (card.x > canvasState.width || card.y > canvasState.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
+
+            //ctx.rotate(90 * Math.PI / 180);
+            ctx.save();
+            if (card.rotation != 0) {
+                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
+                ctx.rotate(card.rotation);
+                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
+            }
+
+            card.DrawOnLoad(ctx);
+
+            ctx.restore();
+        }
+
+        //Draw Selected Card Outline
+        if (this.selectedCard != null) {
+            ctx.strokeStyle = canvasState.selectionColor;
+            ctx.lineWidth = canvasState.selectionWidth;
+            let myCard = this.selectedCard;
+            ctx.strokeRect(myCard.x, myCard.y, myCard.w, myCard.h);
+        }
     };
 }
 

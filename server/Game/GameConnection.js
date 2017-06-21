@@ -64,6 +64,12 @@ function GameConnection(io) {
 
     }
 
+    this.DiscardCard = (socket, discardCardSV) => {
+        let player = _players[socket.id];
+        let game = _games[player.getRoomName()];
+        socket.to(player.getRoomName()).emit('OppPlayerDiscardedCard', discardCardSV);
+    }
+
     this.EmitToRoom = (room, event, msg) => {
         io.to(room).emit(event, msg);
     }

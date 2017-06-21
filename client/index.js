@@ -52,6 +52,10 @@ function init() {
     gameCanvas.game.DealCardToOppPlayer(cardSuitValue);
   });
 
+  socket.on('OppPlayerDiscardedCard', (cardSuitValue) => {
+    gameCanvas.game.OppPlayerDiscardedCard(cardSuitValue);
+  });
+
 
   btnShuffleDeck.onclick = () => {
     socket.emit('ShuffleDeck');

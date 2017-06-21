@@ -29,14 +29,9 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
       else
       {
           this.ctx = ctx;
-          this.backImage.onload = this.DrawWhenReady;
+          this.backImage.onload = this.ctx.drawImage(this.backImage, this.x, this.y, this.w, this.h);
       }
   }
-
-  this.DrawWhenReady = () => {
-      this.ctx.drawImage(this.backImage, this.x, this.y, this.w, this.h);
-  }
-
 
   this.Draw = (ctx) => {
     //ctx.fillStyle = this.fill;
@@ -52,13 +47,13 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
     ctx.drawImage(this.displayImage, this.x, this.y - hoverRaise, this.w, this.h);
   }
 
-  // Determine if a point is inside the shape's bounds
-  this.Contains = function(mx, my) {
-    // All we have to do is make sure the Mouse X,Y fall in the area between
-    // the shape's X and (X + Width) and its Y and (Y + Height)
-    return  (this.x <= mx) && (this.x + this.w >= mx) &&
+    // Determine if a point is inside the shape's bounds
+    this.Contains = function(mx, my) {
+        // All we have to do is make sure the Mouse X,Y fall in the area between
+        // the shape's X and (X + Width) and its Y and (Y + Height)
+        return  (this.x <= mx) && (this.x + this.w >= mx) &&
             (this.y <= my) && (this.y + this.h >= my);
-  }
+    }
 
   this.GetSuitString = () => {
     switch(_suit){

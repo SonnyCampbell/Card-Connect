@@ -22,7 +22,7 @@ io.on('connection', (socket) => {
     console.log('User ' + socket.id + ' connected to server.');
 
     socket.on('JoinRoom', function(username, roomName){
-        conn.JoinRoom(socket, username,roomName);
+        conn.JoinRoom(socket, username, roomName);
     });
 
     socket.on('StartGame', function(){
@@ -41,6 +41,11 @@ io.on('connection', (socket) => {
     socket.on('DealCard', function() {
         console.log('deal card server side received');
         conn.DealCard(socket);
+    });
+
+    socket.on('DiscardCard', function(discardCardSV) {
+        console.log('discard card server side received ' + discardCardSV);
+        conn.DiscardCard(socket, discardCardSV);
     });
 
     socket.on('disconnect', () => {
