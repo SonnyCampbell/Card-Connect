@@ -4,6 +4,7 @@ import CONST from './constants'
 function DeckOfCards() {  
     let _cardCount = 52;
     let _cardsUsed = 0;
+    
 
     this.deckDict = {};
 

@@ -1,4 +1,5 @@
 import Card from './Card'
+import Hand from './Hand'
 
 function Player(socket, username) {
     let _username = username;

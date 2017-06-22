@@ -2,6 +2,7 @@ import Deck from './Deck'
 import DiscardPile from './DiscardPile'
 import Player from './Player'
 import Game from './Game'
+import GoFishGame from './GoFish'
 
 function CanvasState(canvas, socket){
     this.canvas = canvas;
@@ -16,7 +17,7 @@ function CanvasState(canvas, socket){
     this.dragoffx = 0;
     this.dragoffy = 0;
 
-    this.game = new Game(this, socket);
+    this.game = new GoFishGame(this, socket);
 
     this.socket = socket;
 
@@ -62,18 +63,23 @@ function CanvasState(canvas, socket){
         let game = this.game;
         let cards = this.game.cards;
         
-        for(let i = cards.length - 1; i >= 0; i--){
-            if (cards[i].Contains(mx, my)){
-                console.log('start deal card client side');
-                this.socket.emit('DealCard');
-                return;
+        if(this.game.playerTurn){
+            for(let i = cards.length - 1; i >= 0; i--){
+                if (cards[i].Contains(mx, my)){
+                    console.log('start deal card client side');
+                    this.socket.emit('DealCard');
+                    this.game.playerTurn = false;
+                    this.game.oppPlayerTurn = true;
+                    return;
+                }
             }
         }
+        
 
         let cardSelected = false;
-        for(let i = game.playerHand.length - 1; i >= 0; i--){
-            if(game.playerHand[i].hovered){
-                let selectedCard = game.playerHand[i];
+        for(let i = game.playerHand.cards.length - 1; i >= 0; i--){
+            if(game.playerHand.cards[i].hovered){
+                let selectedCard = game.playerHand.cards[i];
                 
                 // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
                 this.dragoffx = mx - selectedCard.x;
@@ -86,7 +92,7 @@ function CanvasState(canvas, socket){
 
                 this.valid = false;
             } else {
-                game.playerHand[i].selected = false;
+                game.playerHand.cards[i].selected = false;
             }
 
         }
@@ -134,14 +140,14 @@ function CanvasState(canvas, socket){
 
         let hovering = false;
 
-        for(let i = game.playerHand.length - 1; i >= 0; i--){
+        for(let i = game.playerHand.cards.length - 1; i >= 0; i--){
             
-            if (!hovering && game.playerHand[i].Contains(mx, my)){ 
+            if (!hovering && game.playerHand.cards[i].Contains(mx, my)){ 
                 hovering = true;
-                game.playerHand[i].hovered = true;
+                game.playerHand.cards[i].hovered = true;
                 this.valid = false;
-            } else if (game.playerHand[i].hovered) {
-                game.playerHand[i].hovered = false;
+            } else if (game.playerHand.cards[i].hovered) {
+                game.playerHand.cards[i].hovered = false;
                 this.valid = false;
             }
         }
@@ -177,7 +183,6 @@ CanvasState.prototype.Clear = function(){
 
 // TODO: Need to actually shuffle the deck server-side
 CanvasState.prototype.StartGame = function() {
-    
     this.game.StartGame();
     this.Draw();
 }
@@ -190,7 +195,7 @@ CanvasState.prototype.Draw = function(){
     }
 }
 
-CanvasState.prototype.animateTo = function(card, startTime, duration, destX, destY, startX, startY) {
+CanvasState.prototype.animateTo = function(card, startTime, duration, destX, destY, startX, startY, endAnimCallback) {
     let canvas = this.canvas;
     let ctx = this.ctx;
     let isMoving = false;
@@ -208,6 +213,7 @@ CanvasState.prototype.animateTo = function(card, startTime, duration, destX, des
         card.x = destX;
         card.y = destY;
         this.valid = false;
+        endAnimCallback();
         return;
     }
 
@@ -215,7 +221,7 @@ CanvasState.prototype.animateTo = function(card, startTime, duration, destX, des
     this.Draw();
 
     requestAnimationFrame(() => {
-        this.animateTo(card, startTime, duration, destX, destY, startX, startY);
+        this.animateTo(card, startTime, duration, destX, destY, startX, startY, endAnimCallback);
     });
 }
 

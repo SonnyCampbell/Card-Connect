@@ -28,7 +28,8 @@ function init() {
 
   btnGameStart.onclick = () => {
     socket.emit('StartGame');
-
+    gameCanvas.game.playerTurn = true;
+    
     socket.emit('DealHands', 5);
 
     btnShuffleDeck.classList.remove('hide');
@@ -41,6 +42,7 @@ function init() {
     btnGameStart.classList.add('hide');
 
     gameCanvas.StartGame();
+
   });
 
   socket.on('DealCard', function(cardSuitValue) {
