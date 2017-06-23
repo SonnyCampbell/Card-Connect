@@ -24,19 +24,6 @@ function Game(canvasState, socket){
     this.oppPlayerTurn = false;
     this.oppPlayerHand = new Hand();
 
-
-    this.StartGame = function(){
-        this.gameStarted = true;
-        if(!this.playerTurn){
-            this.oppPlayerTurn = true;
-        } 
-
-        this.theDeck.Shuffle();
-        for(let i = 0; i < this.theDeck.Cards().length; i++){
-            this.AddCardToGame(this.theDeck.Cards()[i]);
-        }
-    }
-
     this.AddCardToGame = function(card){
         card.x += this.cards.length / 4;
         card.y += this.cards.length / 4;
@@ -176,6 +163,17 @@ function Game(canvasState, socket){
     }
 }
 
+Game.prototype.StartGame = function(){
+    this.gameStarted = true;
+    if(!this.playerTurn){
+        this.oppPlayerTurn = true;
+    } 
+
+    this.theDeck.Shuffle();
+    for(let i = 0; i < this.theDeck.Cards().length; i++){
+        this.AddCardToGame(this.theDeck.Cards()[i]);
+    }
+}
 
 Game.prototype.DiscardSelectedCard = function(){
     let cardToDiscard = this.selectedCard;

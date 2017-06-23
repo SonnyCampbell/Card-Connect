@@ -8,6 +8,14 @@ canvas{
   left: 300px;
 }
 
+#canvas-wrapper {
+  position: relative;
+}
+
+#btnAskCard {
+  position: absolute;
+}
+
 .hide {
   display: none;
 }

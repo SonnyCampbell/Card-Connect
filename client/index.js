@@ -6,17 +6,23 @@ import io from 'socket.io-client'
 
 function init() {
   let socket = io();
-  
-  let gameCanvas = new CanvasState(document.getElementById('canvas'), socket);
-  gameCanvas.Draw();
 
   let iptUsername = document.getElementById("iptUsername");
   let iptRoomName = document.getElementById("iptRoomName");
   let btnJoinGame = document.getElementById("btnJoinGame");
+
+  //let btnAskCard = document.getElementById("btnAskCard");
+  //btnAskCard.classList.add('hide');
   let btnShuffleDeck = document.getElementById("btnShuffleDeck");
   btnShuffleDeck.classList.add('hide');
   let btnGameStart = document.getElementById("btnGameStart");
   btnGameStart.classList.add('hide');
+
+  let gameCanvas = new CanvasState(document.getElementById('canvas'), socket);
+  gameCanvas.Draw();
+  //gameCanvas.btnAskCard = btnAskCard;
+
+
 
   btnJoinGame.onclick = () => {
     socket.emit('JoinRoom', iptUsername.value, iptRoomName.value);
@@ -35,6 +41,14 @@ function init() {
     btnShuffleDeck.classList.remove('hide');
     btnGameStart.classList.add('hide');
   };
+
+  btnShuffleDeck.onclick = () => {
+    socket.emit('ShuffleDeck');
+  }
+
+
+
+  
 
   socket.on('StartGame', function(msg){
     console.log(msg);   
@@ -58,16 +72,9 @@ function init() {
     gameCanvas.game.OppPlayerDiscardedCard(cardSuitValue);
   });
 
-
-  btnShuffleDeck.onclick = () => {
-    socket.emit('ShuffleDeck');
-  }
-
   socket.on('PlayerJoinedGame', function(msg){
     console.log(msg);
   });
-
-
 
   socket.on('ShuffleDeck', function(msg) {
     console.log(msg);

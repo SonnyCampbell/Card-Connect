@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 31);
+/******/ 	return __webpack_require__(__webpack_require__.s = 33);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -103,7 +103,7 @@ module.exports = g;
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(35);
+exports = module.exports = __webpack_require__(37);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -283,10 +283,107 @@ function localstorage() {
   } catch (e) {}
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(47)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ }),
 /* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
+    // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
+    // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
+    // But we aren't checking anything else! We could put "Lalala" for the value of x 
+    this.x = xPos || 0;
+    this.y = yPos || 0;
+    this.w = width || 1;
+    this.h = height || 1;
+    this.rotation = 0;
+
+    this.faceImage = new Image();
+    this.faceImage.src = faceImageSrc;
+    this.backImage = new Image();
+    this.backImage.src = '/images/Cards/card_back2.png';
+    this.displayImage = this.backImage;
+    this.isFaceDown = true;
+
+    this.hovered = false;
+    this.selected = false;
+
+    let _suit = suit;
+    let _value = value;
+
+    this.DrawOnLoad = ctx => {
+        if (this.backImage.complete) {
+            this.Draw(ctx);
+        } else {
+            this.ctx = ctx;
+            this.backImage.onload = this.ctx.drawImage(this.backImage, this.x, this.y, this.w, this.h);
+        }
+    };
+
+    this.Draw = ctx => {
+        //ctx.fillStyle = this.fill;
+        //ctx.fillRect(this.x, this.y, this.w, this.h);
+        let hoverRaise = 0;
+        if (this.hovered && !this.selected) {
+            hoverRaise = 10;
+        }
+
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 0.01;
+        ctx.strokeRect(this.x, this.y, this.w, this.h);
+        ctx.drawImage(this.displayImage, this.x, this.y - hoverRaise, this.w, this.h);
+    };
+
+    // Determine if a point is inside the shape's bounds
+    this.Contains = function (mx, my) {
+        // All we have to do is make sure the Mouse X,Y fall in the area between
+        // the shape's X and (X + Width) and its Y and (Y + Height)
+        return this.x <= mx && this.x + this.w >= mx && this.y <= my && this.y + this.h >= my;
+    };
+
+    this.GetSuitString = () => {
+        switch (_suit) {
+            case 'S':
+                return 'Spades';
+            case 'C':
+                return 'Clubs';
+            case 'H':
+                return 'Hearts';
+            case 'D':
+                return 'Diamonds';
+        }
+    };
+
+    this.GetValueString = () => {
+        switch (_value) {
+            case 1:
+                return 'Ace';
+            case 11:
+                return 'Jack';
+            case 12:
+                return 'Queen';
+            case 13:
+                return 'King';
+            default:
+                return _value;
+        }
+    };
+
+    this.ToString = () => {
+        return `The ${this.GetValueString()} of ${this.GetSuitString()}.`;
+    };
+
+    this.SuitValue = () => {
+        return _suit + _value;
+    };
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Card);
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -455,22 +552,22 @@ Emitter.prototype.hasListeners = function(event){
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
  * Module dependencies.
  */
 
-var keys = __webpack_require__(42);
-var hasBinary = __webpack_require__(17);
-var sliceBuffer = __webpack_require__(29);
-var after = __webpack_require__(28);
-var utf8 = __webpack_require__(43);
+var keys = __webpack_require__(44);
+var hasBinary = __webpack_require__(19);
+var sliceBuffer = __webpack_require__(31);
+var after = __webpack_require__(30);
+var utf8 = __webpack_require__(45);
 
 var base64encoder;
 if (global && global.ArrayBuffer) {
-  base64encoder = __webpack_require__(33);
+  base64encoder = __webpack_require__(35);
 }
 
 /**
@@ -528,7 +625,7 @@ var err = { type: 'error', data: 'parser error' };
  * Create a blob api even for blob builder when vendor prefixes exist
  */
 
-var Blob = __webpack_require__(34);
+var Blob = __webpack_require__(36);
 
 /**
  * Encodes a packet.
@@ -1068,164 +1165,12 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
-    // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
-    // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
-    // But we aren't checking anything else! We could put "Lalala" for the value of x 
-    this.x = xPos || 0;
-    this.y = yPos || 0;
-    this.w = width || 1;
-    this.h = height || 1;
-    this.rotation = 0;
-
-    this.faceImage = new Image();
-    this.faceImage.src = faceImageSrc;
-    this.backImage = new Image();
-    this.backImage.src = '/images/Cards/card_back2.png';
-    this.displayImage = this.backImage;
-    this.isFaceDown = true;
-
-    this.hovered = false;
-    this.selected = false;
-
-    let _suit = suit;
-    let _value = value;
-
-    this.DrawOnLoad = ctx => {
-        if (this.backImage.complete) {
-            this.Draw(ctx);
-        } else {
-            this.ctx = ctx;
-            this.backImage.onload = this.ctx.drawImage(this.backImage, this.x, this.y, this.w, this.h);
-        }
-    };
-
-    this.Draw = ctx => {
-        //ctx.fillStyle = this.fill;
-        //ctx.fillRect(this.x, this.y, this.w, this.h);
-        let hoverRaise = 0;
-        if (this.hovered && !this.selected) {
-            hoverRaise = 10;
-        }
-
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 0.01;
-        ctx.strokeRect(this.x, this.y, this.w, this.h);
-        ctx.drawImage(this.displayImage, this.x, this.y - hoverRaise, this.w, this.h);
-    };
-
-    // Determine if a point is inside the shape's bounds
-    this.Contains = function (mx, my) {
-        // All we have to do is make sure the Mouse X,Y fall in the area between
-        // the shape's X and (X + Width) and its Y and (Y + Height)
-        return this.x <= mx && this.x + this.w >= mx && this.y <= my && this.y + this.h >= my;
-    };
-
-    this.GetSuitString = () => {
-        switch (_suit) {
-            case 'S':
-                return 'Spades';
-            case 'C':
-                return 'Clubs';
-            case 'H':
-                return 'Hearts';
-            case 'D':
-                return 'Diamonds';
-        }
-    };
-
-    this.GetValueString = () => {
-        switch (_value) {
-            case 1:
-                return 'Ace';
-            case 11:
-                return 'Jack';
-            case 12:
-                return 'Queen';
-            case 13:
-                return 'King';
-            default:
-                return _value;
-        }
-    };
-
-    this.ToString = () => {
-        return `The ${this.GetValueString()} of ${this.GetSuitString()}.`;
-    };
-
-    this.SuitValue = () => {
-        return _suit + _value;
-    };
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Card);
-
-/***/ }),
 /* 5 */
-/***/ (function(module, exports) {
-
-
-module.exports = function(a, b){
-  var fn = function(){};
-  fn.prototype = b.prototype;
-  a.prototype = new fn;
-  a.prototype.constructor = a;
-};
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-/**
- * Compiles a querystring
- * Returns string representation of the object
- *
- * @param {Object}
- * @api private
- */
-
-exports.encode = function (obj) {
-  var str = '';
-
-  for (var i in obj) {
-    if (obj.hasOwnProperty(i)) {
-      if (str.length) str += '&';
-      str += encodeURIComponent(i) + '=' + encodeURIComponent(obj[i]);
-    }
-  }
-
-  return str;
-};
-
-/**
- * Parses a simple querystring into an object
- *
- * @param {String} qs
- * @api private
- */
-
-exports.decode = function(qs){
-  var qry = {};
-  var pairs = qs.split('&');
-  for (var i = 0, l = pairs.length; i < l; i++) {
-    var pair = pairs[i].split('=');
-    qry[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
-  }
-  return qry;
-};
-
-
-/***/ }),
-/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(10);
 
 
 
@@ -1370,7 +1315,151 @@ function CreateDeck(deckDict) {
 /* harmony default export */ __webpack_exports__["a"] = (DeckOfCards);
 
 /***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+
+module.exports = function(a, b){
+  var fn = function(){};
+  fn.prototype = b.prototype;
+  a.prototype = new fn;
+  a.prototype.constructor = a;
+};
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+/**
+ * Compiles a querystring
+ * Returns string representation of the object
+ *
+ * @param {Object}
+ * @api private
+ */
+
+exports.encode = function (obj) {
+  var str = '';
+
+  for (var i in obj) {
+    if (obj.hasOwnProperty(i)) {
+      if (str.length) str += '&';
+      str += encodeURIComponent(i) + '=' + encodeURIComponent(obj[i]);
+    }
+  }
+
+  return str;
+};
+
+/**
+ * Parses a simple querystring into an object
+ *
+ * @param {String} qs
+ * @api private
+ */
+
+exports.decode = function(qs){
+  var qry = {};
+  var pairs = qs.split('&');
+  for (var i = 0, l = pairs.length; i < l; i++) {
+    var pair = pairs[i].split('=');
+    qry[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+  }
+  return qry;
+};
+
+
+/***/ }),
 /* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(2);
+
+
+function Hand() {
+    this.cards = [];
+
+    this.AddCardToHand = function (card) {
+        this.cards.push(card);
+    };
+
+    this.ReorganiseHand = function () {
+        // let handAngle = 30;
+        // let halfHandAngle = handAngle / 2;
+
+        // let cardAngle = 0;
+        // if(this.cards.length == 1){
+        //     cardAngle = halfHandAngle;
+        // } else {
+        //     cardAngle = (handAngle / (this.cards.length - 1));
+        // }
+
+        // for(let i = 0; i < this.cards.length; i++){
+        //     console.log(-halfHandAngle + (cardAngle * i));
+        //     this.cards[i].rotation = (-halfHandAngle + (cardAngle * i)) * (Math.PI / 180);
+
+        // }
+        for (let i = 0; i < this.cards.length; i++) {
+            this.cards[i].x = 300 + i * 20;
+        }
+    };
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Hand);
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Hand__ = __webpack_require__(8);
+
+
+
+function Player(socket, username) {
+    let _username = username;
+    let _socket = socket;
+    let _roomName = '';
+    let _hand = [];
+
+    this.isTurn = false;
+
+    // Getters and Setters
+    this.getSocket = () => {
+        return _socket;
+    };
+    this.setSocket = socket => {
+        _socket = socket;
+    };
+
+    this.getUsername = () => {
+        return _username;
+    };
+    this.setUsername = username => {
+        _username = username;
+    };
+
+    this.getRoomName = () => {
+        return _roomName;
+    };
+    this.setRoomName = roomName => {
+        _roomName = roomName;
+    };
+
+    this.getHand = () => {
+        return _hand;
+    };
+    this.setHand = hand => {
+        _hand = hand;
+    };
+}
+
+/* unused harmony default export */ var _unused_webpack_default_export = (Player);
+
+/***/ }),
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1384,15 +1473,15 @@ class CONST {
 /* unused harmony default export */ var _unused_webpack_default_export = (CONST);
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * Module dependencies.
  */
 
-var parser = __webpack_require__(3);
-var Emitter = __webpack_require__(2);
+var parser = __webpack_require__(4);
+var Emitter = __webpack_require__(3);
 
 /**
  * Module exports.
@@ -1547,12 +1636,12 @@ Transport.prototype.onClose = function () {
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {// browser shim for xmlhttprequest module
 
-var hasCORS = __webpack_require__(44);
+var hasCORS = __webpack_require__(46);
 
 module.exports = function (opts) {
   var xdomain = opts.xdomain;
@@ -1591,7 +1680,7 @@ module.exports = function (opts) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1600,10 +1689,10 @@ module.exports = function (opts) {
  */
 
 var debug = __webpack_require__(1)('socket.io-parser');
-var Emitter = __webpack_require__(2);
-var hasBin = __webpack_require__(17);
-var binary = __webpack_require__(49);
-var isBuf = __webpack_require__(24);
+var Emitter = __webpack_require__(3);
+var hasBin = __webpack_require__(19);
+var binary = __webpack_require__(51);
+var isBuf = __webpack_require__(26);
 
 /**
  * Protocol version.
@@ -1997,12 +2086,12 @@ function error() {
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(10);
 
 
 
@@ -2057,57 +2146,221 @@ function DiscardPile() {
 /* harmony default export */ __webpack_exports__["a"] = (DiscardPile);
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Hand__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Deck__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DiscardPile__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Player__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Hand__ = __webpack_require__(8);
 
 
 
-function Player(socket, username) {
-    let _username = username;
-    let _socket = socket;
-    let _roomName = '';
-    let _hand = [];
 
-    this.isTurn = false;
 
-    // Getters and Setters
-    this.getSocket = () => {
-        return _socket;
+
+
+function Game(canvasState, socket) {
+    this.socket = socket;
+    this.canvasState = canvasState;
+
+    this.theDeck = new __WEBPACK_IMPORTED_MODULE_2__Deck__["a" /* default */]();
+    this.discardPile = new __WEBPACK_IMPORTED_MODULE_3__DiscardPile__["a" /* default */]();
+
+    this.cards = [];
+    this.selectedCard = null;
+    this.gameStarted = false;
+
+    this.players = [];
+
+    this.playerTurn = false;
+    this.playerHand = new __WEBPACK_IMPORTED_MODULE_5__Hand__["a" /* default */]();
+
+    this.oppPlayerTurn = false;
+    this.oppPlayerHand = new __WEBPACK_IMPORTED_MODULE_5__Hand__["a" /* default */]();
+
+    this.AddCardToGame = function (card) {
+        card.x += this.cards.length / 4;
+        card.y += this.cards.length / 4;
+        this.cards.push(card);
+        this.canvasState.valid = false;
     };
-    this.setSocket = socket => {
-        _socket = socket;
+
+    this.DealCardToPlayer = function (cardSV) {
+        console.log('client side attempting to deal card ' + cardSV);
+        let card = this.theDeck.deckDict[cardSV];
+        this.theDeck.RemoveCard(card);
+
+        this.cards = this.theDeck.Cards();
+
+        card.displayImage = card.faceImage;
+        card.isFaceDown = false;
+        this.selectedCard = card;
+
+        let reorganiseHand = function () {
+            this.playerHand.ReorganiseHand();
+        }.bind(this);
+
+        this.canvasState.valid = false;
+        this.playerHand.AddCardToHand(card);
+
+        this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + (this.playerHand.cards.length - 1) * 20, 300, card.x, card.y, reorganiseHand);
     };
 
-    this.getUsername = () => {
-        return _username;
-    };
-    this.setUsername = username => {
-        _username = username;
+    this.DealCardToOppPlayer = function (cardSV) {
+        console.log('Dealing opp: ' + cardSV);
+        this.playerTurn = true;
+        this.oppPlayerTurn = false;
+
+        let card = this.theDeck.deckDict[cardSV];
+        this.theDeck.RemoveCard(card);
+        this.cards = this.theDeck.Cards();
+
+        let reorganiseHand = function () {
+            this.oppPlayerHand.ReorganiseHand();
+        }.bind(this);
+
+        this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + this.oppPlayerHand.cards.length * 20, 100, card.x, card.y, reorganiseHand);
+
+        this.oppPlayerHand.AddCardToHand(card);
     };
 
-    this.getRoomName = () => {
-        return _roomName;
-    };
-    this.setRoomName = roomName => {
-        _roomName = roomName;
-    };
+    this.Draw = function (ctx) {
+        let cards = this.cards;
+        let canvasState = this.canvasState;
+        let discardPile = this.discardPile;
 
-    this.getHand = () => {
-        return _hand;
-    };
-    this.setHand = hand => {
-        _hand = hand;
+        //Draw Discard Pile
+        if (this.gameStarted) {
+            this.discardPile.Draw(ctx);
+        }
+
+        //Draw Each card
+        for (let i = 0; i < cards.length; i++) {
+            let card = cards[i];
+
+            if (card.x > canvasState.width || card.y > canvasState.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
+
+            //ctx.rotate(90 * Math.PI / 180);
+            ctx.save();
+            if (card.rotation != 0) {
+                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
+                ctx.rotate(card.rotation);
+                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
+            }
+
+            card.DrawOnLoad(ctx);
+
+            ctx.restore();
+            //console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
+        }
+
+        // Draw Opponents Hand
+        for (let i = 0; i < this.oppPlayerHand.cards.length; i++) {
+            let card = this.oppPlayerHand.cards[i];
+
+            if (card.x > canvasState.width || card.y > canvasState.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
+
+            //ctx.rotate(90 * Math.PI / 180);
+            ctx.save();
+            if (card.rotation != 0) {
+                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
+                ctx.rotate(card.rotation);
+                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
+            }
+
+            card.DrawOnLoad(ctx);
+
+            ctx.restore();
+        }
+
+        //Draw Player Hand
+        for (let i = 0; i < this.playerHand.cards.length; i++) {
+            let card = this.playerHand.cards[i];
+
+            if (card.x > canvasState.width || card.y > canvasState.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
+
+            //ctx.rotate(90 * Math.PI / 180);
+            ctx.save();
+            if (card.rotation != 0) {
+                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
+                ctx.rotate(card.rotation);
+                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
+            }
+
+            card.DrawOnLoad(ctx);
+
+            ctx.restore();
+        }
+
+        //Draw Selected Card Outline
+        if (this.selectedCard != null) {
+            ctx.strokeStyle = canvasState.selectionColor;
+            ctx.lineWidth = canvasState.selectionWidth;
+            let myCard = this.selectedCard;
+            ctx.strokeRect(myCard.x, myCard.y, myCard.w, myCard.h);
+        }
     };
 }
 
-/* unused harmony default export */ var _unused_webpack_default_export = (Player);
+Game.prototype.StartGame = function () {
+    this.gameStarted = true;
+    if (!this.playerTurn) {
+        this.oppPlayerTurn = true;
+    }
+
+    this.theDeck.Shuffle();
+    for (let i = 0; i < this.theDeck.Cards().length; i++) {
+        this.AddCardToGame(this.theDeck.Cards()[i]);
+    }
+};
+
+Game.prototype.DiscardSelectedCard = function () {
+    let cardToDiscard = this.selectedCard;
+    for (let i = 0; i < this.playerHand.cards.length; i++) {
+        if (cardToDiscard.SuitValue() == this.playerHand.cards[i].SuitValue()) {
+            this.playerHand.cards.splice(i, 1);
+            this.playerHand.ReorganiseHand();
+            this.discardPile.DiscardCard(cardToDiscard);
+            this.selectedCard = null;
+            this.canvasState.valid = false;
+            this.socket.emit('DiscardCard', cardToDiscard.SuitValue());
+            break;
+        }
+        if (i == this.playerHand.cards.length) {
+            console.log('Couldn\'t find the card in the deck. Something probably went wrong');
+        }
+    }
+};
+
+Game.prototype.OppPlayerDiscardedCard = function (discardedcardSV) {
+    let cardToDiscard = this.theDeck.deckDict[discardedcardSV];
+    for (let i = 0; i < this.oppPlayerHand.cards.length; i++) {
+        if (cardToDiscard.SuitValue() == this.oppPlayerHand.cards[i].SuitValue()) {
+            this.oppPlayerHand.cards.splice(i, 1);
+            cardToDiscard.displayImage = cardToDiscard.faceImage;
+            let reorganiseHand = function () {
+                this.oppPlayerHand.ReorganiseHand();
+            }.bind(this);
+            this.canvasState.animateTo(cardToDiscard, new Date().getTime(), 0.5, this.discardPile.x + 5, this.discardPile.y + 5, cardToDiscard.x, cardToDiscard.y, reorganiseHand);
+            this.discardPile.cards.push(cardToDiscard);
+            this.canvasState.valid = false;
+            break;
+        }
+        if (i == this.oppPlayerHand.cards.length) {
+            console.log('Couldn\'t find the card in the deck. Something probably went wrong');
+        }
+    }
+    console.log(discardedcardSV);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (Game);
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports) {
 
 /**
@@ -2136,17 +2389,17 @@ module.exports = function(obj, fn){
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
  * Module dependencies
  */
 
-var XMLHttpRequest = __webpack_require__(10);
-var XHR = __webpack_require__(40);
-var JSONP = __webpack_require__(39);
-var websocket = __webpack_require__(41);
+var XMLHttpRequest = __webpack_require__(12);
+var XHR = __webpack_require__(42);
+var JSONP = __webpack_require__(41);
+var websocket = __webpack_require__(43);
 
 /**
  * Export transports.
@@ -2196,18 +2449,18 @@ function polling (opts) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * Module dependencies.
  */
 
-var Transport = __webpack_require__(9);
-var parseqs = __webpack_require__(6);
-var parser = __webpack_require__(3);
-var inherit = __webpack_require__(5);
-var yeast = __webpack_require__(25);
+var Transport = __webpack_require__(11);
+var parseqs = __webpack_require__(7);
+var parser = __webpack_require__(4);
+var inherit = __webpack_require__(6);
+var yeast = __webpack_require__(27);
 var debug = __webpack_require__(1)('engine.io-client:polling');
 
 /**
@@ -2221,7 +2474,7 @@ module.exports = Polling;
  */
 
 var hasXHR2 = (function () {
-  var XMLHttpRequest = __webpack_require__(10);
+  var XMLHttpRequest = __webpack_require__(12);
   var xhr = new XMLHttpRequest({ xdomain: false });
   return null != xhr.responseType;
 })();
@@ -2447,7 +2700,7 @@ Polling.prototype.uri = function () {
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/* global Blob File */
@@ -2456,7 +2709,7 @@ Polling.prototype.uri = function () {
  * Module requirements.
  */
 
-var isArray = __webpack_require__(19);
+var isArray = __webpack_require__(21);
 
 var toString = Object.prototype.toString;
 var withNativeBlob = typeof global.Blob === 'function' || toString.call(global.Blob) === '[object BlobConstructor]';
@@ -2516,7 +2769,7 @@ function hasBinary (obj) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports) {
 
 
@@ -2531,7 +2784,7 @@ module.exports = function(arr, obj){
 };
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -2542,7 +2795,7 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports) {
 
 /**
@@ -2587,7 +2840,7 @@ module.exports = function parseuri(str) {
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -2595,15 +2848,15 @@ module.exports = function parseuri(str) {
  * Module dependencies.
  */
 
-var eio = __webpack_require__(36);
-var Socket = __webpack_require__(23);
-var Emitter = __webpack_require__(2);
-var parser = __webpack_require__(11);
-var on = __webpack_require__(22);
-var bind = __webpack_require__(14);
+var eio = __webpack_require__(38);
+var Socket = __webpack_require__(25);
+var Emitter = __webpack_require__(3);
+var parser = __webpack_require__(13);
+var on = __webpack_require__(24);
+var bind = __webpack_require__(16);
 var debug = __webpack_require__(1)('socket.io-client:manager');
-var indexOf = __webpack_require__(18);
-var Backoff = __webpack_require__(32);
+var indexOf = __webpack_require__(20);
+var Backoff = __webpack_require__(34);
 
 /**
  * IE6+ hasOwnProperty
@@ -3166,7 +3419,7 @@ Manager.prototype.onreconnect = function () {
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports) {
 
 
@@ -3196,7 +3449,7 @@ function on (obj, ev, fn) {
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -3204,13 +3457,13 @@ function on (obj, ev, fn) {
  * Module dependencies.
  */
 
-var parser = __webpack_require__(11);
-var Emitter = __webpack_require__(2);
-var toArray = __webpack_require__(50);
-var on = __webpack_require__(22);
-var bind = __webpack_require__(14);
+var parser = __webpack_require__(13);
+var Emitter = __webpack_require__(3);
+var toArray = __webpack_require__(52);
+var on = __webpack_require__(24);
+var bind = __webpack_require__(16);
 var debug = __webpack_require__(1)('socket.io-client:socket');
-var parseqs = __webpack_require__(6);
+var parseqs = __webpack_require__(7);
 
 /**
  * Module exports.
@@ -3620,7 +3873,7 @@ Socket.prototype.compress = function (compress) {
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -3640,7 +3893,7 @@ function isBuf(obj) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3715,15 +3968,15 @@ module.exports = yeast;
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Deck__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__DiscardPile__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Player__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Game__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__GoFish__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Deck__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__DiscardPile__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Player__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Game__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__GoFish__ = __webpack_require__(32);
 
 
 
@@ -3974,7 +4227,7 @@ CanvasState.prototype.animate = function (card, startTime) {
 /* harmony default export */ __webpack_exports__["a"] = (CanvasState);
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -3982,9 +4235,9 @@ CanvasState.prototype.animate = function (card, startTime) {
  * Module dependencies.
  */
 
-var url = __webpack_require__(48);
-var parser = __webpack_require__(11);
-var Manager = __webpack_require__(21);
+var url = __webpack_require__(50);
+var parser = __webpack_require__(13);
+var Manager = __webpack_require__(23);
 var debug = __webpack_require__(1)('socket.io-client');
 
 /**
@@ -4069,12 +4322,12 @@ exports.connect = lookup;
  * @api public
  */
 
-exports.Manager = __webpack_require__(21);
-exports.Socket = __webpack_require__(23);
+exports.Manager = __webpack_require__(23);
+exports.Socket = __webpack_require__(25);
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports) {
 
 module.exports = after
@@ -4108,7 +4361,7 @@ function noop() {}
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports) {
 
 /**
@@ -4143,229 +4396,74 @@ module.exports = function(arraybuffer, start, end) {
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Deck__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__DiscardPile__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Player__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Hand__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Deck__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Player__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Hand__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Game__ = __webpack_require__(15);
 
 
 
 
 
 
-
-function Game(canvasState, socket) {
-    this.socket = socket;
-    this.canvasState = canvasState;
-
-    this.theDeck = new __WEBPACK_IMPORTED_MODULE_2__Deck__["a" /* default */]();
-    this.discardPile = new __WEBPACK_IMPORTED_MODULE_3__DiscardPile__["a" /* default */]();
-
-    this.cards = [];
-    this.selectedCard = null;
-    this.gameStarted = false;
-
-    this.players = [];
-
-    this.playerTurn = false;
-    this.playerHand = new __WEBPACK_IMPORTED_MODULE_5__Hand__["a" /* default */]();
-
-    this.oppPlayerTurn = false;
-    this.oppPlayerHand = new __WEBPACK_IMPORTED_MODULE_5__Hand__["a" /* default */]();
-
-    this.StartGame = function () {
-        this.gameStarted = true;
-        if (!this.playerTurn) {
-            this.oppPlayerTurn = true;
-        }
-
-        this.theDeck.Shuffle();
-        for (let i = 0; i < this.theDeck.Cards().length; i++) {
-            this.AddCardToGame(this.theDeck.Cards()[i]);
-        }
-    };
-
-    this.AddCardToGame = function (card) {
-        card.x += this.cards.length / 4;
-        card.y += this.cards.length / 4;
-        this.cards.push(card);
-        this.canvasState.valid = false;
-    };
-
-    this.DealCardToPlayer = function (cardSV) {
-        console.log('client side attempting to deal card ' + cardSV);
-        let card = this.theDeck.deckDict[cardSV];
-        this.theDeck.RemoveCard(card);
-
-        this.cards = this.theDeck.Cards();
-
-        card.displayImage = card.faceImage;
-        card.isFaceDown = false;
-        this.selectedCard = card;
-
-        let reorganiseHand = function () {
-            this.playerHand.ReorganiseHand();
-        }.bind(this);
-
-        this.canvasState.valid = false;
-        this.playerHand.AddCardToHand(card);
-
-        this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + (this.playerHand.cards.length - 1) * 20, 300, card.x, card.y, reorganiseHand);
-    };
-
-    this.DealCardToOppPlayer = function (cardSV) {
-        console.log('Dealing opp: ' + cardSV);
-        this.playerTurn = true;
-        this.oppPlayerTurn = false;
-
-        let card = this.theDeck.deckDict[cardSV];
-        this.theDeck.RemoveCard(card);
-        this.cards = this.theDeck.Cards();
-
-        let reorganiseHand = function () {
-            this.oppPlayerHand.ReorganiseHand();
-        }.bind(this);
-
-        this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + this.oppPlayerHand.cards.length * 20, 100, card.x, card.y, reorganiseHand);
-
-        this.oppPlayerHand.AddCardToHand(card);
-    };
-
-    this.Draw = function (ctx) {
-        let cards = this.cards;
-        let canvasState = this.canvasState;
-        let discardPile = this.discardPile;
-
-        //Draw Discard Pile
-        if (this.gameStarted) {
-            this.discardPile.Draw(ctx);
-        }
-
-        //Draw Each card
-        for (let i = 0; i < cards.length; i++) {
-            let card = cards[i];
-
-            if (card.x > canvasState.width || card.y > canvasState.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
-
-            //ctx.rotate(90 * Math.PI / 180);
-            ctx.save();
-            if (card.rotation != 0) {
-                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
-                ctx.rotate(card.rotation);
-                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
-            }
-
-            card.DrawOnLoad(ctx);
-
-            ctx.restore();
-            //console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
-        }
-
-        // Draw Opponents Hand
-        for (let i = 0; i < this.oppPlayerHand.cards.length; i++) {
-            let card = this.oppPlayerHand.cards[i];
-
-            if (card.x > canvasState.width || card.y > canvasState.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
-
-            //ctx.rotate(90 * Math.PI / 180);
-            ctx.save();
-            if (card.rotation != 0) {
-                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
-                ctx.rotate(card.rotation);
-                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
-            }
-
-            card.DrawOnLoad(ctx);
-
-            ctx.restore();
-        }
-
-        //Draw Player Hand
-        for (let i = 0; i < this.playerHand.cards.length; i++) {
-            let card = this.playerHand.cards[i];
-
-            if (card.x > canvasState.width || card.y > canvasState.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
-
-            //ctx.rotate(90 * Math.PI / 180);
-            ctx.save();
-            if (card.rotation != 0) {
-                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
-                ctx.rotate(card.rotation);
-                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
-            }
-
-            card.DrawOnLoad(ctx);
-
-            ctx.restore();
-        }
-
-        //Draw Selected Card Outline
-        if (this.selectedCard != null) {
-            ctx.strokeStyle = canvasState.selectionColor;
-            ctx.lineWidth = canvasState.selectionWidth;
-            let myCard = this.selectedCard;
-            ctx.strokeRect(myCard.x, myCard.y, myCard.w, myCard.h);
-        }
-    };
+function GoFishGame(canvasState, socket) {
+    __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].call(this, canvasState, socket);
 }
 
-Game.prototype.DiscardSelectedCard = function () {
-    let cardToDiscard = this.selectedCard;
-    for (let i = 0; i < this.playerHand.cards.length; i++) {
-        if (cardToDiscard.SuitValue() == this.playerHand.cards[i].SuitValue()) {
-            this.playerHand.cards.splice(i, 1);
-            this.playerHand.ReorganiseHand();
-            this.discardPile.DiscardCard(cardToDiscard);
-            this.selectedCard = null;
-            this.canvasState.valid = false;
-            this.socket.emit('DiscardCard', cardToDiscard.SuitValue());
-            break;
-        }
-        if (i == this.playerHand.cards.length) {
-            console.log('Couldn\'t find the card in the deck. Something probably went wrong');
-        }
-    }
+GoFishGame.prototype = Object.create(__WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype);
+GoFishGame.prototype.constructor = GoFishGame;
+
+GoFishGame.prototype.CreateUI = function () {
+    let btnAskCard = document.createElement("button");
+    this.btnAskCard = btnAskCard;
+    let btnText = document.createTextNode("Ask for Cards");
+    btnAskCard.appendChild(btnText);
+
+    btnAskCard.style.position = "absolute";
+    btnAskCard.style.left = "100px";
+    btnAskCard.style.top = "100px";
+
+    // btnAskCard.style.left = this.playerHand.cards[0].x + "px";
+    // btnAskCard.style.top = (this.playerHand.cards[0].y + 50) + "px";
+
+    document.getElementById('canvas-wrapper').appendChild(btnAskCard);
+
+    btnAskCard.onclick = () => {
+        this.AskForCard();
+    };
 };
 
-Game.prototype.OppPlayerDiscardedCard = function (discardedcardSV) {
-    let cardToDiscard = this.theDeck.deckDict[discardedcardSV];
-    for (let i = 0; i < this.oppPlayerHand.cards.length; i++) {
-        if (cardToDiscard.SuitValue() == this.oppPlayerHand.cards[i].SuitValue()) {
-            this.oppPlayerHand.cards.splice(i, 1);
-            cardToDiscard.displayImage = cardToDiscard.faceImage;
-            let reorganiseHand = function () {
-                this.oppPlayerHand.ReorganiseHand();
-            }.bind(this);
-            this.canvasState.animateTo(cardToDiscard, new Date().getTime(), 0.5, this.discardPile.x + 5, this.discardPile.y + 5, cardToDiscard.x, cardToDiscard.y, reorganiseHand);
-            this.discardPile.cards.push(cardToDiscard);
-            this.canvasState.valid = false;
-            break;
-        }
-        if (i == this.oppPlayerHand.cards.length) {
-            console.log('Couldn\'t find the card in the deck. Something probably went wrong');
-        }
-    }
-    console.log(discardedcardSV);
+GoFishGame.prototype.StartGame = function () {
+    __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype.StartGame.call(this);
+    console.log('test');
+    this.CreateUI();
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (Game);
+GoFishGame.prototype.DiscardSelectedCard = function () {
+    __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype.DiscardSelectedCard.call(this);
+};
+
+GoFishGame.prototype.AskForCard = function () {
+    console.log(this.btnAskCard);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (GoFishGame);
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_Card__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Game_Deck__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_socket_io_client__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_Card__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Game_Deck__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_socket_io_client__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_socket_io_client__);
 
 
@@ -4376,16 +4474,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 function init() {
   let socket = __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default()();
 
-  let gameCanvas = new __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__["a" /* default */](document.getElementById('canvas'), socket);
-  gameCanvas.Draw();
-
   let iptUsername = document.getElementById("iptUsername");
   let iptRoomName = document.getElementById("iptRoomName");
   let btnJoinGame = document.getElementById("btnJoinGame");
+
+  //let btnAskCard = document.getElementById("btnAskCard");
+  //btnAskCard.classList.add('hide');
   let btnShuffleDeck = document.getElementById("btnShuffleDeck");
   btnShuffleDeck.classList.add('hide');
   let btnGameStart = document.getElementById("btnGameStart");
   btnGameStart.classList.add('hide');
+
+  let gameCanvas = new __WEBPACK_IMPORTED_MODULE_0__Game_CanvasState__["a" /* default */](document.getElementById('canvas'), socket);
+  gameCanvas.Draw();
+  //gameCanvas.btnAskCard = btnAskCard;
+
 
   btnJoinGame.onclick = () => {
     socket.emit('JoinRoom', iptUsername.value, iptRoomName.value);
@@ -4403,6 +4506,10 @@ function init() {
 
     btnShuffleDeck.classList.remove('hide');
     btnGameStart.classList.add('hide');
+  };
+
+  btnShuffleDeck.onclick = () => {
+    socket.emit('ShuffleDeck');
   };
 
   socket.on('StartGame', function (msg) {
@@ -4426,10 +4533,6 @@ function init() {
     gameCanvas.game.OppPlayerDiscardedCard(cardSuitValue);
   });
 
-  btnShuffleDeck.onclick = () => {
-    socket.emit('ShuffleDeck');
-  };
-
   socket.on('PlayerJoinedGame', function (msg) {
     console.log(msg);
   });
@@ -4442,7 +4545,7 @@ function init() {
 init();
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports) {
 
 
@@ -4533,7 +4636,7 @@ Backoff.prototype.setJitter = function(jitter){
 
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports) {
 
 /*
@@ -4606,7 +4709,7 @@ Backoff.prototype.setJitter = function(jitter){
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -4709,7 +4812,7 @@ module.exports = (function() {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -4725,7 +4828,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = __webpack_require__(45);
+exports.humanize = __webpack_require__(47);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -4917,19 +5020,19 @@ function coerce(val) {
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-module.exports = __webpack_require__(37);
+module.exports = __webpack_require__(39);
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-module.exports = __webpack_require__(38);
+module.exports = __webpack_require__(40);
 
 /**
  * Exports parser
@@ -4937,25 +5040,25 @@ module.exports = __webpack_require__(38);
  * @api public
  *
  */
-module.exports.parser = __webpack_require__(3);
+module.exports.parser = __webpack_require__(4);
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
  * Module dependencies.
  */
 
-var transports = __webpack_require__(15);
-var Emitter = __webpack_require__(2);
+var transports = __webpack_require__(17);
+var Emitter = __webpack_require__(3);
 var debug = __webpack_require__(1)('engine.io-client:socket');
-var index = __webpack_require__(18);
-var parser = __webpack_require__(3);
-var parseuri = __webpack_require__(20);
-var parsejson = __webpack_require__(46);
-var parseqs = __webpack_require__(6);
+var index = __webpack_require__(20);
+var parser = __webpack_require__(4);
+var parseuri = __webpack_require__(22);
+var parsejson = __webpack_require__(48);
+var parseqs = __webpack_require__(7);
 
 /**
  * Module exports.
@@ -5088,9 +5191,9 @@ Socket.protocol = parser.protocol; // this is an int
  */
 
 Socket.Socket = Socket;
-Socket.Transport = __webpack_require__(9);
-Socket.transports = __webpack_require__(15);
-Socket.parser = __webpack_require__(3);
+Socket.Transport = __webpack_require__(11);
+Socket.transports = __webpack_require__(17);
+Socket.parser = __webpack_require__(4);
 
 /**
  * Creates transport of the given type.
@@ -5692,7 +5795,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -5700,8 +5803,8 @@ Socket.prototype.filterUpgrades = function (upgrades) {
  * Module requirements.
  */
 
-var Polling = __webpack_require__(16);
-var inherit = __webpack_require__(5);
+var Polling = __webpack_require__(18);
+var inherit = __webpack_require__(6);
 
 /**
  * Module exports.
@@ -5930,17 +6033,17 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
  * Module requirements.
  */
 
-var XMLHttpRequest = __webpack_require__(10);
-var Polling = __webpack_require__(16);
-var Emitter = __webpack_require__(2);
-var inherit = __webpack_require__(5);
+var XMLHttpRequest = __webpack_require__(12);
+var Polling = __webpack_require__(18);
+var Emitter = __webpack_require__(3);
+var inherit = __webpack_require__(6);
 var debug = __webpack_require__(1)('engine.io-client:polling-xhr');
 
 /**
@@ -6350,24 +6453,24 @@ function unloadHandler () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
  * Module dependencies.
  */
 
-var Transport = __webpack_require__(9);
-var parser = __webpack_require__(3);
-var parseqs = __webpack_require__(6);
-var inherit = __webpack_require__(5);
-var yeast = __webpack_require__(25);
+var Transport = __webpack_require__(11);
+var parser = __webpack_require__(4);
+var parseqs = __webpack_require__(7);
+var inherit = __webpack_require__(6);
+var yeast = __webpack_require__(27);
 var debug = __webpack_require__(1)('engine.io-client:websocket');
 var BrowserWebSocket = global.WebSocket || global.MozWebSocket;
 var NodeWebSocket;
 if (typeof window === 'undefined') {
   try {
-    NodeWebSocket = __webpack_require__(52);
+    NodeWebSocket = __webpack_require__(54);
   } catch (e) { }
 }
 
@@ -6643,7 +6746,7 @@ WS.prototype.check = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports) {
 
 
@@ -6668,7 +6771,7 @@ module.exports = Object.keys || function keys (obj){
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/utf8js v2.1.2 by @mathias */
@@ -6926,10 +7029,10 @@ module.exports = Object.keys || function keys (obj){
 
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(51)(module), __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(53)(module), __webpack_require__(0)))
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports) {
 
 
@@ -6952,7 +7055,7 @@ try {
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports) {
 
 /**
@@ -7110,7 +7213,7 @@ function plural(ms, n, name) {
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -7148,7 +7251,7 @@ module.exports = function parsejson(data) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -7338,7 +7441,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -7346,7 +7449,7 @@ process.umask = function() { return 0; };
  * Module dependencies.
  */
 
-var parseuri = __webpack_require__(20);
+var parseuri = __webpack_require__(22);
 var debug = __webpack_require__(1)('socket.io-client:url');
 
 /**
@@ -7420,7 +7523,7 @@ function url (uri, loc) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/*global Blob,File*/
@@ -7429,8 +7532,8 @@ function url (uri, loc) {
  * Module requirements
  */
 
-var isArray = __webpack_require__(19);
-var isBuf = __webpack_require__(24);
+var isArray = __webpack_require__(21);
+var isBuf = __webpack_require__(26);
 var toString = Object.prototype.toString;
 var withNativeBlob = typeof global.Blob === 'function' || toString.call(global.Blob) === '[object BlobConstructor]';
 var withNativeFile = typeof global.File === 'function' || toString.call(global.File) === '[object FileConstructor]';
@@ -7568,7 +7671,7 @@ exports.removeBlobs = function(data, callback) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports) {
 
 module.exports = toArray
@@ -7587,7 +7690,7 @@ function toArray(list, index) {
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -7615,82 +7718,10 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
-
-/***/ }),
-/* 53 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(4);
-
-
-function Hand() {
-    this.cards = [];
-
-    this.AddCardToHand = function (card) {
-        this.cards.push(card);
-    };
-
-    this.ReorganiseHand = function () {
-        // let handAngle = 30;
-        // let halfHandAngle = handAngle / 2;
-
-        // let cardAngle = 0;
-        // if(this.cards.length == 1){
-        //     cardAngle = halfHandAngle;
-        // } else {
-        //     cardAngle = (handAngle / (this.cards.length - 1));
-        // }
-
-        // for(let i = 0; i < this.cards.length; i++){
-        //     console.log(-halfHandAngle + (cardAngle * i));
-        //     this.cards[i].rotation = (-halfHandAngle + (cardAngle * i)) * (Math.PI / 180);
-
-        // }
-        for (let i = 0; i < this.cards.length; i++) {
-            this.cards[i].x = 300 + i * 20;
-        }
-    };
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Hand);
-
-/***/ }),
-/* 54 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Card__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Deck__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Player__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Hand__ = __webpack_require__(53);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Game__ = __webpack_require__(30);
-
-
-
-
-
-
-function GoFishGame(canvasState, socket) {
-    __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].call(this, canvasState, socket);
-
-    console.log(this.playerHand.cards);
-}
-
-GoFishGame.prototype = Object.create(__WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype);
-GoFishGame.prototype.constructor = GoFishGame;
-
-GoFishGame.prototype.DiscardSelectedCard = function () {
-    console.log(__WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype);
-    __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype.DiscardSelectedCard.call(this);
-    console.log('test');
-};
-
-/* harmony default export */ __webpack_exports__["a"] = (GoFishGame);
 
 /***/ })
 /******/ ]);
