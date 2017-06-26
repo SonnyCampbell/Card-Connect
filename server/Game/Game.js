@@ -25,8 +25,8 @@ function Game(){
             for(let i = 0; i < player.getHand().length; i++){
                 //console.log(this.players[j].getHand()[i].ToString());
                 let dealtCard = player.getHand()[i];
-                player.getSocket().emit('DealCard', dealtCard.SuitValue());
-                player.getSocket().to(player.getRoomName()).emit('OppPlayerDealtCard', dealtCard.SuitValue());
+                player.getSocket().emit('DealCard', dealtCard.SuitValue(), true);
+                player.getSocket().to(player.getRoomName()).emit('OppPlayerDealtCard', dealtCard.SuitValue(), true);
             }
         };
     }

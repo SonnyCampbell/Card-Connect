@@ -51,6 +51,16 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log('User disconnected');
     });
+
+
+// ---------------------------------------------------------------------------------
+//TODO: Logically separate functions
+// Go Fish Functions
+// ---------------------------------------------------------------------------------
+
+    socket.on('AskForCard', function(cardQuestion, cardSV){
+        conn.AskForCard(socket, cardQuestion, cardQuestion);
+    });
 });
 
 http.listen(3000, () => {

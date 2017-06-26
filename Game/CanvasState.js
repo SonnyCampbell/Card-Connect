@@ -90,6 +90,8 @@ function CanvasState(canvas, socket){
                 selectedCard.selected = true;
                 cardSelected = true;
 
+                game.UpdateUI();
+
                 this.valid = false;
             } else {
                 game.playerHand.cards[i].selected = false;

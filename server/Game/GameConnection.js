@@ -59,7 +59,7 @@ function GameConnection(io) {
         let player = _players[socket.id];
         let game = _games[player.getRoomName()];
         let dealtCard = game.DealCard();
-        socket.emit('DealCard', dealtCard.SuitValue());
+        socket.emit('DealCard', dealtCard.SuitValue(), false);
         socket.to(player.getRoomName()).emit('OppPlayerDealtCard', dealtCard.SuitValue());
 
     }
@@ -72,6 +72,17 @@ function GameConnection(io) {
 
     this.EmitToRoom = (room, event, msg) => {
         io.to(room).emit(event, msg);
+    }
+
+
+// ---------------------------------------------------------------------------------
+//TODO: Logically separate functions
+// Go Fish Functions
+// ---------------------------------------------------------------------------------
+
+    this.AskForCard = (socket, cardQuestion, cardSV) => {
+        let player = _players[socket.id];
+        socket.to(player.getRoomName()).emit('OppAskedForCard', cardQuestion, cardSV);
     }
 }
 

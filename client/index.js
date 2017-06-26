@@ -33,6 +33,7 @@ function init() {
   };
 
   btnGameStart.onclick = () => {
+    
     socket.emit('StartGame');
     gameCanvas.game.playerTurn = true;
     
@@ -46,10 +47,6 @@ function init() {
     socket.emit('ShuffleDeck');
   }
 
-
-
-  
-
   socket.on('StartGame', function(msg){
     console.log(msg);   
     btnShuffleDeck.classList.remove('hide');
@@ -59,13 +56,13 @@ function init() {
 
   });
 
-  socket.on('DealCard', function(cardSuitValue) {
+  socket.on('DealCard', function(cardSuitValue, openingHand) {
     console.log('deal card client side received: ' + cardSuitValue);
-    gameCanvas.game.DealCardToPlayer(cardSuitValue);
+    gameCanvas.game.DealCardToPlayer(cardSuitValue, openingHand);
   });
 
-  socket.on('OppPlayerDealtCard', (cardSuitValue) => {
-    gameCanvas.game.DealCardToOppPlayer(cardSuitValue);
+  socket.on('OppPlayerDealtCard', (cardSuitValue, openingHand) => {
+    gameCanvas.game.DealCardToOppPlayer(cardSuitValue, openingHand);
   });
 
   socket.on('OppPlayerDiscardedCard', (cardSuitValue) => {

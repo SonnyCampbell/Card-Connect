@@ -37,7 +37,8 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
     //ctx.fillStyle = this.fill;
     //ctx.fillRect(this.x, this.y, this.w, this.h);
     let hoverRaise = 0;
-    if((this.hovered && !this.selected)){
+    //if((this.hovered && !this.selected)){
+    if((this.hovered || this.selected)){
         hoverRaise = 10;
     }
 

@@ -326,7 +326,8 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
         //ctx.fillStyle = this.fill;
         //ctx.fillRect(this.x, this.y, this.w, this.h);
         let hoverRaise = 0;
-        if (this.hovered && !this.selected) {
+        //if((this.hovered && !this.selected)){
+        if (this.hovered || this.selected) {
             hoverRaise = 10;
         }
 
@@ -2189,45 +2190,6 @@ function Game(canvasState, socket) {
         this.canvasState.valid = false;
     };
 
-    this.DealCardToPlayer = function (cardSV) {
-        console.log('client side attempting to deal card ' + cardSV);
-        let card = this.theDeck.deckDict[cardSV];
-        this.theDeck.RemoveCard(card);
-
-        this.cards = this.theDeck.Cards();
-
-        card.displayImage = card.faceImage;
-        card.isFaceDown = false;
-        this.selectedCard = card;
-
-        let reorganiseHand = function () {
-            this.playerHand.ReorganiseHand();
-        }.bind(this);
-
-        this.canvasState.valid = false;
-        this.playerHand.AddCardToHand(card);
-
-        this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + (this.playerHand.cards.length - 1) * 20, 300, card.x, card.y, reorganiseHand);
-    };
-
-    this.DealCardToOppPlayer = function (cardSV) {
-        console.log('Dealing opp: ' + cardSV);
-        this.playerTurn = true;
-        this.oppPlayerTurn = false;
-
-        let card = this.theDeck.deckDict[cardSV];
-        this.theDeck.RemoveCard(card);
-        this.cards = this.theDeck.Cards();
-
-        let reorganiseHand = function () {
-            this.oppPlayerHand.ReorganiseHand();
-        }.bind(this);
-
-        this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + this.oppPlayerHand.cards.length * 20, 100, card.x, card.y, reorganiseHand);
-
-        this.oppPlayerHand.AddCardToHand(card);
-    };
-
     this.Draw = function (ctx) {
         let cards = this.cards;
         let canvasState = this.canvasState;
@@ -2301,13 +2263,14 @@ function Game(canvasState, socket) {
             ctx.strokeStyle = canvasState.selectionColor;
             ctx.lineWidth = canvasState.selectionWidth;
             let myCard = this.selectedCard;
-            ctx.strokeRect(myCard.x, myCard.y, myCard.w, myCard.h);
+            ctx.strokeRect(myCard.x, myCard.y - 10, myCard.w, myCard.h);
         }
     };
 }
 
 Game.prototype.StartGame = function () {
     this.gameStarted = true;
+    console.log(this);
     if (!this.playerTurn) {
         this.oppPlayerTurn = true;
     }
@@ -2355,6 +2318,52 @@ Game.prototype.OppPlayerDiscardedCard = function (discardedcardSV) {
         }
     }
     console.log(discardedcardSV);
+};
+
+Game.prototype.DealCardToPlayer = function (cardSV, openingHand) {
+    console.log('client side attempting to deal card ' + cardSV);
+    if (!openingHand) {
+        this.playerTurn = false;
+        this.oppPlayerTurn = true;
+    }
+
+    let card = this.theDeck.deckDict[cardSV];
+    this.theDeck.RemoveCard(card);
+
+    this.cards = this.theDeck.Cards();
+
+    card.displayImage = card.faceImage;
+    card.isFaceDown = false;
+    this.selectedCard = card;
+
+    let reorganiseHand = function () {
+        this.playerHand.ReorganiseHand();
+    }.bind(this);
+
+    this.canvasState.valid = false;
+    this.playerHand.AddCardToHand(card);
+
+    this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + (this.playerHand.cards.length - 1) * 20, 300, card.x, card.y, reorganiseHand);
+};
+
+Game.prototype.DealCardToOppPlayer = function (cardSV, openingHand) {
+    console.log('Dealing opp: ' + cardSV);
+    if (!openingHand) {
+        this.playerTurn = true;
+        this.oppPlayerTurn = false;
+    }
+
+    let card = this.theDeck.deckDict[cardSV];
+    this.theDeck.RemoveCard(card);
+    this.cards = this.theDeck.Cards();
+
+    let reorganiseHand = function () {
+        this.oppPlayerHand.ReorganiseHand();
+    }.bind(this);
+
+    this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + this.oppPlayerHand.cards.length * 20, 100, card.x, card.y, reorganiseHand);
+
+    this.oppPlayerHand.AddCardToHand(card);
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (Game);
@@ -4070,6 +4079,8 @@ function CanvasState(canvas, socket) {
                 selectedCard.selected = true;
                 cardSelected = true;
 
+                game.UpdateUI();
+
                 this.valid = false;
             } else {
                 game.playerHand.cards[i].selected = false;
@@ -4412,6 +4423,11 @@ module.exports = function(arraybuffer, start, end) {
 
 
 function GoFishGame(canvasState, socket) {
+    let game = this;
+    socket.on('OppAskedForCard', function (cardQuestion, cardSV) {
+        game.AskedForCard(cardQuestion, cardSV);
+    });
+
     __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].call(this, canvasState, socket);
 }
 
@@ -4425,31 +4441,85 @@ GoFishGame.prototype.CreateUI = function () {
     btnAskCard.appendChild(btnText);
 
     btnAskCard.style.position = "absolute";
-    btnAskCard.style.left = "100px";
-    btnAskCard.style.top = "100px";
-
-    // btnAskCard.style.left = this.playerHand.cards[0].x + "px";
-    // btnAskCard.style.top = (this.playerHand.cards[0].y + 50) + "px";
+    btnAskCard.style.left = "300px";
+    btnAskCard.style.top = "500px";
+    btnAskCard.style.width = "100px";
 
     document.getElementById('canvas-wrapper').appendChild(btnAskCard);
 
-    btnAskCard.onclick = () => {
-        this.AskForCard();
+    let game = this;
+    btnAskCard.disabled = !this.playerTurn;
+    btnAskCard.onclick = function () {
+        game.AskForCard();
     };
+
+    let divCardQuestion = document.createElement('div');
+    this.divCardQuestion = divCardQuestion;
+
+    let imgSpeechBubble = document.createElement('img');
+    imgSpeechBubble.setAttribute('src', 'images/speechBubble.png');
+    imgSpeechBubble.setAttribute('height', '100px');
+    imgSpeechBubble.setAttribute('width', '200px');
+    divCardQuestion.appendChild(imgSpeechBubble);
+
+    let divCardQuestionText = document.createElement('div');
+    this.divCardQuestionText = divCardQuestionText;
+    let txtCardQuestion = document.createTextNode('');
+    divCardQuestionText.appendChild(txtCardQuestion);
+    divCardQuestionText.style.position = 'absolute';
+    divCardQuestionText.style.top = "20px";
+    divCardQuestionText.style.left = "20px";
+
+    divCardQuestion.appendChild(divCardQuestionText);
+    divCardQuestion.style.position = 'absolute';
+    divCardQuestion.style.left = "300px";
+    divCardQuestion.style.top = "10px";
+    document.getElementById('canvas-wrapper').appendChild(divCardQuestion);
+};
+
+GoFishGame.prototype.UpdateUI = function () {
+    this.btnAskCard.innerHTML = 'Any ' + this.selectedCard.GetValueString() + 's?';
 };
 
 GoFishGame.prototype.StartGame = function () {
     __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype.StartGame.call(this);
-    console.log('test');
+
     this.CreateUI();
 };
 
 GoFishGame.prototype.DiscardSelectedCard = function () {
+    console.log('test1');
     __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype.DiscardSelectedCard.call(this);
 };
 
+GoFishGame.prototype.DealCardToPlayer = function (cardSV, openingHand) {
+    if (!openingHand) {
+        this.btnAskCard.disabled = true;
+    }
+
+    __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype.DealCardToPlayer.call(this, cardSV, openingHand);
+};
+
+GoFishGame.prototype.DealCardToOppPlayer = function (cardSV, openingHand) {
+    if (!openingHand) {
+        this.btnAskCard.disabled = false;
+    }
+
+    this.divCardQuestionText.innerHTML = '';
+    this.divCardQuestion.classList.add('hide');
+
+    __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype.DealCardToOppPlayer.call(this, cardSV, openingHand);
+};
+
 GoFishGame.prototype.AskForCard = function () {
-    console.log(this.btnAskCard);
+    if (this.playerTurn) {
+        this.socket.emit('AskForCard', this.btnAskCard.innerHTML, this.selectedCard.SuitValue());
+    }
+};
+
+GoFishGame.prototype.AskedForCard = function (cardQuestion, cardSV) {
+    this.divCardQuestion.classList.remove('hide');
+    this.divCardQuestionText.innerHTML = cardQuestion;
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (GoFishGame);
@@ -4499,6 +4569,7 @@ function init() {
   };
 
   btnGameStart.onclick = () => {
+
     socket.emit('StartGame');
     gameCanvas.game.playerTurn = true;
 
@@ -4520,13 +4591,13 @@ function init() {
     gameCanvas.StartGame();
   });
 
-  socket.on('DealCard', function (cardSuitValue) {
+  socket.on('DealCard', function (cardSuitValue, openingHand) {
     console.log('deal card client side received: ' + cardSuitValue);
-    gameCanvas.game.DealCardToPlayer(cardSuitValue);
+    gameCanvas.game.DealCardToPlayer(cardSuitValue, openingHand);
   });
 
-  socket.on('OppPlayerDealtCard', cardSuitValue => {
-    gameCanvas.game.DealCardToOppPlayer(cardSuitValue);
+  socket.on('OppPlayerDealtCard', (cardSuitValue, openingHand) => {
+    gameCanvas.game.DealCardToOppPlayer(cardSuitValue, openingHand);
   });
 
   socket.on('OppPlayerDiscardedCard', cardSuitValue => {

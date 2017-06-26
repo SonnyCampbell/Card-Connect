@@ -31,57 +31,6 @@ function Game(canvasState, socket){
         this.canvasState.valid = false;
     }
 
-    this.DealCardToPlayer = function(cardSV){
-        console.log('client side attempting to deal card ' + cardSV);
-        let card = this.theDeck.deckDict[cardSV];
-        this.theDeck.RemoveCard(card);
-
-        this.cards = this.theDeck.Cards();
-        
-        card.displayImage = card.faceImage;
-        card.isFaceDown = false;
-        this.selectedCard = card;
-
-        let reorganiseHand = (function() {this.playerHand.ReorganiseHand()}).bind(this);
-
-        this.canvasState.valid = false;
-        this.playerHand.AddCardToHand(card);
-
-        this.canvasState.animateTo(card, 
-                                (new Date()).getTime(), 
-                                0.75, 
-                                300 + ((this.playerHand.cards.length-1) * 20), 
-                                300, 
-                                card.x, 
-                                card.y,
-                                reorganiseHand);
-        
-        
-    }
-
-    this.DealCardToOppPlayer = function(cardSV){
-        console.log('Dealing opp: ' + cardSV);
-        this.playerTurn = true;
-        this.oppPlayerTurn = false;
-
-        let card = this.theDeck.deckDict[cardSV];
-        this.theDeck.RemoveCard(card);
-        this.cards = this.theDeck.Cards();
-
-        let reorganiseHand = (function() {this.oppPlayerHand.ReorganiseHand()}).bind(this);
-
-        this.canvasState.animateTo(card, 
-                                (new Date()).getTime(), 
-                                0.75, 
-                                300 + (this.oppPlayerHand.cards.length * 20), 
-                                100, 
-                                card.x, 
-                                card.y,
-                                reorganiseHand);
-
-        this.oppPlayerHand.AddCardToHand(card);
-    }
-
     this.Draw = function(ctx){
         let cards = this.cards;
         let canvasState = this.canvasState;
@@ -158,13 +107,14 @@ function Game(canvasState, socket){
             ctx.strokeStyle = canvasState.selectionColor;
             ctx.lineWidth = canvasState.selectionWidth;
             let myCard = this.selectedCard;
-            ctx.strokeRect(myCard.x, myCard.y, myCard.w, myCard.h);
+            ctx.strokeRect(myCard.x, myCard.y - 10, myCard.w, myCard.h);
         }
     }
 }
 
 Game.prototype.StartGame = function(){
     this.gameStarted = true;
+    console.log(this);
     if(!this.playerTurn){
         this.oppPlayerTurn = true;
     } 
@@ -210,6 +160,65 @@ Game.prototype.OppPlayerDiscardedCard = function(discardedcardSV){
         }
     }
     console.log(discardedcardSV);
+}
+
+Game.prototype.DealCardToPlayer = function(cardSV, openingHand){
+    console.log('client side attempting to deal card ' + cardSV);
+    if(!openingHand){
+        this.playerTurn = false;
+        this.oppPlayerTurn = true;
+    }
+
+
+    let card = this.theDeck.deckDict[cardSV];
+    this.theDeck.RemoveCard(card);
+
+    this.cards = this.theDeck.Cards();
+    
+    card.displayImage = card.faceImage;
+    card.isFaceDown = false;
+    this.selectedCard = card;
+
+    let reorganiseHand = (function() {this.playerHand.ReorganiseHand()}).bind(this);
+
+    this.canvasState.valid = false;
+    this.playerHand.AddCardToHand(card);
+
+    this.canvasState.animateTo(card, 
+                            (new Date()).getTime(), 
+                            0.75, 
+                            300 + ((this.playerHand.cards.length-1) * 20), 
+                            300, 
+                            card.x, 
+                            card.y,
+                            reorganiseHand);
+    
+    
+}
+
+Game.prototype.DealCardToOppPlayer = function(cardSV, openingHand){
+    console.log('Dealing opp: ' + cardSV);
+    if(!openingHand){
+        this.playerTurn = true;
+        this.oppPlayerTurn = false;
+    }
+
+    let card = this.theDeck.deckDict[cardSV];
+    this.theDeck.RemoveCard(card);
+    this.cards = this.theDeck.Cards();
+
+    let reorganiseHand = (function() {this.oppPlayerHand.ReorganiseHand()}).bind(this);
+
+    this.canvasState.animateTo(card, 
+                            (new Date()).getTime(), 
+                            0.75, 
+                            300 + (this.oppPlayerHand.cards.length * 20), 
+                            100, 
+                            card.x, 
+                            card.y,
+                            reorganiseHand);
+
+    this.oppPlayerHand.AddCardToHand(card);
 }
 
 export default Game;

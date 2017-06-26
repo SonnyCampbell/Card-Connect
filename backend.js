@@ -99,8 +99,8 @@ function Game(){
             for(let i = 0; i < player.getHand().length; i++){
                 //console.log(this.players[j].getHand()[i].ToString());
                 let dealtCard = player.getHand()[i];
-                player.getSocket().emit('DealCard', dealtCard.SuitValue());
-                player.getSocket().to(player.getRoomName()).emit('OppPlayerDealtCard', dealtCard.SuitValue());
+                player.getSocket().emit('DealCard', dealtCard.SuitValue(), true);
+                player.getSocket().to(player.getRoomName()).emit('OppPlayerDealtCard', dealtCard.SuitValue(), true);
             }
         };
     }
@@ -286,7 +286,7 @@ function GameConnection(io) {
         let player = _players[socket.id];
         let game = _games[player.getRoomName()];
         let dealtCard = game.DealCard();
-        socket.emit('DealCard', dealtCard.SuitValue());
+        socket.emit('DealCard', dealtCard.SuitValue(), false);
         socket.to(player.getRoomName()).emit('OppPlayerDealtCard', dealtCard.SuitValue());
 
     }
@@ -299,6 +299,17 @@ function GameConnection(io) {
 
     this.EmitToRoom = (room, event, msg) => {
         io.to(room).emit(event, msg);
+    }
+
+
+// ---------------------------------------------------------------------------------
+//TODO: Logically separate functions
+// Go Fish Functions
+// ---------------------------------------------------------------------------------
+
+    this.AskForCard = (socket, cardQuestion, cardSV) => {
+        let player = _players[socket.id];
+        socket.to(player.getRoomName()).emit('OppAskedForCard', cardQuestion, cardSV);
     }
 }
 
@@ -536,6 +547,16 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log('User disconnected');
+    });
+
+
+// ---------------------------------------------------------------------------------
+//TODO: Logically separate functions
+// Go Fish Functions
+// ---------------------------------------------------------------------------------
+
+    socket.on('AskForCard', function(cardQuestion, cardSV){
+        conn.AskForCard(socket, cardQuestion, cardQuestion);
     });
 });
 
