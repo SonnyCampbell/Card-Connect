@@ -90,7 +90,7 @@ function CanvasState(canvas, socket){
                 selectedCard.selected = true;
                 cardSelected = true;
 
-                game.UpdateUI();
+                game.SelectedCard();
 
                 this.valid = false;
             } else {
