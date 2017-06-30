@@ -4496,6 +4496,10 @@ function GoFishGame(canvasState, socket) {
         game.OppAskedForCard(cardQuestion, cardSV);
     });
 
+    socket.on('PassedCard', function (cardSV) {
+        game.OppPassedCard(cardSV);
+    });
+
     socket.on('ToldGoFish', function () {
         game.OppToldGoFish();
     });
@@ -4595,16 +4599,48 @@ GoFishGame.prototype.OppToldGoFish = function () {
     this.divCardQuestionText.innerHTML = 'Go fish!';
 };
 
+GoFishGame.prototype.OppPassedCard = function (cardSV) {
+    console.log(cardSV);
+    let oppHand = this.oppPlayerHand.cards;
+
+    for (let i = 0; i < oppHand.length; i++) {
+        if (oppHand[i].SuitValue() == cardSV) {
+            let passedCard = oppHand[i];
+            passedCard.displayImage = passedCard.faceImage;
+
+            console.log('passing card ' + oppHand[i].SuitValue());
+            this.oppPlayerHand.cards.splice(i, 1);
+
+            let reorganiseHand = function () {
+                this.playerHand.ReorganiseHand();
+            }.bind(this);
+
+            this.canvasState.animateTo(passedCard, new Date().getTime(), 0.75, 300 + this.playerHand.cards.length * 20, 300, passedCard.x, passedCard.y, reorganiseHand);
+
+            this.playerHand.AddCardToHand(passedCard);
+
+            this.OppPassedCard(cardSV);
+            return;
+        }
+    }
+
+    this.oppPlayerHand.ReorganiseHand();
+};
+
 function PassCards(game) {
     let hand = game.playerHand.cards;
 
     for (let i = 0; i < hand.length; i++) {
         if (hand[i].askedFor) {
             let passedCard = hand[i];
+
+            game.socket.emit('PassingCard', passedCard.SuitValue());
+
             console.log('passing card ' + hand[i].SuitValue());
             game.playerHand.cards.splice(i, 1);
 
             let reorganiseHand = function () {
+                passedCard.displayImage = passedCard.backImage;
                 game.oppPlayerHand.ReorganiseHand();
             }.bind(game);
 

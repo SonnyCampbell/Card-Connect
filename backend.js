@@ -316,6 +316,11 @@ function GameConnection(io) {
         let player = _players[socket.id];
         socket.to(player.getRoomName()).emit('ToldGoFish');
     }
+
+    this.PassingCard = (socket, cardSV) => {
+        let player = _players[socket.id];
+        socket.to(player.getRoomName()).emit('PassedCard', cardSV);
+    }
 }
 
 
@@ -570,6 +575,10 @@ io.on('connection', (socket) => {
 
     socket.on('GoFish', function(){
         conn.GoFish(socket);
+    });
+
+    socket.on('PassingCard', function(cardSV){
+        conn.PassingCard(socket, cardSV);
     });
 
 });

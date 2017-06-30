@@ -66,6 +66,10 @@ io.on('connection', (socket) => {
         conn.GoFish(socket);
     });
 
+    socket.on('PassingCard', function(cardSV){
+        conn.PassingCard(socket, cardSV);
+    });
+
 });
 
 http.listen(3000, () => {
