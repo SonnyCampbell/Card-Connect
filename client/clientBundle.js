@@ -309,6 +309,7 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
 
     this.hovered = false;
     this.selected = false;
+    this.askedFor = false;
 
     let _suit = suit;
     let _value = value;
@@ -1247,6 +1248,72 @@ function DeckOfCards() {
     };
 }
 
+// function Cre ateDeck(deckDict) {
+//     let cards = [];
+
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/2_of_clubs.png' , 'C', 2 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/3_of_clubs.png' , 'C', 3 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/4_of_clubs.png' , 'C', 4 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/5_of_clubs.png' , 'C', 5 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/6_of_clubs.png' , 'C', 6 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/7_of_clubs.png' , 'C', 7 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/8_of_clubs.png' , 'C', 8 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/9_of_clubs.png' , 'C', 9 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/10_of_clubs.png' , 'C', 10 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/jack_of_clubs2.png' , 'C', 11 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/queen_of_clubs2.png' , 'C', 12 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/king_of_clubs2.png' , 'C', 13 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/ace_of_clubs.png' , 'C', 1 ));
+
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/2_of_spades.png' , 'S', 2 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/3_of_spades.png' , 'S', 3 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/4_of_spades.png' , 'S', 4 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/5_of_spades.png' , 'S', 5 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/6_of_spades.png' , 'S', 6 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/7_of_spades.png' , 'S', 7 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/8_of_spades.png' , 'S', 8 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/9_of_spades.png' , 'S', 9 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/10_of_spades.png' , 'S', 10 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/jack_of_spades2.png' , 'S', 11 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/queen_of_spades2.png' , 'S', 12 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/king_of_spades2.png' , 'S', 13 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/ace_of_spades.png' , 'S', 1 ));
+
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/2_of_hearts.png' , 'H', 2 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/3_of_hearts.png' , 'H', 3 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/4_of_hearts.png' , 'H', 4 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/5_of_hearts.png' , 'H', 5 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/6_of_hearts.png' , 'H', 6 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/7_of_hearts.png' , 'H', 7 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/8_of_hearts.png' , 'H', 8 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/9_of_hearts.png' , 'H', 9 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/10_of_hearts.png' , 'H', 10 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/jack_of_hearts2.png' , 'H', 11 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/queen_of_hearts2.png' , 'H', 12 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/king_of_hearts2.png' , 'H', 13 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/ace_of_hearts.png' , 'H', 1 ));
+
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/2_of_diamonds.png' , 'D', 2 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/3_of_diamonds.png' , 'D', 3 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/4_of_diamonds.png' , 'D', 4 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/5_of_diamonds.png' , 'D', 5 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/6_of_diamonds.png' , 'D', 6 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/7_of_diamonds.png' , 'D', 7 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/8_of_diamonds.png' , 'D', 8 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/9_of_diamonds.png' , 'D', 9 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/10_of_diamonds.png' , 'D', 10 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/jack_of_diamonds2.png' , 'D', 11 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/queen_of_diamonds2.png' , 'D', 12 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/king_of_diamonds2.png' , 'D', 13 ));
+//     cards.push(new Card(0, 0, 100, 150, '/images/Cards/ace_of_diamonds.png' , 'D', 1 ));
+
+//     cards.forEach(function(card) {
+//         deckDict[card.SuitValue()] = card;
+//     }, this);
+
+//     return cards;
+// }
+
 function CreateDeck(deckDict) {
     let cards = [];
 
@@ -1286,11 +1353,6 @@ function CreateDeck(deckDict) {
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/7_of_hearts.png', 'H', 7));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/8_of_hearts.png', 'H', 8));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/9_of_hearts.png', 'H', 9));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/10_of_hearts.png', 'H', 10));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/jack_of_hearts2.png', 'H', 11));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/queen_of_hearts2.png', 'H', 12));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/king_of_hearts2.png', 'H', 13));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/ace_of_hearts.png', 'H', 1));
 
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/2_of_diamonds.png', 'D', 2));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/3_of_diamonds.png', 'D', 3));
@@ -1300,6 +1362,13 @@ function CreateDeck(deckDict) {
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/7_of_diamonds.png', 'D', 7));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/8_of_diamonds.png', 'D', 8));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/9_of_diamonds.png', 'D', 9));
+
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/10_of_hearts.png', 'H', 10));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/jack_of_hearts2.png', 'H', 11));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/queen_of_hearts2.png', 'H', 12));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/king_of_hearts2.png', 'H', 13));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/ace_of_hearts.png', 'H', 1));
+
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/10_of_diamonds.png', 'D', 10));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/jack_of_diamonds2.png', 'D', 11));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/queen_of_diamonds2.png', 'D', 12));
@@ -2334,7 +2403,6 @@ Game.prototype.DealCardToPlayer = function (cardSV, openingHand) {
 
     card.displayImage = card.faceImage;
     card.isFaceDown = false;
-    this.selectedCard = card;
 
     let reorganiseHand = function () {
         this.playerHand.ReorganiseHand();
@@ -4425,18 +4493,29 @@ module.exports = function(arraybuffer, start, end) {
 function GoFishGame(canvasState, socket) {
     let game = this;
     socket.on('OppAskedForCard', function (cardQuestion, cardSV) {
-        game.AskedForCard(cardQuestion, cardSV);
+        game.OppAskedForCard(cardQuestion, cardSV);
     });
 
     socket.on('ToldGoFish', function () {
-        game.ToldGoFish();
+        game.OppToldGoFish();
     });
 
     __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].call(this, canvasState, socket);
+    this.askedForCard = false;
+
+    canvasState.canvas.addEventListener('dblclick', function (e) {
+        game.HandleDblClick();
+    }, false);
 }
 
 GoFishGame.prototype = Object.create(__WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype);
 GoFishGame.prototype.constructor = GoFishGame;
+
+GoFishGame.prototype.HandleDblClick = function () {
+    if (this.askedForCard) {
+        PassCards(this);
+    }
+};
 
 GoFishGame.prototype.CreateUI = function () {
     CreateBtnAskCard(this);
@@ -4469,6 +4548,11 @@ GoFishGame.prototype.DealCardToPlayer = function (cardSV, openingHand) {
     this.divCardQuestionText.innerHTML = '';
     this.divCardQuestion.classList.add('hide');
 
+    if (this.selectedCard != null) {
+        this.selectedCard.selected = false;
+        this.selectedCard = null;
+    }
+
     __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype.DealCardToPlayer.call(this, cardSV, openingHand);
 };
 
@@ -4490,25 +4574,70 @@ GoFishGame.prototype.AskForCard = function () {
     }
 };
 
-GoFishGame.prototype.AskedForCard = function (cardQuestion, cardSV) {
+GoFishGame.prototype.OppAskedForCard = function (cardQuestion, cardSV) {
     this.divCardQuestion.classList.remove('hide');
     this.divCardQuestionText.innerHTML = cardQuestion;
+
+    CheckHandForCard(this, cardSV);
+    this.askedForCard = true;
+
     this.btnGoFish.disabled = false;
 };
 
 GoFishGame.prototype.GoFish = function () {
-    //if (this.playerTurn){   
     this.socket.emit('GoFish');
     this.btnGoFish.disabled = true;
-    //}
+    this.askedForCard = false;
 };
 
-GoFishGame.prototype.ToldGoFish = function () {
-    //if (this.playerTurn){   
+GoFishGame.prototype.OppToldGoFish = function () {
     this.divCardQuestion.classList.remove('hide');
     this.divCardQuestionText.innerHTML = 'Go fish!';
-    //}
 };
+
+function PassCards(game) {
+    let hand = game.playerHand.cards;
+
+    for (let i = 0; i < hand.length; i++) {
+        if (hand[i].askedFor) {
+            let passedCard = hand[i];
+            console.log('passing card ' + hand[i].SuitValue());
+            game.playerHand.cards.splice(i, 1);
+
+            let reorganiseHand = function () {
+                game.oppPlayerHand.ReorganiseHand();
+            }.bind(game);
+
+            game.canvasState.animateTo(passedCard, new Date().getTime(), 0.75, 300 + game.oppPlayerHand.cards.length * 20, 100, passedCard.x, passedCard.y, reorganiseHand);
+
+            game.oppPlayerHand.AddCardToHand(passedCard);
+
+            PassCards(game);
+            return;
+        }
+    }
+
+    game.playerHand.ReorganiseHand();
+
+    game.selectedCard = null;
+    game.canvasState.valid = false;
+}
+
+function CheckHandForCard(game, cardSV) {
+    let hand = game.playerHand.cards;
+    let deck = game.theDeck;
+    console.log(deck.deckDict[cardSV]);
+
+    for (let i = 0; i < hand.length; i++) {
+        if (hand[i].GetValueString() == deck.deckDict[cardSV].GetValueString()) {
+            game.selectedCard = hand[i];
+            hand[i].selected = true;
+            hand[i].askedFor = true;
+            game.canvasState.valid = false;
+            break;
+        }
+    }
+}
 
 function CreateBtnAskCard(game) {
     let btnAskCard = document.createElement("button");

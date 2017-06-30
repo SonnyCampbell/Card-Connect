@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
 // ---------------------------------------------------------------------------------
 
     socket.on('AskForCard', function(cardQuestion, cardSV){
-        conn.AskForCard(socket, cardQuestion, cardQuestion);
+        conn.AskForCard(socket, cardQuestion, cardSV);
     });
 
     socket.on('GoFish', function(){

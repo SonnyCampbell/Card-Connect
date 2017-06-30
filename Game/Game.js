@@ -107,7 +107,7 @@ function Game(canvasState, socket){
             ctx.strokeStyle = canvasState.selectionColor;
             ctx.lineWidth = canvasState.selectionWidth;
             let myCard = this.selectedCard;
-            ctx.strokeRect(myCard.x, myCard.y - 10, myCard.w, myCard.h);
+            ctx.strokeRect(myCard.x, myCard.y-10, myCard.w, myCard.h);
         }
     }
 }
@@ -177,7 +177,6 @@ Game.prototype.DealCardToPlayer = function(cardSV, openingHand){
     
     card.displayImage = card.faceImage;
     card.isFaceDown = false;
-    this.selectedCard = card;
 
     let reorganiseHand = (function() {this.playerHand.ReorganiseHand()}).bind(this);
 

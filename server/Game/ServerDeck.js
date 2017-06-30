@@ -56,6 +56,7 @@ function DeckOfCards() {
 }
 
 
+
 function CreateDeck() {
     let cards = [];
 
@@ -95,11 +96,7 @@ function CreateDeck() {
     cards.push(new Card(0, 0, 100, 150, 'H', 7 ));
     cards.push(new Card(0, 0, 100, 150, 'H', 8 ));
     cards.push(new Card(0, 0, 100, 150, 'H', 9 ));
-    cards.push(new Card(0, 0, 100, 150, 'H', 10 ));
-    cards.push(new Card(0, 0, 100, 150, 'H', 11 ));
-    cards.push(new Card(0, 0, 100, 150, 'H', 12 ));
-    cards.push(new Card(0, 0, 100, 150, 'H', 13 ));
-    cards.push(new Card(0, 0, 100, 150, 'H', 1 ));
+
 
     cards.push(new Card(0, 0, 100, 150, 'D', 2 ));
     cards.push(new Card(0, 0, 100, 150, 'D', 3 ));
@@ -109,6 +106,13 @@ function CreateDeck() {
     cards.push(new Card(0, 0, 100, 150, 'D', 7 ));
     cards.push(new Card(0, 0, 100, 150, 'D', 8 ));
     cards.push(new Card(0, 0, 100, 150, 'D', 9 ));
+
+    cards.push(new Card(0, 0, 100, 150, 'H', 10 ));
+    cards.push(new Card(0, 0, 100, 150, 'H', 11 ));
+    cards.push(new Card(0, 0, 100, 150, 'H', 12 ));
+    cards.push(new Card(0, 0, 100, 150, 'H', 13 ));
+    cards.push(new Card(0, 0, 100, 150, 'H', 1 ));
+
     cards.push(new Card(0, 0, 100, 150, 'D', 10 ));
     cards.push(new Card(0, 0, 100, 150, 'D', 11 ));
     cards.push(new Card(0, 0, 100, 150, 'D', 12 ));

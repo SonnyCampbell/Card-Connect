@@ -7,19 +7,31 @@ import Game from './Game'
 function GoFishGame(canvasState, socket) {
     let game = this;
     socket.on('OppAskedForCard', function(cardQuestion, cardSV) {
-        game.AskedForCard(cardQuestion, cardSV);
+        game.OppAskedForCard(cardQuestion, cardSV);
     });
 
     socket.on('ToldGoFish', function() {
-        game.ToldGoFish();
+        game.OppToldGoFish();
     });
 
     Game.call(this,canvasState, socket);
+    this.askedForCard = false;
+
+    canvasState.canvas.addEventListener('dblclick', function(e){
+        game.HandleDblClick();
+
+    }, false);
 
 }
 
 GoFishGame.prototype = Object.create(Game.prototype);
 GoFishGame.prototype.constructor = GoFishGame;
+
+GoFishGame.prototype.HandleDblClick = function(){
+    if (this.askedForCard) {
+        PassCards(this);
+    }
+}
 
 GoFishGame.prototype.CreateUI = function() {
     CreateBtnAskCard(this);
@@ -54,6 +66,12 @@ GoFishGame.prototype.DealCardToPlayer = function(cardSV, openingHand){
     this.divCardQuestionText.innerHTML = '';
     this.divCardQuestion.classList.add('hide');
 
+    if(this.selectedCard != null){
+        this.selectedCard.selected = false;
+        this.selectedCard = null;
+    }
+
+
     Game.prototype.DealCardToPlayer.call(this, cardSV, openingHand); 
 }
 
@@ -77,24 +95,78 @@ GoFishGame.prototype.AskForCard = function(){
     }
 }
 
-GoFishGame.prototype.AskedForCard = function(cardQuestion, cardSV){  
+GoFishGame.prototype.OppAskedForCard = function(cardQuestion, cardSV){  
     this.divCardQuestion.classList.remove('hide');
     this.divCardQuestionText.innerHTML = cardQuestion;
+
+    CheckHandForCard(this, cardSV);
+    this.askedForCard = true;
+
     this.btnGoFish.disabled = false;
 }
 
-GoFishGame.prototype.GoFish = function(){  
-    //if (this.playerTurn){   
+GoFishGame.prototype.GoFish = function(){    
     this.socket.emit('GoFish'); 
     this.btnGoFish.disabled = true;  
-    //}
+    this.askedForCard = false;
 }
 
-GoFishGame.prototype.ToldGoFish = function(){  
-    //if (this.playerTurn){   
+GoFishGame.prototype.OppToldGoFish = function(){     
     this.divCardQuestion.classList.remove('hide');
     this.divCardQuestionText.innerHTML = 'Go fish!';  
-    //}
+}
+
+
+function PassCards(game){
+    let hand = game.playerHand.cards;
+
+    for(let i = 0; i < hand.length; i++){
+        if(hand[i].askedFor){
+            let passedCard = hand[i];
+            console.log('passing card ' + hand[i].SuitValue());
+            game.playerHand.cards.splice(i, 1);
+          
+            let reorganiseHand = (function() {game.oppPlayerHand.ReorganiseHand()}).bind(game);
+
+            game.canvasState.animateTo(passedCard, 
+                                    (new Date()).getTime(), 
+                                    0.75, 
+                                    300 + ((game.oppPlayerHand.cards.length) * 20), 
+                                    100, 
+                                    passedCard.x, 
+                                    passedCard.y,
+                                    reorganiseHand);
+
+            game.oppPlayerHand.AddCardToHand(passedCard);
+
+            PassCards(game);
+            return;
+        }
+    }
+
+    game.playerHand.ReorganiseHand();
+
+    game.selectedCard = null;
+    game.canvasState.valid = false;
+}
+
+
+function CheckHandForCard(game, cardSV){
+    let hand = game.playerHand.cards;
+    let deck = game.theDeck;
+    console.log(deck.deckDict[cardSV]);
+
+    for(let i = 0; i < hand.length; i++){
+        if(hand[i].GetValueString() == deck.deckDict[cardSV].GetValueString()){
+            game.selectedCard = hand[i];
+            hand[i].selected = true;
+            hand[i].askedFor = true;
+            game.canvasState.valid = false;
+            break;
+        }
+    }
+
+    
 }
 
 function CreateBtnAskCard(game) {

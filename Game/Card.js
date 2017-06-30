@@ -17,6 +17,7 @@ function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
 
   this.hovered = false;
   this.selected = false;
+  this.askedFor = false;
 
   let _suit = suit;
   let _value = value;
