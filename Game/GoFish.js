@@ -48,7 +48,12 @@ GoFishGame.prototype.CreateUI = function() {
 }
 
 GoFishGame.prototype.SelectedCard = function() {
-    this.btnAskCard.innerHTML = 'Any ' + this.selectedCard.GetValueString() + 's?';
+    if(this.selectedCard == null){
+        this.btnAskCard.innerHTML = 'Ask for Cards';
+    } else {
+        this.btnAskCard.innerHTML = 'Any ' + this.selectedCard.GetValueString() + 's?';
+    }
+    
 }
 
 GoFishGame.prototype.StartGame = function(){
@@ -93,8 +98,20 @@ GoFishGame.prototype.DealCardToOppPlayer = function(cardSV, openingHand){
     
 }
 
+GoFishGame.prototype.StartTurn = function(){
+    Game.prototype.StartTurn.call(this);
+    this.btnAskCard.disabled = false;
+    this.btnGoFish.disabled = true;
+}
+
+GoFishGame.prototype.EndTurn = function(){
+    Game.prototype.EndTurn.call(this);
+    this.btnAskCard.disabled = true;
+}
+
 GoFishGame.prototype.AskForCard = function(){  
-    if (this.playerTurn){   
+    if (this.selectedCard != null && this.playerTurn){   
+        console.log(this.selectedCard);
         this.socket.emit('AskForCard', this.btnAskCard.innerHTML, this.selectedCard.SuitValue());   
         this.btnAskCard.disabled = true;
     }
@@ -152,6 +169,7 @@ GoFishGame.prototype.OppPassedCard = function(cardSV) {
     }
 
     this.oppPlayerHand.ReorganiseHand();
+    this.EndTurn();
 }
 
 
@@ -189,6 +207,7 @@ function PassCards(game){
     }
 
     game.playerHand.ReorganiseHand();
+    game.StartTurn();
 
     game.selectedCard = null;
     game.canvasState.valid = false;
@@ -245,7 +264,6 @@ function CreateBtnGoFish(game) {
 
     document.getElementById('canvas-wrapper').appendChild(btnGoFish);
 
-    //btnGoFish.disabled = !game.playerTurn;
     btnGoFish.onclick = function() { 
         game.GoFish();
     }

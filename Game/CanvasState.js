@@ -68,8 +68,7 @@ function CanvasState(canvas, socket){
                 if (cards[i].Contains(mx, my)){
                     console.log('start deal card client side');
                     this.socket.emit('DealCard');
-                    this.game.playerTurn = false;
-                    this.game.oppPlayerTurn = true;
+                    this.game.EndTurn();
                     return;
                 }
             }
@@ -98,6 +97,10 @@ function CanvasState(canvas, socket){
             }
 
         }
+
+        //TODO: Fix selected card bug when deselecting card from hand
+        console.log(game.selectedCard);
+        game.SelectedCard();
 
         if(!cardSelected){
             game.selectedCard = null;

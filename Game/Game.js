@@ -165,8 +165,7 @@ Game.prototype.OppPlayerDiscardedCard = function(discardedcardSV){
 Game.prototype.DealCardToPlayer = function(cardSV, openingHand){
     console.log('client side attempting to deal card ' + cardSV);
     if(!openingHand){
-        this.playerTurn = false;
-        this.oppPlayerTurn = true;
+        this.EndTurn();
     }
 
 
@@ -198,8 +197,7 @@ Game.prototype.DealCardToPlayer = function(cardSV, openingHand){
 Game.prototype.DealCardToOppPlayer = function(cardSV, openingHand){
     console.log('Dealing opp: ' + cardSV);
     if(!openingHand){
-        this.playerTurn = true;
-        this.oppPlayerTurn = false;
+        this.StartTurn();
     }
 
     let card = this.theDeck.deckDict[cardSV];
@@ -218,6 +216,20 @@ Game.prototype.DealCardToOppPlayer = function(cardSV, openingHand){
                             reorganiseHand);
 
     this.oppPlayerHand.AddCardToHand(card);
+}
+
+Game.prototype.StartTurn = function(){
+    this.playerTurn = true;
+    this.oppPlayerTurn = false;
+}
+
+Game.prototype.EndTurn = function(){
+    this.playerTurn = false;
+    this.oppPlayerTurn = true;
+}
+
+Game.prototype.SelectedCard = function(){
+    //Virtual and empty for now
 }
 
 export default Game;

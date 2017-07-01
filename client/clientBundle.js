@@ -2392,8 +2392,7 @@ Game.prototype.OppPlayerDiscardedCard = function (discardedcardSV) {
 Game.prototype.DealCardToPlayer = function (cardSV, openingHand) {
     console.log('client side attempting to deal card ' + cardSV);
     if (!openingHand) {
-        this.playerTurn = false;
-        this.oppPlayerTurn = true;
+        this.EndTurn();
     }
 
     let card = this.theDeck.deckDict[cardSV];
@@ -2417,8 +2416,7 @@ Game.prototype.DealCardToPlayer = function (cardSV, openingHand) {
 Game.prototype.DealCardToOppPlayer = function (cardSV, openingHand) {
     console.log('Dealing opp: ' + cardSV);
     if (!openingHand) {
-        this.playerTurn = true;
-        this.oppPlayerTurn = false;
+        this.StartTurn();
     }
 
     let card = this.theDeck.deckDict[cardSV];
@@ -2432,6 +2430,20 @@ Game.prototype.DealCardToOppPlayer = function (cardSV, openingHand) {
     this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + this.oppPlayerHand.cards.length * 20, 100, card.x, card.y, reorganiseHand);
 
     this.oppPlayerHand.AddCardToHand(card);
+};
+
+Game.prototype.StartTurn = function () {
+    this.playerTurn = true;
+    this.oppPlayerTurn = false;
+};
+
+Game.prototype.EndTurn = function () {
+    this.playerTurn = false;
+    this.oppPlayerTurn = true;
+};
+
+Game.prototype.SelectedCard = function () {
+    //Virtual and empty for now
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (Game);
@@ -4126,8 +4138,7 @@ function CanvasState(canvas, socket) {
                 if (cards[i].Contains(mx, my)) {
                     console.log('start deal card client side');
                     this.socket.emit('DealCard');
-                    this.game.playerTurn = false;
-                    this.game.oppPlayerTurn = true;
+                    this.game.EndTurn();
                     return;
                 }
             }
@@ -4154,6 +4165,10 @@ function CanvasState(canvas, socket) {
                 game.playerHand.cards[i].selected = false;
             }
         }
+
+        //TODO: Fix selected card bug when deselecting card from hand
+        console.log(game.selectedCard);
+        game.SelectedCard();
 
         if (!cardSelected) {
             game.selectedCard = null;
@@ -4529,7 +4544,11 @@ GoFishGame.prototype.CreateUI = function () {
 };
 
 GoFishGame.prototype.SelectedCard = function () {
-    this.btnAskCard.innerHTML = 'Any ' + this.selectedCard.GetValueString() + 's?';
+    if (this.selectedCard == null) {
+        this.btnAskCard.innerHTML = 'Ask for Cards';
+    } else {
+        this.btnAskCard.innerHTML = 'Any ' + this.selectedCard.GetValueString() + 's?';
+    }
 };
 
 GoFishGame.prototype.StartGame = function () {
@@ -4571,8 +4590,20 @@ GoFishGame.prototype.DealCardToOppPlayer = function (cardSV, openingHand) {
     __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype.DealCardToOppPlayer.call(this, cardSV, openingHand);
 };
 
+GoFishGame.prototype.StartTurn = function () {
+    __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype.StartTurn.call(this);
+    this.btnAskCard.disabled = false;
+    this.btnGoFish.disabled = true;
+};
+
+GoFishGame.prototype.EndTurn = function () {
+    __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].prototype.EndTurn.call(this);
+    this.btnAskCard.disabled = true;
+};
+
 GoFishGame.prototype.AskForCard = function () {
-    if (this.playerTurn) {
+    if (this.selectedCard != null && this.playerTurn) {
+        console.log(this.selectedCard);
         this.socket.emit('AskForCard', this.btnAskCard.innerHTML, this.selectedCard.SuitValue());
         this.btnAskCard.disabled = true;
     }
@@ -4625,6 +4656,7 @@ GoFishGame.prototype.OppPassedCard = function (cardSV) {
     }
 
     this.oppPlayerHand.ReorganiseHand();
+    this.EndTurn();
 };
 
 function PassCards(game) {
@@ -4654,6 +4686,7 @@ function PassCards(game) {
     }
 
     game.playerHand.ReorganiseHand();
+    game.StartTurn();
 
     game.selectedCard = null;
     game.canvasState.valid = false;
@@ -4707,7 +4740,6 @@ function CreateBtnGoFish(game) {
 
     document.getElementById('canvas-wrapper').appendChild(btnGoFish);
 
-    //btnGoFish.disabled = !game.playerTurn;
     btnGoFish.onclick = function () {
         game.GoFish();
     };
