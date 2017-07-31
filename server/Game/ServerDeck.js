@@ -68,11 +68,7 @@ function CreateDeck() {
     cards.push(new Card(0, 0, 100, 150, 'C', 7 ));
     cards.push(new Card(0, 0, 100, 150, 'C', 8 ));
     cards.push(new Card(0, 0, 100, 150, 'C', 9 ));
-    cards.push(new Card(0, 0, 100, 150, 'C', 10 ));
-    cards.push(new Card(0, 0, 100, 150, 'C', 11 ));
-    cards.push(new Card(0, 0, 100, 150, 'C', 12 ));
-    cards.push(new Card(0, 0, 100, 150, 'C', 13 ));
-    cards.push(new Card(0, 0, 100, 150, 'C', 1 ));
+
 
     cards.push(new Card(0, 0, 100, 150, 'S', 2 ));
     cards.push(new Card(0, 0, 100, 150, 'S', 3 ));
@@ -82,11 +78,7 @@ function CreateDeck() {
     cards.push(new Card(0, 0, 100, 150, 'S', 7 ));
     cards.push(new Card(0, 0, 100, 150, 'S', 8 ));
     cards.push(new Card(0, 0, 100, 150, 'S', 9 ));
-    cards.push(new Card(0, 0, 100, 150, 'S', 10 ));
-    cards.push(new Card(0, 0, 100, 150, 'S', 11 ));
-    cards.push(new Card(0, 0, 100, 150, 'S', 12 ));
-    cards.push(new Card(0, 0, 100, 150, 'S', 13 ));
-    cards.push(new Card(0, 0, 100, 150, 'S', 1 ));
+
 
     cards.push(new Card(0, 0, 100, 150, 'H', 2 ));
     cards.push(new Card(0, 0, 100, 150, 'H', 3 ));
@@ -107,17 +99,32 @@ function CreateDeck() {
     cards.push(new Card(0, 0, 100, 150, 'D', 8 ));
     cards.push(new Card(0, 0, 100, 150, 'D', 9 ));
 
+    cards.push(new Card(0, 0, 100, 150, 'C', 10 ));
+    cards.push(new Card(0, 0, 100, 150, 'C', 11 ));
+    cards.push(new Card(0, 0, 100, 150, 'C', 12 ));
+    cards.push(new Card(0, 0, 100, 150, 'C', 13 ));
+
+
+    cards.push(new Card(0, 0, 100, 150, 'S', 10 ));
+    cards.push(new Card(0, 0, 100, 150, 'S', 11 ));
+    cards.push(new Card(0, 0, 100, 150, 'S', 12 ));
+    cards.push(new Card(0, 0, 100, 150, 'S', 13 ));
+    
+
     cards.push(new Card(0, 0, 100, 150, 'H', 10 ));
     cards.push(new Card(0, 0, 100, 150, 'H', 11 ));
     cards.push(new Card(0, 0, 100, 150, 'H', 12 ));
     cards.push(new Card(0, 0, 100, 150, 'H', 13 ));
-    cards.push(new Card(0, 0, 100, 150, 'H', 1 ));
+    
 
     cards.push(new Card(0, 0, 100, 150, 'D', 10 ));
     cards.push(new Card(0, 0, 100, 150, 'D', 11 ));
     cards.push(new Card(0, 0, 100, 150, 'D', 12 ));
     cards.push(new Card(0, 0, 100, 150, 'D', 13 ));
     cards.push(new Card(0, 0, 100, 150, 'D', 1 ));
+    cards.push(new Card(0, 0, 100, 150, 'H', 1 ));
+    cards.push(new Card(0, 0, 100, 150, 'S', 1 ));
+    cards.push(new Card(0, 0, 100, 150, 'C', 1 ));
 
     return cards;
 }

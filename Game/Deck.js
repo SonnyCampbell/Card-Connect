@@ -79,7 +79,7 @@ function DeckOfCards() {
 }
 
 
-// function Cre ateDeck(deckDict) {
+// function CreateDeck(deckDict) {
 //     let cards = [];
 
 //     cards.push(new Card(0, 0, 100, 150, '/images/Cards/2_of_clubs.png' , 'C', 2 ));
@@ -156,11 +156,6 @@ function CreateDeck(deckDict) {
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/7_of_clubs.png' , 'C', 7 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/8_of_clubs.png' , 'C', 8 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/9_of_clubs.png' , 'C', 9 ));
-    cards.push(new Card(0, 0, 100, 150, '/images/Cards/10_of_clubs.png' , 'C', 10 ));
-    cards.push(new Card(0, 0, 100, 150, '/images/Cards/jack_of_clubs2.png' , 'C', 11 ));
-    cards.push(new Card(0, 0, 100, 150, '/images/Cards/queen_of_clubs2.png' , 'C', 12 ));
-    cards.push(new Card(0, 0, 100, 150, '/images/Cards/king_of_clubs2.png' , 'C', 13 ));
-    cards.push(new Card(0, 0, 100, 150, '/images/Cards/ace_of_clubs.png' , 'C', 1 ));
 
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/2_of_spades.png' , 'S', 2 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/3_of_spades.png' , 'S', 3 ));
@@ -170,11 +165,6 @@ function CreateDeck(deckDict) {
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/7_of_spades.png' , 'S', 7 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/8_of_spades.png' , 'S', 8 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/9_of_spades.png' , 'S', 9 ));
-    cards.push(new Card(0, 0, 100, 150, '/images/Cards/10_of_spades.png' , 'S', 10 ));
-    cards.push(new Card(0, 0, 100, 150, '/images/Cards/jack_of_spades2.png' , 'S', 11 ));
-    cards.push(new Card(0, 0, 100, 150, '/images/Cards/queen_of_spades2.png' , 'S', 12 ));
-    cards.push(new Card(0, 0, 100, 150, '/images/Cards/king_of_spades2.png' , 'S', 13 ));
-    cards.push(new Card(0, 0, 100, 150, '/images/Cards/ace_of_spades.png' , 'S', 1 ));
 
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/2_of_hearts.png' , 'H', 2 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/3_of_hearts.png' , 'H', 3 ));
@@ -195,6 +185,17 @@ function CreateDeck(deckDict) {
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/8_of_diamonds.png' , 'D', 8 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/9_of_diamonds.png' , 'D', 9 ));
 
+    cards.push(new Card(0, 0, 100, 150, '/images/Cards/10_of_clubs.png' , 'C', 10 ));
+    cards.push(new Card(0, 0, 100, 150, '/images/Cards/jack_of_clubs2.png' , 'C', 11 ));
+    cards.push(new Card(0, 0, 100, 150, '/images/Cards/queen_of_clubs2.png' , 'C', 12 ));
+    cards.push(new Card(0, 0, 100, 150, '/images/Cards/king_of_clubs2.png' , 'C', 13 ));
+    cards.push(new Card(0, 0, 100, 150, '/images/Cards/ace_of_clubs.png' , 'C', 1 ));
+
+    cards.push(new Card(0, 0, 100, 150, '/images/Cards/10_of_spades.png' , 'S', 10 ));
+    cards.push(new Card(0, 0, 100, 150, '/images/Cards/jack_of_spades2.png' , 'S', 11 ));
+    cards.push(new Card(0, 0, 100, 150, '/images/Cards/queen_of_spades2.png' , 'S', 12 ));
+    cards.push(new Card(0, 0, 100, 150, '/images/Cards/king_of_spades2.png' , 'S', 13 ));
+    cards.push(new Card(0, 0, 100, 150, '/images/Cards/ace_of_spades.png' , 'S', 1 ));
 
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/10_of_hearts.png' , 'H', 10 ));
     cards.push(new Card(0, 0, 100, 150, '/images/Cards/jack_of_hearts2.png' , 'H', 11 ));

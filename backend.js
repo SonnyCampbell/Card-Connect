@@ -321,6 +321,11 @@ function GameConnection(io) {
         let player = _players[socket.id];
         socket.to(player.getRoomName()).emit('PassedCard', cardSV);
     }
+
+    this.LayDownCard = (socket, cardSV) => {
+        let player = _players[socket.id];
+        socket.to(player.getRoomName()).emit('OppLaidDownCard', cardSV); 
+    }
 }
 
 
@@ -443,11 +448,7 @@ function CreateDeck() {
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 7 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 8 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 9 ));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 10 ));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 11 ));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 12 ));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 13 ));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 1 ));
+
 
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 2 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 3 ));
@@ -457,11 +458,7 @@ function CreateDeck() {
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 7 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 8 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 9 ));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 10 ));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 11 ));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 12 ));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 13 ));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 1 ));
+
 
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 2 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 3 ));
@@ -482,17 +479,32 @@ function CreateDeck() {
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 8 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 9 ));
 
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 10 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 11 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 12 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 13 ));
+
+
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 10 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 11 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 12 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 13 ));
+    
+
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 10 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 11 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 12 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 13 ));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 1 ));
+    
 
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 10 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 11 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 12 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 13 ));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'D', 1 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'H', 1 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'S', 1 ));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__ServerCard__["a" /* default */](0, 0, 100, 150, 'C', 1 ));
 
     return cards;
 }
@@ -559,6 +571,8 @@ io.on('connection', (socket) => {
         conn.DiscardCard(socket, discardCardSV);
     });
 
+
+
     socket.on('disconnect', () => {
         console.log('User disconnected');
     });
@@ -579,6 +593,11 @@ io.on('connection', (socket) => {
 
     socket.on('PassingCard', function(cardSV){
         conn.PassingCard(socket, cardSV);
+    });
+
+    socket.on('LayDownCard', function(laidDownCardSV) {
+        console.log('Laying down card ' + laidDownCardSV);
+        conn.LayDownCard(socket, laidDownCardSV);
     });
 
 });

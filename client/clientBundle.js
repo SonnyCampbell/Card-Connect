@@ -1248,7 +1248,7 @@ function DeckOfCards() {
     };
 }
 
-// function Cre ateDeck(deckDict) {
+// function CreateDeck(deckDict) {
 //     let cards = [];
 
 //     cards.push(new Card(0, 0, 100, 150, '/images/Cards/2_of_clubs.png' , 'C', 2 ));
@@ -1325,11 +1325,6 @@ function CreateDeck(deckDict) {
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/7_of_clubs.png', 'C', 7));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/8_of_clubs.png', 'C', 8));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/9_of_clubs.png', 'C', 9));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/10_of_clubs.png', 'C', 10));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/jack_of_clubs2.png', 'C', 11));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/queen_of_clubs2.png', 'C', 12));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/king_of_clubs2.png', 'C', 13));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/ace_of_clubs.png', 'C', 1));
 
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/2_of_spades.png', 'S', 2));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/3_of_spades.png', 'S', 3));
@@ -1339,11 +1334,6 @@ function CreateDeck(deckDict) {
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/7_of_spades.png', 'S', 7));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/8_of_spades.png', 'S', 8));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/9_of_spades.png', 'S', 9));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/10_of_spades.png', 'S', 10));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/jack_of_spades2.png', 'S', 11));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/queen_of_spades2.png', 'S', 12));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/king_of_spades2.png', 'S', 13));
-    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/ace_of_spades.png', 'S', 1));
 
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/2_of_hearts.png', 'H', 2));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/3_of_hearts.png', 'H', 3));
@@ -1362,6 +1352,18 @@ function CreateDeck(deckDict) {
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/7_of_diamonds.png', 'D', 7));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/8_of_diamonds.png', 'D', 8));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/9_of_diamonds.png', 'D', 9));
+
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/10_of_clubs.png', 'C', 10));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/jack_of_clubs2.png', 'C', 11));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/queen_of_clubs2.png', 'C', 12));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/king_of_clubs2.png', 'C', 13));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/ace_of_clubs.png', 'C', 1));
+
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/10_of_spades.png', 'S', 10));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/jack_of_spades2.png', 'S', 11));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/queen_of_spades2.png', 'S', 12));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/king_of_spades2.png', 'S', 13));
+    cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/ace_of_spades.png', 'S', 1));
 
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/10_of_hearts.png', 'H', 10));
     cards.push(new __WEBPACK_IMPORTED_MODULE_0__Card__["a" /* default */](0, 0, 100, 150, '/images/Cards/jack_of_hearts2.png', 'H', 11));
@@ -4131,8 +4133,10 @@ function CanvasState(canvas, socket) {
         let my = mouse.y;
 
         let game = this.game;
+
         let cards = this.game.cards;
 
+        console.log(this.game.playerTurn);
         if (this.game.playerTurn) {
             for (let i = cards.length - 1; i >= 0; i--) {
                 if (cards[i].Contains(mx, my)) {
@@ -4167,8 +4171,8 @@ function CanvasState(canvas, socket) {
         }
 
         //TODO: Fix selected card bug when deselecting card from hand
-        console.log(game.selectedCard);
-        game.SelectedCard();
+        //console.log(game.selectedCard);
+        //game.SelectedCard();
 
         if (!cardSelected) {
             game.selectedCard = null;
@@ -4519,8 +4523,15 @@ function GoFishGame(canvasState, socket) {
         game.OppToldGoFish();
     });
 
+    socket.on('OppLaidDownCard', function (cardSV) {
+        console.log('Opp laid down ' + cardSV);
+        game.OppLaidDownCard(cardSV);
+    });
+
     __WEBPACK_IMPORTED_MODULE_4__Game__["a" /* default */].call(this, canvasState, socket);
     this.askedForCard = false;
+    this.laidDownBooks = [];
+    this.oppLaidDownBooks = [];
 
     canvasState.canvas.addEventListener('dblclick', function (e) {
         game.HandleDblClick();
@@ -4531,7 +4542,7 @@ GoFishGame.prototype = Object.create(__WEBPACK_IMPORTED_MODULE_4__Game__["a" /* 
 GoFishGame.prototype.constructor = GoFishGame;
 
 GoFishGame.prototype.HandleDblClick = function () {
-    if (this.askedForCard) {
+    if (this.askedForCard && !this.playerTurn) {
         PassCards(this);
     }
 };
@@ -4539,6 +4550,7 @@ GoFishGame.prototype.HandleDblClick = function () {
 GoFishGame.prototype.CreateUI = function () {
     CreateBtnAskCard(this);
     CreateBtnGoFish(this);
+    CreateBtnLayDownBook(this);
 
     CreateDivCardQuesion(this);
 };
@@ -4547,6 +4559,7 @@ GoFishGame.prototype.SelectedCard = function () {
     if (this.selectedCard == null) {
         this.btnAskCard.innerHTML = 'Ask for Cards';
     } else {
+        this.CheckForBook();
         this.btnAskCard.innerHTML = 'Any ' + this.selectedCard.GetValueString() + 's?';
     }
 };
@@ -4625,6 +4638,66 @@ GoFishGame.prototype.GoFish = function () {
     this.askedForCard = false;
 };
 
+GoFishGame.prototype.LayDownBook = function () {
+    console.log('laying down book');
+    let hand = this.playerHand.cards;
+    let laidDownCards = [];
+
+    for (let i = hand.length - 1; i >= 0; i--) {
+        if (this.selectedCard.GetValueString() == hand[i].GetValueString()) {
+            let laidDownCard = hand[i];
+            this.socket.emit('LayDownCard', laidDownCard.SuitValue());
+
+            //console.log('passing card ' + hand[i].SuitValue());
+            laidDownCards.push(laidDownCard);
+            this.discardPile.cards.push(laidDownCard);
+            this.playerHand.cards.splice(i, 1);
+
+            let reorganiseHand = function () {
+                //passedCard.displayImage = passedCard.backImage;
+                this.playerHand.ReorganiseHand();
+            }.bind(this);
+
+            this.canvasState.animateTo(laidDownCard, new Date().getTime(), 0.75, 700 + this.laidDownBooks.length * 20, 300, laidDownCard.x, laidDownCard.y, reorganiseHand);
+        }
+    }
+
+    this.laidDownBooks[this.laidDownBooks.length] = laidDownCards;
+    console.log(this.laidDownBooks);
+
+    this.selectedCard = null;
+    this.canvasState.valid = false;
+};
+
+GoFishGame.prototype.OppLaidDownCard = function (cardSV) {
+    console.log(cardSV);
+    let oppHand = this.oppPlayerHand.cards;
+    let laidDownCards = [];
+
+    for (let i = oppHand.length - 1; i >= 0; i--) {
+        if (oppHand[i].SuitValue() == cardSV) {
+            let laidDownCard = oppHand[i];
+            laidDownCard.displayImage = laidDownCard.faceImage;
+
+            console.log('opp laying down card ' + oppHand[i].SuitValue());
+            laidDownCards.push(laidDownCard);
+            this.discardPile.cards.push(laidDownCard);
+            this.oppPlayerHand.cards.splice(i, 1);
+
+            //let reorganiseHand = (function() {this.oppPlayerHand.ReorganiseHand()}).bind(this);
+
+            this.canvasState.animateTo(laidDownCard, new Date().getTime(), 0.75, 700 + this.oppLaidDownBooks.length * 20, 100, laidDownCard.x, laidDownCard.y, function () {
+                console.log('animation for ' + laidDownCard.SuitValue() + ' complete');
+            });
+        }
+    }
+
+    this.oppPlayerHand.ReorganiseHand();
+    this.oppLaidDownBooks[this.oppLaidDownBooks.length] = laidDownCards;
+    console.log(this.oppLaidDownBooks);
+    //this.EndTurn();
+};
+
 GoFishGame.prototype.OppToldGoFish = function () {
     this.divCardQuestion.classList.remove('hide');
     this.divCardQuestionText.innerHTML = 'Go fish!';
@@ -4659,8 +4732,27 @@ GoFishGame.prototype.OppPassedCard = function (cardSV) {
     this.EndTurn();
 };
 
+GoFishGame.prototype.CheckForBook = function () {
+    let hand = this.playerHand.cards;
+    let matchCount = 0;
+
+    for (let i = 0; i < hand.length; i++) {
+        if (this.selectedCard.GetValueString() == hand[i].GetValueString()) {
+            matchCount++;
+        }
+    }
+
+    if (matchCount == 4) {
+        this.btnLayDownBook.disabled = false;
+    } else {
+        this.btnLayDownBook.disabled = true;
+    }
+};
+
 function PassCards(game) {
     let hand = game.playerHand.cards;
+    let didPassCard = false;
+    console.log('PassCards called');
 
     for (let i = 0; i < hand.length; i++) {
         if (hand[i].askedFor) {
@@ -4680,13 +4772,18 @@ function PassCards(game) {
 
             game.oppPlayerHand.AddCardToHand(passedCard);
 
+            game.askedForCard = false;
+
+            game.divCardQuestionText.innerHTML = '';
+            game.divCardQuestion.classList.add('hide');
+            game.playerHand.ReorganiseHand();
+            game.StartTurn();
+
             PassCards(game);
+
             return;
         }
     }
-
-    game.playerHand.ReorganiseHand();
-    game.StartTurn();
 
     game.selectedCard = null;
     game.canvasState.valid = false;
@@ -4703,7 +4800,9 @@ function CheckHandForCard(game, cardSV) {
             hand[i].selected = true;
             hand[i].askedFor = true;
             game.canvasState.valid = false;
-            break;
+            //break;
+        } else {
+            hand[i].askedFor = false;
         }
     }
 }
@@ -4742,6 +4841,25 @@ function CreateBtnGoFish(game) {
 
     btnGoFish.onclick = function () {
         game.GoFish();
+    };
+}
+
+function CreateBtnLayDownBook(game) {
+    let btnLayDownBook = document.createElement("button");
+    game.btnLayDownBook = btnLayDownBook;
+    let btnText = document.createTextNode("Lay Down Book");
+    btnLayDownBook.appendChild(btnText);
+
+    btnLayDownBook.style.position = "absolute";
+    btnLayDownBook.style.left = "540px";
+    btnLayDownBook.style.top = "500px";
+    btnLayDownBook.style.width = "100px";
+    btnLayDownBook.disabled = true;
+
+    document.getElementById('canvas-wrapper').appendChild(btnLayDownBook);
+
+    btnLayDownBook.onclick = function () {
+        game.LayDownBook();
     };
 }
 

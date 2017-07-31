@@ -48,6 +48,8 @@ io.on('connection', (socket) => {
         conn.DiscardCard(socket, discardCardSV);
     });
 
+
+
     socket.on('disconnect', () => {
         console.log('User disconnected');
     });
@@ -68,6 +70,11 @@ io.on('connection', (socket) => {
 
     socket.on('PassingCard', function(cardSV){
         conn.PassingCard(socket, cardSV);
+    });
+
+    socket.on('LayDownCard', function(laidDownCardSV) {
+        console.log('Laying down card ' + laidDownCardSV);
+        conn.LayDownCard(socket, laidDownCardSV);
     });
 
 });

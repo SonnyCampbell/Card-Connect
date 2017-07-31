@@ -61,8 +61,10 @@ function CanvasState(canvas, socket){
         let my = mouse.y;
 
         let game = this.game;
+        
         let cards = this.game.cards;
         
+        console.log(this.game.playerTurn);
         if(this.game.playerTurn){
             for(let i = cards.length - 1; i >= 0; i--){
                 if (cards[i].Contains(mx, my)){
@@ -99,8 +101,8 @@ function CanvasState(canvas, socket){
         }
 
         //TODO: Fix selected card bug when deselecting card from hand
-        console.log(game.selectedCard);
-        game.SelectedCard();
+        //console.log(game.selectedCard);
+        //game.SelectedCard();
 
         if(!cardSelected){
             game.selectedCard = null;

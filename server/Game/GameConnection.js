@@ -94,6 +94,11 @@ function GameConnection(io) {
         let player = _players[socket.id];
         socket.to(player.getRoomName()).emit('PassedCard', cardSV);
     }
+
+    this.LayDownCard = (socket, cardSV) => {
+        let player = _players[socket.id];
+        socket.to(player.getRoomName()).emit('OppLaidDownCard', cardSV); 
+    }
 }
 
 
