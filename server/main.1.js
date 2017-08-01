@@ -77,6 +77,11 @@ io.on('connection', (socket) => {
         conn.LayDownCard(socket, laidDownCardSV);
     });
 
+    socket.on('LayDownBook', function(laidDownCardValueString) {
+        console.log('Laying down book of ' + laidDownCardValueString);
+        conn.LayDownBook(socket, laidDownCardValueString);
+    });
+
 });
 
 http.listen(3000, () => {

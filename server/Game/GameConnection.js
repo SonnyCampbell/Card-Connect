@@ -95,9 +95,15 @@ function GameConnection(io) {
         socket.to(player.getRoomName()).emit('PassedCard', cardSV);
     }
 
+    //NOT BEING USED - LayDownBook used instead
     this.LayDownCard = (socket, cardSV) => {
         let player = _players[socket.id];
         socket.to(player.getRoomName()).emit('OppLaidDownCard', cardSV); 
+    }
+
+    this.LayDownBook = (socket, cardValue) => {
+        let player = _players[socket.id];
+        socket.to(player.getRoomName()).emit('OppLaidDownBook', cardValue); 
     }
 }
 

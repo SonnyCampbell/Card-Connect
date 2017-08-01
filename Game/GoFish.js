@@ -23,6 +23,11 @@ function GoFishGame(canvasState, socket) {
         game.OppLaidDownCard(cardSV);
     });
 
+    socket.on('OppLaidDownBook', function(cardValue) {
+        console.log('Opp laid down ' + cardValue);
+        game.OppLaidDownBook(cardValue);
+    });
+
 
     Game.call(this,canvasState, socket);
     this.askedForCard = false;
@@ -150,12 +155,12 @@ GoFishGame.prototype.LayDownBook = function(){
     for(let i = hand.length - 1; i >= 0 ; i--){
         if(this.selectedCard.GetValueString() == hand[i].GetValueString()){           
             let laidDownCard = hand[i];
-            this.socket.emit('LayDownCard', laidDownCard.SuitValue());
+            //this.socket.emit('LayDownCard', laidDownCard.SuitValue());
 
             //console.log('passing card ' + hand[i].SuitValue());
             laidDownCards.push(laidDownCard);
             this.discardPile.cards.push(laidDownCard);
-            this.playerHand.cards.splice(i, 1)
+            this.playerHand.cards.splice(i, 1);
             
             let reorganiseHand = (function() {
                 //passedCard.displayImage = passedCard.backImage;
@@ -174,6 +179,7 @@ GoFishGame.prototype.LayDownBook = function(){
         }
     }
 
+    this.socket.emit('LayDownBook', laidDownCards[0].GetValueString());
     this.laidDownBooks[this.laidDownBooks.length] = laidDownCards;
     console.log(this.laidDownBooks);
 
@@ -182,13 +188,45 @@ GoFishGame.prototype.LayDownBook = function(){
 
 }
 
+//NOT BEING USED - OppLaidDownBook used instead
 GoFishGame.prototype.OppLaidDownCard = function(cardSV) {
     console.log(cardSV);
+    let oppHand = this.oppPlayerHand.cards;
+
+    for(let i = oppHand.length - 1; i >= 0 ; i--){
+        if(oppHand[i].SuitValue() == cardSV){
+            let laidDownCard = oppHand[i];
+            laidDownCard.displayImage = laidDownCard.faceImage;
+
+            console.log('opp laying down card ' + oppHand[i].SuitValue());
+            this.discardPile.cards.push(laidDownCard);
+            this.oppPlayerHand.cards.splice(i, 1);
+            
+            //let reorganiseHand = (function() {this.oppPlayerHand.ReorganiseHand()}).bind(this);
+
+            this.canvasState.animateTo(laidDownCard, 
+                                    (new Date()).getTime(), 
+                                    0.75, 
+                                    700,
+                                    100, 
+                                    laidDownCard.x, 
+                                    laidDownCard.y,
+                                    (function(){console.log('animation for ' + laidDownCard.SuitValue() + ' complete')}));
+
+        }
+    }
+
+    this.oppPlayerHand.ReorganiseHand();
+    //this.EndTurn();
+}
+
+GoFishGame.prototype.OppLaidDownBook= function(cardValue) {
+    console.log(cardValue);
     let oppHand = this.oppPlayerHand.cards;
     let laidDownCards = [];
 
     for(let i = oppHand.length - 1; i >= 0 ; i--){
-        if(oppHand[i].SuitValue() == cardSV){
+        if(oppHand[i].GetValueString() == cardValue){
             let laidDownCard = oppHand[i];
             laidDownCard.displayImage = laidDownCard.faceImage;
 
