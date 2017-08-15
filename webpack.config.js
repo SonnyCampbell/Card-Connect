@@ -39,11 +39,8 @@ let clientConfig = Object.assign({}, config,{
     },
     module: {
         loaders: [
-            {
-                loader: 'babel-loader',
-                test: /\.js?/,
-                exclude: /node_modules/
-            }
+            { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/},
+            { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ }
         ]
     },
 });

@@ -48,7 +48,7 @@ function DeckOfCards() {
     }
 
     this.CardsLeft = () => {
-        return _cardCount - _cardsUsed;
+        return cards.length;
     }
 
     this.PutInDiscardPile = (theCard) => {

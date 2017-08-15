@@ -1219,7 +1219,7 @@ function DeckOfCards() {
     };
 
     this.CardsLeft = () => {
-        return _cardCount - _cardsUsed;
+        return cards.length;
     };
 
     this.PutInDiscardPile = theCard => {
@@ -4581,6 +4581,7 @@ GoFishGame.prototype.DiscardSelectedCard = function () {
 };
 
 GoFishGame.prototype.DealCardToPlayer = function (cardSV, openingHand) {
+
     if (!openingHand) {
         this.btnAskCard.disabled = true;
     }
@@ -4671,6 +4672,8 @@ GoFishGame.prototype.LayDownBook = function () {
     this.laidDownBooks[this.laidDownBooks.length] = laidDownCards;
     console.log(this.laidDownBooks);
 
+    CheckWinCondition(this);
+
     this.selectedCard = null;
     this.canvasState.valid = false;
 };
@@ -4727,6 +4730,7 @@ GoFishGame.prototype.OppLaidDownBook = function (cardValue) {
     this.oppPlayerHand.ReorganiseHand();
     this.oppLaidDownBooks[this.oppLaidDownBooks.length] = laidDownCards;
     console.log(this.oppLaidDownBooks);
+    CheckWinCondition(this);
     //this.EndTurn();
 };
 
@@ -4821,6 +4825,20 @@ function PassCards(game) {
     game.canvasState.valid = false;
 }
 
+function CheckWinCondition(game) {
+    console.log('Checking win condi');
+    if (game.theDeck.CardsLeft() == 0 && game.playerHand.cards.length == 0 && game.oppPlayerHand.cards.length == 0) {
+
+        if (game.laidDownBooks.length > game.oppLaidDownBooks.length) {
+            CreateGameOverPanel('YOU WIN!');
+        } else if (game.laidDownBooks.length < game.oppLaidDownBooks.length) {
+            console.log('YOU LOSE!');
+        } else {
+            console.log('DRAW!');
+        }
+    }
+}
+
 function CheckHandForCard(game, cardSV) {
     let hand = game.playerHand.cards;
     let deck = game.theDeck;
@@ -4839,6 +4857,23 @@ function CheckHandForCard(game, cardSV) {
     }
 }
 
+function CreateGameOverPanel(game, text) {
+    console.log(text);
+    let divGameOverPanel = document.createElement("div");
+    game.divGameOverPanel = divGameOverPanel;
+    divGameOverPanel.style.backgroundColor = 'white';
+    divGameOverPanel.style.position = "absolute";
+    divGameOverPanel.style.left = "300px";
+    divGameOverPanel.style.top = "200px";
+    divGameOverPanel.style.width = "500px";
+    divGameOverPanel.style.height = "200px";
+
+    let txtGameOver = document.createTextNode(text);
+    divGameOverPanel.appendChild(txtGameOver);
+
+    document.getElementById('canvas-wrapper').appendChild(divGameOverPanel);
+}
+
 function CreateBtnAskCard(game) {
     let btnAskCard = document.createElement("button");
     game.btnAskCard = btnAskCard;
@@ -4854,6 +4889,7 @@ function CreateBtnAskCard(game) {
 
     btnAskCard.disabled = !game.playerTurn;
     btnAskCard.onclick = function () {
+        CreateGameOverPanel(game, 'YOU WIN!');
         game.AskForCard();
     };
 }
