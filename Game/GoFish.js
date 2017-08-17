@@ -438,7 +438,7 @@ function CreateBtnAskCard(game) {
 
     btnAskCard.disabled = !game.playerTurn;
     btnAskCard.onclick = function() { 
-        CreateGameOverPanel(game, 'YOU WIN!');
+        //CreateGameOverPanel(game, 'YOU WIN!');
         game.AskForCard();
     }
 }

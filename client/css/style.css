@@ -19,3 +19,45 @@ canvas{
 .hide {
   display: none;
 }
+
+
+
+.GameSelectComponent {
+  border: 2px solid black;
+  width: 49%;
+  height: 75%;
+  float: left;
+  text-align: center;
+}
+
+.RoomSelectComponent {
+  border: 2px solid black;
+  width: 49%;
+  height: 75%;
+  float: right;
+}
+
+.UnselectedGameComponent {
+  border: 1px solid black;
+  border-radius: 8px;
+  width: 100px;
+  height: 150px;
+  cursor: pointer;
+  display: inline-block;
+  margin: 2% 1%;
+}
+
+.SelectedGameComponent {
+  border: 1px solid red;
+  border-radius: 8px;
+  width: 100px;
+  height: 150px;
+  cursor: pointer;
+  display: inline-block;
+  margin: 2% 1%;
+}
+
+.GameText {
+  text-align: center;
+  margin-top: 60%;
+}

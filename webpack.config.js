@@ -32,7 +32,7 @@ let serverConfig = Object.assign({}, config,{
 });
 
 let clientConfig = Object.assign({}, config,{
-    entry: './client/index.js',
+    entry: './src/index.js',
     output: {
       path: path.join(__dirname, 'client'),
       filename: 'clientBundle.js'

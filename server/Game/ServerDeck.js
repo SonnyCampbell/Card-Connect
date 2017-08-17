@@ -6,7 +6,7 @@ function DeckOfCards() {
     let _cardsUsed = 0;
 
     let cards = CreateDeck();
-    cards = Shuffle(cards);
+    //cards = Shuffle(cards);
     let discardPile = [];
 
 
@@ -46,18 +46,16 @@ function DeckOfCards() {
             return null;
         }
     }
-   
-}
 
-function Shuffle(cards) {
-    for(let i = 0; i < cards.length; i++){
-        let k = Math.floor(Math.random() * cards.length);
-        let temp = cards[i];
-        cards[i] = cards[k];
-        cards[k] = temp;
+    this.Shuffle = () => {
+        for(let i = 0; i < cards.length; i++){
+            let k = Math.floor(Math.random() * cards.length);
+            let temp = cards[i];
+            cards[i] = cards[k];
+            cards[k] = temp;
+        }
     }
-
-    return cards;
+   
 }
 
 
