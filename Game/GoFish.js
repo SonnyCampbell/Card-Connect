@@ -45,6 +45,8 @@ GoFishGame.prototype = Object.create(Game.prototype);
 GoFishGame.prototype.constructor = GoFishGame;
 
 GoFishGame.prototype.HandleDblClick = function(){
+    this.canvasState.DeselectCard();
+
     if (this.askedForCard && !this.playerTurn) {        
         PassCards(this);
     }
@@ -321,11 +323,10 @@ GoFishGame.prototype.CheckForBook = function() {
 function PassCards(game){
     let hand = game.playerHand.cards;
     let didPassCard = false;
-    console.log('PassCards called')
 
     for(let i = 0; i < hand.length; i++){
         if(hand[i].askedFor){
-            let passedCard = hand[i];
+            let passedCard = hand[i];          
             
             game.socket.emit('PassingCard', passedCard.SuitValue());
 
@@ -347,7 +348,7 @@ function PassCards(game){
                                     reorganiseHand);
 
             game.oppPlayerHand.AddCardToHand(passedCard);
-
+            passedCard.hovered = false;
 
             game.askedForCard = false;
 
@@ -368,13 +369,13 @@ function PassCards(game){
 
 
 function CheckWinCondition(game){
-    console.log('Checking win condi')
+    console.log('Checking win condition')
     if (game.theDeck.CardsLeft() == 0 && 
             game.playerHand.cards.length == 0 && 
             game.oppPlayerHand.cards.length == 0){
         
         if(game.laidDownBooks.length > game.oppLaidDownBooks.length){
-            CreateGameOverPanel('YOU WIN!');
+            CreateGameOverPanel(game, 'YOU WIN!');
         } else if(game.laidDownBooks.length < game.oppLaidDownBooks.length) {
             console.log('YOU LOSE!')
         } else {
@@ -408,16 +409,14 @@ function CreateGameOverPanel(game, text){
     console.log(text);
     let divGameOverPanel = document.createElement("div");
     game.divGameOverPanel = divGameOverPanel;
-    divGameOverPanel.style.backgroundColor = 'white';
-    divGameOverPanel.style.position = "absolute";
-    divGameOverPanel.style.left = "300px";
-    divGameOverPanel.style.top = "200px";
-    divGameOverPanel.style.width = "500px";
-    divGameOverPanel.style.height = "200px";
+    divGameOverPanel.classList.add('GameOverPanel');
     
+    let txtGameOverDiv = document.createElement("div");
+    txtGameOverDiv.classList.add('GameOVerPanelText');
 
     let txtGameOver = document.createTextNode(text);
-    divGameOverPanel.appendChild(txtGameOver);
+    txtGameOverDiv.appendChild(txtGameOver);
+    divGameOverPanel.appendChild(txtGameOverDiv);
 
     document.getElementById('canvas-wrapper').appendChild(divGameOverPanel);
 

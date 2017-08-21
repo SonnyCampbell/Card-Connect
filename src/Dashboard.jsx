@@ -7,7 +7,16 @@ class Dashboard extends Component {
     constructor(props){
         super(props);
         this.state = {
-            gameType: ''
+            gameType: '',
+            joinGameError: ''
+        }
+    }
+
+    componentWillReceiveProps(nextProps){
+        if(nextProps.error !== this.props.error){
+            this.setState({
+                joinGameError: nextProps.error
+            })
         }
     }
 
@@ -16,7 +25,9 @@ class Dashboard extends Component {
             this.props.onJoinGame(username, roomName, this.state.gameType);
         }
         else {
-            console.log('no game type selected')
+            this.setState({
+                joinGameError: 'No game type selected'
+            });
         }
         
     }
@@ -31,10 +42,10 @@ class Dashboard extends Component {
     render(){
         return (
             <div className='DashboardComponent'>
-                <JoinGame onJoinGame={this.handleJoinGame.bind(this)} /> 
+                <JoinGame onJoinGame={this.handleJoinGame.bind(this)} error={this.state.joinGameError} /> 
                 <hr />
                 <GameSelect onSelectGame={this.handleSelectGame.bind(this)}/>
-                <RoomSelect />
+                <RoomSelect socket={this.props.socket}/>
             </div>
         );
     }

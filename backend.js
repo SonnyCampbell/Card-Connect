@@ -74,26 +74,30 @@
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ServerDeck__ = __webpack_require__(9);
 
 
-function Game(){
-    let _deck = new __WEBPACK_IMPORTED_MODULE_0__ServerDeck__["a" /* default */]();
+class Game {
+    constructor() {
+        this.deck = new __WEBPACK_IMPORTED_MODULE_0__ServerDeck__["a" /* default */](); 
 
-    this.players = [];
-
-    this.ShuffleDeck = () => {
-        _deck.Shuffle();
+        this.players = [];
+        this.hasStarted = false;
     }
 
-    this.DealCard = () => {
-        return _deck.Deal();
+
+    ShuffleDeck() {
+        this.deck.Shuffle();
     }
 
-    this.DealHands = function(numOfCards){
+    DealCard() {
+        return this.deck.Deal();
+    }
+
+    DealHands(numOfCards) {
         
         for(let j = 0; j < this.players.length; j++){
             let player = this.players[j];
 
             for(let i = 0; i < numOfCards; i++){
-                player.getHand().push(_deck.Deal());
+                player.getHand().push(this.deck.Deal());
             }
 
             for(let i = 0; i < player.getHand().length; i++){
@@ -234,28 +238,69 @@ function GameConnection(io) {
     let _players = {}; // { socket.id : Player() }
     let _games = {}; // { roomName : Game() }
     let _roomsPlayers = {}; // { roomName: [Player1(), Player2(), ...]}
+    let _rooms = [];
 
     this.JoinRoom = (socket, username, roomName) => {
+
+
+        if(_games.hasOwnProperty(roomName) && _games[roomName].hasStarted){
+            //Block player from joining
+            console.log('Game already in progress in ' + roomName);
+            socket.emit('joinRoomError', 'Game already in progress in ' + roomName  );
+            return;
+        }
+
+        if(_roomsPlayers.hasOwnProperty(roomName)){
+            if(_roomsPlayers[roomName].length >= 2){
+                //Block player from joining
+                console.log('Maximum player number reached in ' + roomName);
+                socket.emit('joinRoomError', 'Maximum player number reached in ' + roomName);
+                return;
+            }
+
+            for(let i = 0; i < _roomsPlayers[roomName].length; i++){
+                if(_roomsPlayers[roomName][i].getUsername() === username){
+                    console.log('Username ' + username + ' already in use.');
+                    socket.emit('joinRoomError', 'Username ' + username + ' already in use.');
+                    return;
+                }
+            }
+            
+        }
+
+        
+
         let player = new __WEBPACK_IMPORTED_MODULE_0__ServerPlayer__["a" /* default */](socket, username);
         _players[socket.id]  = player;
         player.setRoomName(roomName);
+        _rooms.push(roomName);
 
 
-        if(_roomsPlayers[roomName] === undefined){
+        if(!_roomsPlayers.hasOwnProperty(roomName)){
             _roomsPlayers[roomName] = [player];
         } else {
             _roomsPlayers[roomName].push(player);
         }
         //console.log(_roomsPlayers[roomName]);
+        socket.emit('joinRoomSuccess', 'You successfully joined the room ' + roomName);
 
         socket.join(roomName, function() {
             socket.to(roomName).emit('PlayerJoinedGame', player.getUsername() + ' joined the room ' + roomName + '.');
         });
+
     }
+
+
+    this.GetRoomListUpdate = function(socket){
+        console.log(socket.id + ' ' + _rooms);
+        socket.emit('RoomListUpdate', _rooms);
+    }
+
 
     this.StartGame = (socket) => {
         let player = _players[socket.id];
         _games[player.getRoomName()] = new __WEBPACK_IMPORTED_MODULE_1__Game__["a" /* default */]();
+        _games[player.getRoomName()].hasStarted = true;
 
         console.log(player.getUsername() + ' started the game.');
         this.EmitToRoom(player.getRoomName(), 'StartGame', player.getUsername() + ' started the game.');
@@ -577,6 +622,10 @@ io.on('connection', (socket) => {
     socket.on('DiscardCard', function(discardCardSV) {
         console.log('discard card server side received ' + discardCardSV);
         conn.DiscardCard(socket, discardCardSV);
+    });
+
+    socket.on('GetRoomListUpdate', function() {
+        conn.GetRoomListUpdate(socket);
     });
 
 

@@ -163,6 +163,16 @@ function CanvasState(canvas, socket){
     //Add new shape on 'dblclick'
 }
 
+CanvasState.prototype.DeselectCard = function(){
+    if(this.game.selectedCard !== null){
+        console.log(this.game.selectedCard)
+        this.game.selectedCard.selected = false;
+        this.game.selectedCard = null;
+        this.valid = false;
+    }
+
+}
+
 CanvasState.prototype.GetMouse = function(e){
     let theCanvas = this.canvas;
     let offsetX = 0;

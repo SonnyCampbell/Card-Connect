@@ -15,28 +15,47 @@ class App extends Component {
             isInGame: false,
             username: '',
             roomName: '',
-            gameType: ''
-        };
+            gameType: '',
+            error: ''
+        };       
+    }
+
+    componentDidMount(){
+        this.initialiseSocket(this.state.socket);
+    }
+
+    initialiseSocket(socket){
+        socket.on('joinRoomError', (error) => {
+            this.setState({
+                error
+            });
+            console.log(this.state.error);
+        });
+
+        socket.on('joinRoomSuccess', () => {
+            this.setState({
+                isInGame: true
+            });
+            //console.log(username + " joined game");
+        })
     }
 
     handleJoinGame(username, roomName, gameType) {
         if(gameType !== ''){
-            console.log(gameType);
+            
             this.state.socket.emit('JoinRoom', username, roomName);
-
             this.setState({
-                isInGame: true,
                 username,
                 roomName,
                 gameType
             });
-            console.log(username + " joined game");
+
+
         }
         
     }
 
     render(){
-        console.log('Inside App Component');
 
         return (
             <div className='MainPage'>
@@ -44,7 +63,11 @@ class App extends Component {
                 <hr/>
                 {
                     !this.state.isInGame 
-                    ? <Dashboard onJoinGame={this.handleJoinGame.bind(this)} /> 
+                    ? <Dashboard 
+                        onJoinGame={this.handleJoinGame.bind(this)} 
+                        error={this.state.error}
+                        socket={this.state.socket}
+                        /> 
                     : <GameScreen socket={this.state.socket}/>            
                 }
 

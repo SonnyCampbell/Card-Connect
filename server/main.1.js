@@ -48,6 +48,10 @@ io.on('connection', (socket) => {
         conn.DiscardCard(socket, discardCardSV);
     });
 
+    socket.on('GetRoomListUpdate', function() {
+        conn.GetRoomListUpdate(socket);
+    });
+
 
 
     socket.on('disconnect', () => {

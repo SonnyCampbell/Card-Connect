@@ -20,6 +20,27 @@ canvas{
   display: none;
 }
 
+.GameTitle{
+  text-align: center;
+  font-size: 30;
+  font-weight: bold;
+}
+
+.GameOverPanel {
+  background-color: white;
+  opacity: 0.5;
+  position: absolute;
+  left: 300px;
+  top: 200px;
+  width: 500px;
+  height: 200px;
+  text-align: center;
+}
+
+.GameOverPanelText {
+  margin-top: 100px;
+  opacity: 1;
+}
 
 
 .GameSelectComponent {
@@ -35,6 +56,11 @@ canvas{
   width: 49%;
   height: 75%;
   float: right;
+}
+
+.RoomDetails{
+  display: block;
+  border: 1px solid black;
 }
 
 .UnselectedGameComponent {
