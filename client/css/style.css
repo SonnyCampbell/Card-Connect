@@ -68,8 +68,16 @@ canvas{
 }
 
 .RoomDetails{
+  margin: 2px;
+  display: block;
+  cursor: pointer;
+}
+
+.RoomDetailsSelected {
+  margin: 2px;
   display: block;
   border: 1px solid black;
+  cursor: pointer;
 }
 
 .UnselectedGameComponent {

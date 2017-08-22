@@ -42,7 +42,10 @@ function GameConnection(io) {
         let player = new Player(socket, username);
         _players[socket.id]  = player;
         player.setRoomName(roomName);
-        _rooms.push(roomName);
+        if(!_rooms.includes(roomName)){
+            _rooms.push(roomName);
+        }
+        
 
 
         if(!_roomsPlayers.hasOwnProperty(roomName)){
@@ -61,8 +64,16 @@ function GameConnection(io) {
 
 
     this.GetRoomListUpdate = function(socket){
-        console.log(socket.id + ' ' + _rooms);
-        socket.emit('RoomListUpdate', _rooms);
+        let roomList = [];
+
+        for(let i = 0; i < _rooms.length; i++){
+            roomList.push({
+                roomName: _rooms[i],
+                playerCount: _roomsPlayers[_rooms[i]].length
+            });
+        }
+        console.log(socket.id + ' ' + roomList);
+        socket.emit('RoomListUpdate', roomList);
     }
 
 

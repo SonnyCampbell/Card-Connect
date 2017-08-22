@@ -24,6 +24,7 @@ class RoomSelect extends Component {
     }
 
     UpdateRoomList(roomDetails){
+        console.log(roomDetails);
         this.setState({
             roomDetails
         });
@@ -47,14 +48,23 @@ class RoomSelect extends Component {
             roomListInterval
         });
     }
+
+    handleSelectRoom(index){
+        console.log(this.props.selectedRoomIndex);
+        this.props.onSelectRoom(index);
+    }
     
     render(){
         return (
             <div className='RoomSelectComponent'>
                 {this.state.roomDetails.map((room, k) => (
-                    <div className='RoomDetails' key={k}>Game: {room}   Players: 1/2</div>
+                    <div 
+                        className={this.props.selectedRoomIndex === k ? 'RoomDetailsSelected' : 'RoomDetails'} 
+                        onClick={this.handleSelectRoom.bind(this, k)}
+                        key={k}
+                    >Game: {room.roomName}   Players: {room.playerCount}/2</div>
                 )) }
-                <br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content
+                
             </div>
         );
     }

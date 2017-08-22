@@ -9,7 +9,8 @@ class Dashboard extends Component {
         super(props);
         this.state = {
             gameType: '',
-            joinGameError: ''
+            joinGameError: '',
+            selectedRoomIndex: -1
         }
     }
 
@@ -39,6 +40,13 @@ class Dashboard extends Component {
             gameType
         });
     }
+
+    handleSelectRoom(index){
+        console.log(index + ' room selected');
+        this.setState({
+            selectedRoomIndex: index
+        });
+    }
     
     render(){
         return (
@@ -47,8 +55,16 @@ class Dashboard extends Component {
                 <hr />
                 <Grid >
                     <Row className="show-grid">
-                        <Col xs={6} md={6}><GameSelect onSelectGame={this.handleSelectGame.bind(this)}/></Col>
-                        <Col xs={6} md={6}><RoomSelect socket={this.props.socket}/></Col>
+                        <Col xs={6} md={6}>
+                            <GameSelect onSelectGame={this.handleSelectGame.bind(this)}/>
+                        </Col>
+                        <Col xs={6} md={6}>
+                            <RoomSelect 
+                                socket={this.props.socket} 
+                                onSelectRoom={this.handleSelectRoom.bind(this)} 
+                                selectedRoomIndex={this.state.selectedRoomIndex}
+                            />
+                        </Col>
                     </Row>
                 </Grid>
                 
