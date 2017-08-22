@@ -45,18 +45,20 @@ canvas{
 .DashboardComponent {
   padding-left: 20px;
   padding-right: 20px;
+  padding-bottom: 20px;
 }
 
 .GameSelectComponent {
   border: 2px solid black;
-  height: 75%;
+  height: 70%;
   text-align: center;
 }
 
 .RoomSelectComponent {
   border: 2px solid black;
-  height: 75%;
-  overflow: auto;
+  height: 70%;
+  overflow: hidden;
+  position: relative;
 }
 
 .container {

@@ -189,8 +189,7 @@ GoFishGame.prototype.LayDownBook = function(){
 
     CheckWinCondition(this);
 
-    this.selectedCard = null;
-    this.canvasState.valid = false;
+    this.canvasState.DeselectCard();
 
 }
 

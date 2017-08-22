@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import Ps from 'perfect-scrollbar';
+
 
 class RoomSelect extends Component {
     constructor(props){
@@ -13,6 +15,8 @@ class RoomSelect extends Component {
         this.state.socket.on('RoomListUpdate', (roomDetails) => {
             this.UpdateRoomList(roomDetails);
         });
+
+        
     }
 
     GetRoomListUpdate(socket) {
@@ -27,6 +31,12 @@ class RoomSelect extends Component {
 
     componentWillUnmount() {
         clearInterval(this.state.roomListInterval);
+    }
+
+    componentDidMount() {
+        
+        var container = document.getElementsByClassName('RoomSelectComponent');
+        Ps.initialize(container[0]);
     }
 
     componentWillMount() {

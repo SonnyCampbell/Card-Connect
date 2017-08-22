@@ -29,7 +29,7 @@ class GameScreen extends Component {
         this.state.socket.emit('StartGame');
         this.state.gameCanvas.game.playerTurn = true;
 
-        this.state.socket.emit('DealHands', 5);
+        this.state.socket.emit('DealHands', 26);
         this.setState({
             isGameStarted: true
         });

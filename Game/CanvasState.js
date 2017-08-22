@@ -165,8 +165,8 @@ function CanvasState(canvas, socket){
 
 CanvasState.prototype.DeselectCard = function(){
     if(this.game.selectedCard !== null){
-        console.log(this.game.selectedCard)
         this.game.selectedCard.selected = false;
+        this.game.selectedCard.hovered = false;
         this.game.selectedCard = null;
         this.valid = false;
     }
