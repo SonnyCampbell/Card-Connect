@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { Grid, Row, Col } from 'react-bootstrap';
 import JoinGame from './JoinGame.jsx';
 import GameSelect from './GameSelect.jsx';
 import RoomSelect from './RoomSelect.jsx';
@@ -44,8 +45,14 @@ class Dashboard extends Component {
             <div className='DashboardComponent'>
                 <JoinGame onJoinGame={this.handleJoinGame.bind(this)} error={this.state.joinGameError} /> 
                 <hr />
-                <GameSelect onSelectGame={this.handleSelectGame.bind(this)}/>
-                <RoomSelect socket={this.props.socket}/>
+                <Grid >
+                    <Row className="show-grid">
+                        <Col xs={6} md={6}><GameSelect onSelectGame={this.handleSelectGame.bind(this)}/></Col>
+                        <Col xs={6} md={6}><RoomSelect socket={this.props.socket}/></Col>
+                    </Row>
+                </Grid>
+                
+                
             </div>
         );
     }

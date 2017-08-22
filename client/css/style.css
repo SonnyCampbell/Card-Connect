@@ -42,20 +42,27 @@ canvas{
   opacity: 1;
 }
 
+.DashboardComponent {
+  padding-left: 20px;
+  padding-right: 20px;
+}
 
 .GameSelectComponent {
   border: 2px solid black;
-  width: 49%;
   height: 75%;
-  float: left;
   text-align: center;
 }
 
 .RoomSelectComponent {
   border: 2px solid black;
-  width: 49%;
   height: 75%;
-  float: right;
+  overflow: auto;
+}
+
+.container {
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  width: 100%;
 }
 
 .RoomDetails{

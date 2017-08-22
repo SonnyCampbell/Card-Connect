@@ -44,6 +44,7 @@ class RoomSelect extends Component {
                 {this.state.roomDetails.map((room, k) => (
                     <div className='RoomDetails' key={k}>Game: {room}   Players: 1/2</div>
                 )) }
+                <br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content<br />Content
             </div>
         );
     }

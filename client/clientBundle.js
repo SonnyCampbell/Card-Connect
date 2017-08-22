@@ -23044,6 +23044,8 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactBootstrap = __webpack_require__(402);
+
 var _JoinGame = __webpack_require__(243);
 
 var _JoinGame2 = _interopRequireDefault(_JoinGame);
@@ -23115,8 +23117,24 @@ var Dashboard = function (_Component) {
                 { className: 'DashboardComponent' },
                 _react2.default.createElement(_JoinGame2.default, { onJoinGame: this.handleJoinGame.bind(this), error: this.state.joinGameError }),
                 _react2.default.createElement('hr', null),
-                _react2.default.createElement(_GameSelect2.default, { onSelectGame: this.handleSelectGame.bind(this) }),
-                _react2.default.createElement(_RoomSelect2.default, { socket: this.props.socket })
+                _react2.default.createElement(
+                    _reactBootstrap.Grid,
+                    null,
+                    _react2.default.createElement(
+                        _reactBootstrap.Row,
+                        { className: 'show-grid' },
+                        _react2.default.createElement(
+                            _reactBootstrap.Col,
+                            { xs: 6, md: 6 },
+                            _react2.default.createElement(_GameSelect2.default, { onSelectGame: this.handleSelectGame.bind(this) })
+                        ),
+                        _react2.default.createElement(
+                            _reactBootstrap.Col,
+                            { xs: 6, md: 6 },
+                            _react2.default.createElement(_RoomSelect2.default, { socket: this.props.socket })
+                        )
+                    )
+                )
             );
         }
     }]);
@@ -23620,7 +23638,101 @@ var RoomSelect = function (_Component) {
                         room,
                         '   Players: 1/2'
                     );
-                })
+                }),
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content',
+                _react2.default.createElement('br', null),
+                'Content'
             );
         }
     }]);
