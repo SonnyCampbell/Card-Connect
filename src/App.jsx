@@ -43,7 +43,7 @@ class App extends Component {
     handleJoinGame(username, roomName, gameType) {
         if(gameType !== ''){
             
-            this.state.socket.emit('JoinRoom', username, roomName);
+            this.state.socket.emit('JoinRoom', username, roomName, gameType);
             this.setState({
                 username,
                 roomName,

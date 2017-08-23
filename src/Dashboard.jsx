@@ -24,14 +24,14 @@ class Dashboard extends Component {
 
     handleJoinGame(username, roomName){
         if(this.state.gameType !== ''){
+            console.log(username + ' ' + roomName);
             this.props.onJoinGame(username, roomName, this.state.gameType);
         }
         else {
             this.setState({
                 joinGameError: 'No game type selected'
             });
-        }
-        
+        }      
     }
 
     handleSelectGame(gameType){
@@ -46,6 +46,10 @@ class Dashboard extends Component {
         this.setState({
             selectedRoomIndex: index
         });
+    }
+
+    handleJoinRoom(username, roomName, gameType){
+        this.props.onJoinGame(username, roomName, gameType);
     }
     
     render(){
@@ -63,6 +67,7 @@ class Dashboard extends Component {
                                 socket={this.props.socket} 
                                 onSelectRoom={this.handleSelectRoom.bind(this)} 
                                 selectedRoomIndex={this.state.selectedRoomIndex}
+                                onJoinRoom={this.handleJoinRoom.bind(this)}
                             />
                         </Col>
                     </Row>

@@ -51,8 +51,14 @@ class RoomSelect extends Component {
 
     handleSelectRoom(index){
         console.log(this.props.selectedRoomIndex);
+        
         this.props.onSelectRoom(index);
     }
+
+    handleJoinRoom(username, roomName, gameType){
+        this.props.onJoinRoom(username, roomName, gameType);
+    }
+
     
     render(){
         return (
@@ -61,8 +67,9 @@ class RoomSelect extends Component {
                     <div 
                         className={this.props.selectedRoomIndex === k ? 'RoomDetailsSelected' : 'RoomDetails'} 
                         onClick={this.handleSelectRoom.bind(this, k)}
+                        onDoubleClick={this.handleJoinRoom.bind(this, 'Player' + k , room.roomName, room.gameType)}
                         key={k}
-                    >Game: {room.roomName}   Players: {room.playerCount}/2</div>
+                    >Room: {room.roomName} | Game: {room.gameType} | Players: {room.playerCount}/2</div>
                 )) }
                 
             </div>

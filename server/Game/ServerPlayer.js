@@ -1,12 +1,14 @@
 import Card from './ServerCard'
 
-function Player(socket, username) {
+function Player(socket, username, gameType) {
     let _username = username;
     let _socket = socket;
     let _roomName = '';
     let _hand = [];
 
     this.isTurn = false;
+
+    this.gameType = gameType;
 
     // Getters and Setters
     this.getSocket = () => {

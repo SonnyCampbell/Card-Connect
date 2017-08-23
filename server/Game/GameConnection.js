@@ -9,7 +9,7 @@ function GameConnection(io) {
     let _roomsPlayers = {}; // { roomName: [Player1(), Player2(), ...]}
     let _rooms = [];
 
-    this.JoinRoom = (socket, username, roomName) => {
+    this.JoinRoom = (socket, username, roomName, gameType) => {
 
 
         if(_games.hasOwnProperty(roomName) && _games[roomName].hasStarted){
@@ -39,7 +39,8 @@ function GameConnection(io) {
 
         
 
-        let player = new Player(socket, username);
+        let player = new Player(socket, username, gameType);
+
         _players[socket.id]  = player;
         player.setRoomName(roomName);
         if(!_rooms.includes(roomName)){
@@ -69,7 +70,8 @@ function GameConnection(io) {
         for(let i = 0; i < _rooms.length; i++){
             roomList.push({
                 roomName: _rooms[i],
-                playerCount: _roomsPlayers[_rooms[i]].length
+                playerCount: _roomsPlayers[_rooms[i]].length,
+                gameType: _roomsPlayers[_rooms[i]][0].gameType
             });
         }
         console.log(socket.id + ' ' + roomList);
@@ -79,7 +81,7 @@ function GameConnection(io) {
 
     this.StartGame = (socket) => {
         let player = _players[socket.id];
-        _games[player.getRoomName()] = new Game();
+        _games[player.getRoomName()] = new Game(player.gameType);
         _games[player.getRoomName()].hasStarted = true;
 
         console.log(player.getUsername() + ' started the game.');

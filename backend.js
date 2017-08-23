@@ -75,11 +75,12 @@
 
 
 class Game {
-    constructor() {
+    constructor(gameType) {
         this.deck = new __WEBPACK_IMPORTED_MODULE_0__ServerDeck__["a" /* default */](); 
 
         this.players = [];
         this.hasStarted = false;
+        this.gameType = gameType;
     }
 
 
@@ -123,13 +124,15 @@ class Game {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ServerCard__ = __webpack_require__(2);
 
 
-function Player(socket, username) {
+function Player(socket, username, gameType) {
     let _username = username;
     let _socket = socket;
     let _roomName = '';
     let _hand = [];
 
     this.isTurn = false;
+
+    this.gameType = gameType;
 
     // Getters and Setters
     this.getSocket = () => {
@@ -240,7 +243,7 @@ function GameConnection(io) {
     let _roomsPlayers = {}; // { roomName: [Player1(), Player2(), ...]}
     let _rooms = [];
 
-    this.JoinRoom = (socket, username, roomName) => {
+    this.JoinRoom = (socket, username, roomName, gameType) => {
 
 
         if(_games.hasOwnProperty(roomName) && _games[roomName].hasStarted){
@@ -270,7 +273,8 @@ function GameConnection(io) {
 
         
 
-        let player = new __WEBPACK_IMPORTED_MODULE_0__ServerPlayer__["a" /* default */](socket, username);
+        let player = new __WEBPACK_IMPORTED_MODULE_0__ServerPlayer__["a" /* default */](socket, username, gameType);
+
         _players[socket.id]  = player;
         player.setRoomName(roomName);
         if(!_rooms.includes(roomName)){
@@ -300,7 +304,8 @@ function GameConnection(io) {
         for(let i = 0; i < _rooms.length; i++){
             roomList.push({
                 roomName: _rooms[i],
-                playerCount: _roomsPlayers[_rooms[i]].length
+                playerCount: _roomsPlayers[_rooms[i]].length,
+                gameType: _roomsPlayers[_rooms[i]][0].gameType
             });
         }
         console.log(socket.id + ' ' + roomList);
@@ -310,7 +315,7 @@ function GameConnection(io) {
 
     this.StartGame = (socket) => {
         let player = _players[socket.id];
-        _games[player.getRoomName()] = new __WEBPACK_IMPORTED_MODULE_1__Game__["a" /* default */]();
+        _games[player.getRoomName()] = new __WEBPACK_IMPORTED_MODULE_1__Game__["a" /* default */](player.gameType);
         _games[player.getRoomName()].hasStarted = true;
 
         console.log(player.getUsername() + ' started the game.');
@@ -608,8 +613,8 @@ let players = {};
 io.on('connection', (socket) => {
     console.log('User ' + socket.id + ' connected to server.');
 
-    socket.on('JoinRoom', function(username, roomName){
-        conn.JoinRoom(socket, username, roomName);
+    socket.on('JoinRoom', function(username, roomName, gameType){
+        conn.JoinRoom(socket, username, roomName, gameType);
     });
 
     socket.on('StartGame', function(){

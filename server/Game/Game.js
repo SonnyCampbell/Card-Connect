@@ -1,11 +1,12 @@
 import Deck from './ServerDeck'
 
 class Game {
-    constructor() {
+    constructor(gameType) {
         this.deck = new Deck(); 
 
         this.players = [];
         this.hasStarted = false;
+        this.gameType = gameType;
     }
 
 

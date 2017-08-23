@@ -23289,7 +23289,7 @@ var App = function (_Component) {
         value: function handleJoinGame(username, roomName, gameType) {
             if (gameType !== '') {
 
-                this.state.socket.emit('JoinRoom', username, roomName);
+                this.state.socket.emit('JoinRoom', username, roomName, gameType);
                 this.setState({
                     username: username,
                     roomName: roomName,
@@ -23959,6 +23959,7 @@ var Dashboard = function (_Component) {
         key: 'handleJoinGame',
         value: function handleJoinGame(username, roomName) {
             if (this.state.gameType !== '') {
+                console.log(username + ' ' + roomName);
                 this.props.onJoinGame(username, roomName, this.state.gameType);
             } else {
                 this.setState({
@@ -23981,6 +23982,11 @@ var Dashboard = function (_Component) {
             this.setState({
                 selectedRoomIndex: index
             });
+        }
+    }, {
+        key: 'handleJoinRoom',
+        value: function handleJoinRoom(username, roomName, gameType) {
+            this.props.onJoinGame(username, roomName, gameType);
         }
     }, {
         key: 'render',
@@ -24007,7 +24013,8 @@ var Dashboard = function (_Component) {
                             _react2.default.createElement(_RoomSelect2.default, {
                                 socket: this.props.socket,
                                 onSelectRoom: this.handleSelectRoom.bind(this),
-                                selectedRoomIndex: this.state.selectedRoomIndex
+                                selectedRoomIndex: this.state.selectedRoomIndex,
+                                onJoinRoom: this.handleJoinRoom.bind(this)
                             })
                         )
                     )
@@ -24518,7 +24525,13 @@ var RoomSelect = function (_Component) {
         key: 'handleSelectRoom',
         value: function handleSelectRoom(index) {
             console.log(this.props.selectedRoomIndex);
+
             this.props.onSelectRoom(index);
+        }
+    }, {
+        key: 'handleJoinRoom',
+        value: function handleJoinRoom(username, roomName, gameType) {
+            this.props.onJoinRoom(username, roomName, gameType);
         }
     }, {
         key: 'render',
@@ -24534,11 +24547,14 @@ var RoomSelect = function (_Component) {
                         {
                             className: _this3.props.selectedRoomIndex === k ? 'RoomDetailsSelected' : 'RoomDetails',
                             onClick: _this3.handleSelectRoom.bind(_this3, k),
+                            onDoubleClick: _this3.handleJoinRoom.bind(_this3, 'Player' + k, room.roomName, room.gameType),
                             key: k
                         },
-                        'Game: ',
+                        'Room: ',
                         room.roomName,
-                        '   Players: ',
+                        ' | Game: ',
+                        room.gameType,
+                        ' | Players: ',
                         room.playerCount,
                         '/2'
                     );
