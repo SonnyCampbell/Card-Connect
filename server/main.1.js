@@ -30,7 +30,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('DealHands', function(numOfCards){
-        console.log('Dealing Hands');
         conn.DealHands(socket, numOfCards);
     });
 
@@ -39,12 +38,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('DealCard', function() {
-        console.log('deal card server side received');
         conn.DealCard(socket);
     });
 
     socket.on('DiscardCard', function(discardCardSV) {
-        console.log('discard card server side received ' + discardCardSV);
         conn.DiscardCard(socket, discardCardSV);
     });
 

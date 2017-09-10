@@ -1,55 +1,63 @@
 import Card from './ServerCard'
 import CONST from './Constants'
 
-function DeckOfCards() {  
-    let _cardCount = 52;
-    let _cardsUsed = 0;
+class DeckOfCards { 
+    constructor(){
 
-    let cards = CreateDeck();
-    //cards = Shuffle(cards);
-    let discardPile = [];
+        //privates
+        this._cardCount = 52;
+        this._cardsUsed = 0;
+        this._cards = CreateDeck();
+        //cards = Shuffle(cards);
+        this._discardPile = [];
+
+        //public
+    } 
 
 
 
-    this.Cards = () => {
-        return cards;
+
+    Cards()  {
+        return this._cards;
     }
 
-    this.Deal = () => {
-        if(_cardsUsed >= cards.length)
+    Deal() {
+        let cards = this._cards;
+        if(this._cardsUsed >= cards.length)
         {
             throw new Error("No cards left in the deck!");
         }
 
-        let returnCard =  cards[cards.length - _cardsUsed - 1];
-        _cardsUsed++;
+        let returnCard =  cards[cards.length - this._cardsUsed - 1];
+        this._cardsUsed++;
         return returnCard;
     }
 
-    this.CardsUsed = () => {
-        return _cardsUsed;
+    CardsUsed() {
+        return this._cardsUsed;
     }
 
-    this.CardsLeft = () => {
-        return _cardCount - _cardsUsed;
+    CardsLeft() {
+        return this._cardCount - this._cardsUsed;
     }
 
-    this.PutInDiscardPile = (theCard) => {
-        discardPile.push(theCard);
+    PutInDiscardPile(theCard) {
+        this._discardPile.push(theCard);
     }
 
-    this.TakeTopOfDiscardPile = () => {
-        if (discardPile.length > 0){
-            return discardPile.pop();
+    TakeTopOfDiscardPile() {
+        if (this._discardPile.length > 0){
+            return this._discardPile.pop();
         } else {
             console.log('Discard pile is empty!');
             return null;
         }
     }
 
-    this.Shuffle = () => {
-        for(let i = 0; i < cards.length; i++){
-            let k = Math.floor(Math.random() * cards.length);
+    Shuffle() {
+        let cards = this._cards;
+        for(let i = 0; i < cards.length  - this._cardsUsed; i++){
+            let k = Math.floor(Math.random() * (cards.length - this._cardsUsed));
             let temp = cards[i];
             cards[i] = cards[k];
             cards[k] = temp;

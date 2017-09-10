@@ -1,19 +1,27 @@
-function Card(xPos, yPos, width, height, suit, value) {
-  // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
-  // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
-  // But we aren't checking anything else! We could put "Lalala" for the value of x 
-  this.x = xPos || 0;
-  this.y = yPos || 0;
-  this.w = width || 1;
-  this.h = height || 1;
-  this.rotation = 0;
+class Card {
+    constructor(xPos, yPos, width, height, suit, value) {
 
-  let _suit = suit;
-  let _value = value;
+        //private
+        this._suit = suit;
+        this._value = value;
+
+        // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
+        // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
+        // But we aren't checking anything else! We could put "Lalala" for the value of x 
+        //public
+        this.x = xPos || 0;
+        this.y = yPos || 0;
+        this.w = width || 1;
+        this.h = height || 1;
+        this.rotation = 0;
+
+        
+    }
 
 
-  this.GetSuitString = () => {
-    switch(_suit){
+
+  GetSuitString() {
+    switch(this._suit){
         case 'S':
             return 'Spades';
         case 'C':
@@ -25,8 +33,8 @@ function Card(xPos, yPos, width, height, suit, value) {
     }
   }
 
-  this.GetValueString = () => {
-    switch(_value){
+  GetValueString() {
+    switch(this._value){
         case 1:
             return 'Ace';
         case 11:
@@ -41,12 +49,12 @@ function Card(xPos, yPos, width, height, suit, value) {
   }
 
 
-  this.ToString = () => {
+  ToString() {
     return `The ${this.GetValueString()} of ${this.GetSuitString()}.`;
   }
 
-  this.SuitValue = () => {
-      return  _suit + _value;
+  SuitValue() {
+      return  this._suit + this._value;
   }
 }
 

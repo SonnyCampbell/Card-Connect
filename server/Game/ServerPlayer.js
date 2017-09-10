@@ -1,42 +1,47 @@
 import Card from './ServerCard'
 
-function Player(socket, username, gameType) {
-    let _username = username;
-    let _socket = socket;
-    let _roomName = '';
-    let _hand = [];
+class Player {
+    constructor(socket, username, gameType){
 
-    this.isTurn = false;
+        //privates
+        this._username = username;
+        this._socket = socket;
+        this._roomName = '';
+        this._hand = [];
 
-    this.gameType = gameType;
+        //public
+        this.isTurn = false;
+        this.gameType = gameType;
+    }
+    
 
     // Getters and Setters
-    this.getSocket = () => {
-        return  _socket;
+    GetSocket() {
+        return  this._socket;
     }
-    this.setSocket = (socket) => {
-        _socket = socket;
-    }
-
-    this.getUsername = () => {
-        return  _username;
-    }
-    this.setUsername = (username) => {
-        _username = username;
+    SetSocket(socket){
+        this._socket = socket;
     }
 
-    this.getRoomName = () => {
-        return  _roomName;
+    GetUsername() {
+        return  this._username;
     }
-    this.setRoomName = (roomName) => {
-        _roomName = roomName;
+    SetUsername(username) {
+        this._username = username;
     }
 
-    this.getHand = () => {
-        return _hand;
+    GetRoomName() {
+        return  this._roomName;
     }
-    this.setHand = (hand) => {
-        _hand = hand;
+    SetRoomName(roomName) {
+        this._roomName = roomName;
+    }
+
+    GetHand() {
+        return this._hand;
+    }
+    SetHand(hand) {
+        this._hand = hand;
     }
 }
 

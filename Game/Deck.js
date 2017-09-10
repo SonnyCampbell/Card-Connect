@@ -1,15 +1,18 @@
 import Card from './Card'
 import CONST from './constants'
 
-function DeckOfCards() {  
-    let _cardCount = 52;
-    let _cardsUsed = 0;
+class DeckOfCards {  
+    constructor(){
+        this._cardCount = 52;
+        this._cardsUsed = 0;
+        
     
+        this.deckDict = {};
+    
+        this.cards = CreateDeck(this.deckDict);
+        this.discardPile = [];
+    }
 
-    this.deckDict = {};
-
-    let cards = CreateDeck(this.deckDict);
-    let discardPile = [];
 
     // for (let i = 0; i < CONST.SUITS().length; i++)
     // {           
@@ -22,49 +25,49 @@ function DeckOfCards() {
     
 
 
-    this.Shuffle = () => {
-        for(let i = 0; i < cards.length; i++){
-            let k = Math.floor(Math.random() * cards.length);
-            let temp = cards[i];
-            cards[i] = cards[k];
-            cards[k] = temp;
+    Shuffle() {
+        for(let i = 0; i < this.cards.length; i++){
+            let k = Math.floor(Math.random() * this.cards.length);
+            let temp = this.cards[i];
+            this.cards[i] = this.cards[k];
+            this.cards[k] = temp;
         }
     }
 
-    this.Cards = () => {
-        return cards;
+    Cards() {
+        return this.cards;
     }
 
-    this.Deal = () => {
-        if(_cardsUsed >= cards.length)
+    Deal() {
+        if(this._cardsUsed >= this.cards.length)
         {
             throw new Error("No cards left in the deck!");
         }
-        return cards[_cardsUsed++];
+        return this.cards[this._cardsUsed++];
     }
 
-    this.CardsUsed = () => {
-        return _cardsUsed;
+    CardsUsed() {
+        return this._cardsUsed;
     }
 
-    this.CardsLeft = () => {
-        return cards.length;
+    CardsLeft() {
+        return this.cards.length;
     }
 
-    this.PutInDiscardPile = (theCard) => {
-        discardPile.push(theCard);
+    PutInDiscardPile(theCard) {
+        this.discardPile.push(theCard);
     }
 
-    this.TakeTopOfDiscardPile = () => {
-        if (discardPile.length > 0){
-            return discardPile.pop();
+    TakeTopOfDiscardPile() {
+        if (this.discardPile.length > 0){
+            return this.discardPile.pop();
         } else {
             console.log('Discard pile is empty!');
             return null;
         }
     }
 
-    this.RemoveCard = (card) => {
+    RemoveCard(card) {
         for(let i = 0; i < this.Cards().length; i++){
             if (card.SuitValue() == this.Cards()[i].SuitValue()){
                 this.Cards().splice(i, 1);

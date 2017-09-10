@@ -4,58 +4,69 @@ import Player from './Player'
 import Game from './Game'
 import GoFishGame from './GoFish'
 
-function CanvasState(canvas, socket){
-    this.canvas = canvas;
-    this.width = canvas.width;
-    this.height = canvas.height;
-    this.ctx = canvas.getContext('2d');
-
-    this.valid = false;
-
-    this.dragging = false;
+class CanvasState{
+    constructor(canvas, socket){
+        this.canvas = canvas;
+        this.width = canvas.width;
+        this.height = canvas.height;
+        this.ctx = canvas.getContext('2d');
     
-    this.dragoffx = 0;
-    this.dragoffy = 0;
-
-    this.game = new GoFishGame(this, socket);
-
-    this.socket = socket;
-
-    //-----------------------------------------------------------------------------
-    // Padding and border offets
-    //-----------------------------------------------------------------------------
-    let thisCanvasState = this;
-
-    this.selectionColor = '#CC0000';
-    this.selectionWidth = 2;
-    this.interval = 30;
-    setInterval(function() { thisCanvasState.Draw(); }, thisCanvasState.interval);
+        this.valid = false;
     
-    let html = document.body.parentNode;
-    this.htmlTop = html.offsetTop;
-    this.htmlLeft = html.offsetLeft;
+        this.dragging = false;
+        
+        this.dragoffx = 0;
+        this.dragoffy = 0;
+    
+        this.game = new GoFishGame(this, socket);
+    
+        this.socket = socket;
+    
+        //-----------------------------------------------------------------------------
+        // Padding and border offets
+        //-----------------------------------------------------------------------------
+        let thisCanvasState = this;
+    
+        this.selectionColor = '#CC0000';
+        this.selectionWidth = 2;
+        this.interval = 30;
+        setInterval(function() { thisCanvasState.Draw(); }, thisCanvasState.interval);
+        
+        let html = document.body.parentNode;
+        this.htmlTop = html.offsetTop;
+        this.htmlLeft = html.offsetLeft;
+    
+        let stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
+        if (document.defaultView && document.defaultView.getComputedStyle) {
+            this.stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingLeft'], 10)      || 0;
+            this.stylePaddingTop  = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10)       || 0;
+            this.styleBorderLeft  = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10)  || 0;
+            this.styleBorderTop   = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10)   || 0;
+        }
+    
+        //-----------------------------------------------------------------------------
+        // Event Listeners
+        //-----------------------------------------------------------------------------
+        canvas.addEventListener('selectstart', function(e) {
+            e.preventDefault(); 
+            return false;
+        }, false);
+      
+        canvas.addEventListener('mousedown', function(e){
+            thisCanvasState.HandleMouseDown(e);
+        }, false);
 
-    let stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
-    if (document.defaultView && document.defaultView.getComputedStyle) {
-        this.stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingLeft'], 10)      || 0;
-        this.stylePaddingTop  = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10)       || 0;
-        this.styleBorderLeft  = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10)  || 0;
-        this.styleBorderTop   = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10)   || 0;
+        canvas.addEventListener('mouseup', function(e){
+            thisCanvasState.HandleMouseUp(e);
+        }, false);
+
+        canvas.addEventListener('mousemove', function(e){
+            thisCanvasState.HandleMouseMove(e);
+        }, false);
     }
+    
 
-    //-----------------------------------------------------------------------------
-    // Event Listeners
-    //-----------------------------------------------------------------------------
-    canvas.addEventListener('selectstart', function(e) {
-        e.preventDefault(); 
-        return false;
-    }, false);
-  
-    canvas.addEventListener('mousedown', function(e){
-        thisCanvasState.HandleMouseDown(e);
-    }, false);
-
-    this.HandleMouseDown = function(e){
+    HandleMouseDown(e){
         let mouse = this.GetMouse(e);
         let mx = mouse.x;
         let my = mouse.y;
@@ -110,11 +121,9 @@ function CanvasState(canvas, socket){
         }
     }
   
-    canvas.addEventListener('mouseup', function(e){
-        thisCanvasState.HandleMouseUp(e);
-    }, false);
+    
 
-    this.HandleMouseUp = function(e) {
+    HandleMouseUp(e) {
         this.dragging = false;
 
         let mouse = this.GetMouse(e);
@@ -128,11 +137,9 @@ function CanvasState(canvas, socket){
         }
     }
   
-    canvas.addEventListener('mousemove', function(e){
-        thisCanvasState.HandleMouseMove(e);
-    }, false);
+    
 
-    this.HandleMouseMove = function(e){
+    HandleMouseMove(e){
         let mouse = this.GetMouse(e);
         let mx = mouse.x;
         let my = mouse.y;
@@ -160,107 +167,107 @@ function CanvasState(canvas, socket){
         }
     }
 
-    //Add new shape on 'dblclick'
-}
-
-CanvasState.prototype.DeselectCard = function(){
-    if(this.game.selectedCard !== null){
-        this.game.selectedCard.selected = false;
-        this.game.selectedCard.hovered = false;
-        this.game.selectedCard = null;
-        this.valid = false;
+    DeselectCard(){
+        if(this.game.selectedCard !== null){
+            this.game.selectedCard.selected = false;
+            this.game.selectedCard.hovered = false;
+            this.game.selectedCard = null;
+            this.valid = false;
+        }
+    
     }
 
-}
-
-CanvasState.prototype.GetMouse = function(e){
-    let theCanvas = this.canvas;
-    let offsetX = 0;
-    let offsetY = 0;
-    let mx, my;
-
-    if (theCanvas.offsetParent !== undefined) {
-        do {
-            offsetX += theCanvas.offsetLeft;
-            offsetY += theCanvas.offsetTop;
-        } while ((theCanvas = theCanvas.offsetParent));
+    GetMouse(e){
+        let theCanvas = this.canvas;
+        let offsetX = 0;
+        let offsetY = 0;
+        let mx, my;
+    
+        if (theCanvas.offsetParent !== undefined) {
+            do {
+                offsetX += theCanvas.offsetLeft;
+                offsetY += theCanvas.offsetTop;
+            } while ((theCanvas = theCanvas.offsetParent));
+        }
+    
+        offsetX += this.stylePaddingLeft + this.styleBorderLeft + this.htmlLeft;
+        offsetY += this.stylePaddingTop + this.styleBorderTop + this.htmlTop;
+        mx = e.pageX - offsetX;
+        my = e.pageY - offsetY;
+    
+        return {x: mx, y: my};
     }
 
-    offsetX += this.stylePaddingLeft + this.styleBorderLeft + this.htmlLeft;
-    offsetY += this.stylePaddingTop + this.styleBorderTop + this.htmlTop;
-    mx = e.pageX - offsetX;
-    my = e.pageY - offsetY;
+    Clear(){
+        this.ctx.clearRect(0, 0, this.width, this.height);
+    }
 
-    return {x: mx, y: my};
-}
+    // TODO: Need to actually shuffle the deck server-side
+    StartGame() {
+        this.game.StartGame();
+        this.Draw();
+    }
 
-CanvasState.prototype.Clear = function(){
-    this.ctx.clearRect(0, 0, this.width, this.height);
-}
+    Draw(){
+        if(!this.valid){
+            this.Clear();
+            this.game.Draw(this.ctx);
+            this.valid = true;
+        }
+    }
 
-// TODO: Need to actually shuffle the deck server-side
-CanvasState.prototype.StartGame = function() {
-    this.game.StartGame();
-    this.Draw();
-}
-
-CanvasState.prototype.Draw = function(){
-    if(!this.valid){
+    animateTo(card, startTime, duration, destX, destY, startX, startY, endAnimCallback) {
+        let canvas = this.canvas;
+        let ctx = this.ctx;
+        let isMoving = false;
+    
+        let time = ((new Date()).getTime() - startTime)/ 1000 ;
+        let t = Math.min(1, time / duration);
+    
+        if( t < 1) {
+            card.x = startX * (1 - t) + (destX) * t;
+            card.y = startY * (1 - t) + (destY) * t;
+            isMoving = true;
+            this.valid = false;
+        }
+        else {
+            card.x = destX;
+            card.y = destY;
+            this.valid = false;
+            endAnimCallback();
+            return;
+        }
+    
         this.Clear();
-        this.game.Draw(this.ctx);
-        this.valid = true;
+        this.Draw();
+    
+        requestAnimationFrame(() => {
+            this.animateTo(card, startTime, duration, destX, destY, startX, startY, endAnimCallback);
+        });
     }
+
+    animate(card, startTime){
+        let canvas = this.canvas;
+        let ctx = this.ctx;
+    
+        let time = (new Date()).getTime() - startTime;
+    
+        let linearSpeed = 10;
+        let newX = linearSpeed * time / 1000;
+    
+        if(newX < canvas.width - card.w) {
+            card.x += newX;
+            this.valid = false;
+        }
+    
+        this.Clear();
+        this.Draw();
+    
+        requestAnimationFrame(() => {
+            this.animate(card, startTime);
+        });
+    }
+
 }
 
-CanvasState.prototype.animateTo = function(card, startTime, duration, destX, destY, startX, startY, endAnimCallback) {
-    let canvas = this.canvas;
-    let ctx = this.ctx;
-    let isMoving = false;
-
-    let time = ((new Date()).getTime() - startTime)/ 1000 ;
-    let t = Math.min(1, time / duration);
-
-    if( t < 1) {
-        card.x = startX * (1 - t) + (destX) * t;
-        card.y = startY * (1 - t) + (destY) * t;
-        isMoving = true;
-        this.valid = false;
-    }
-    else {
-        card.x = destX;
-        card.y = destY;
-        this.valid = false;
-        endAnimCallback();
-        return;
-    }
-
-    this.Clear();
-    this.Draw();
-
-    requestAnimationFrame(() => {
-        this.animateTo(card, startTime, duration, destX, destY, startX, startY, endAnimCallback);
-    });
-}
-
-CanvasState.prototype.animate = function(card, startTime){
-    let canvas = this.canvas;
-    let ctx = this.ctx;
-
-    let time = (new Date()).getTime() - startTime;
-
-    let linearSpeed = 10;
-    let newX = linearSpeed * time / 1000;
-
-    if(newX < canvas.width - card.w) {
-        card.x += newX;
-        this.valid = false;
-    }
-
-    this.Clear();
-    this.Draw();
-
-    requestAnimationFrame(() => {
-        this.animate(card, startTime);
-    });
-}
 export default CanvasState;

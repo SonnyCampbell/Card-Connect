@@ -2662,99 +2662,119 @@ module.exports = ReactCurrentOwner;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
-    var _this = this;
 
-    // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
-    // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
-    // But we aren't checking anything else! We could put "Lalala" for the value of x 
-    this.x = xPos || 0;
-    this.y = yPos || 0;
-    this.w = width || 1;
-    this.h = height || 1;
-    this.rotation = 0;
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-    this.faceImage = new Image();
-    this.faceImage.src = faceImageSrc;
-    this.backImage = new Image();
-    this.backImage.src = '/images/Cards/card_back2.png';
-    this.displayImage = this.backImage;
-    this.isFaceDown = true;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    this.hovered = false;
-    this.selected = false;
-    this.askedFor = false;
+var Card = function () {
+    function Card(xPos, yPos, width, height, faceImageSrc, suit, value) {
+        _classCallCheck(this, Card);
 
-    var _suit = suit;
-    var _value = value;
+        // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
+        // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
+        // But we aren't checking anything else! We could put "Lalala" for the value of x 
+        this.x = xPos || 0;
+        this.y = yPos || 0;
+        this.w = width || 1;
+        this.h = height || 1;
+        this.rotation = 0;
 
-    this.DrawOnLoad = function (ctx) {
-        if (_this.backImage.complete) {
-            _this.Draw(ctx);
-        } else {
-            _this.ctx = ctx;
-            _this.backImage.onload = _this.ctx.drawImage(_this.backImage, _this.x, _this.y, _this.w, _this.h);
+        this.faceImage = new Image();
+        this.faceImage.src = faceImageSrc;
+        this.backImage = new Image();
+        this.backImage.src = '/images/Cards/card_back2.png';
+        this.displayImage = this.backImage;
+        this.isFaceDown = true;
+
+        this.hovered = false;
+        this.selected = false;
+        this.askedFor = false;
+
+        this._suit = suit;
+        this._value = value;
+    }
+
+    _createClass(Card, [{
+        key: 'DrawOnLoad',
+        value: function DrawOnLoad(ctx) {
+            if (this.backImage.complete) {
+                this.Draw(ctx);
+            } else {
+                this.ctx = ctx;
+                this.backImage.onload = this.ctx.drawImage(this.backImage, this.x, this.y, this.w, this.h);
+            }
         }
-    };
+    }, {
+        key: 'Draw',
+        value: function Draw(ctx) {
+            //ctx.fillStyle = this.fill;
+            //ctx.fillRect(this.x, this.y, this.w, this.h);
+            var hoverRaise = 0;
+            //if((this.hovered && !this.selected)){
+            if (this.hovered || this.selected) {
+                hoverRaise = 10;
+            }
 
-    this.Draw = function (ctx) {
-        //ctx.fillStyle = this.fill;
-        //ctx.fillRect(this.x, this.y, this.w, this.h);
-        var hoverRaise = 0;
-        //if((this.hovered && !this.selected)){
-        if (_this.hovered || _this.selected) {
-            hoverRaise = 10;
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 0.01;
+            ctx.strokeRect(this.x, this.y, this.w, this.h);
+            ctx.drawImage(this.displayImage, this.x, this.y - hoverRaise, this.w, this.h);
         }
 
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 0.01;
-        ctx.strokeRect(_this.x, _this.y, _this.w, _this.h);
-        ctx.drawImage(_this.displayImage, _this.x, _this.y - hoverRaise, _this.w, _this.h);
-    };
+        // Determine if a point is inside the shape's bounds
 
-    // Determine if a point is inside the shape's bounds
-    this.Contains = function (mx, my) {
-        // All we have to do is make sure the Mouse X,Y fall in the area between
-        // the shape's X and (X + Width) and its Y and (Y + Height)
-        return this.x <= mx && this.x + this.w >= mx && this.y <= my && this.y + this.h >= my;
-    };
-
-    this.GetSuitString = function () {
-        switch (_suit) {
-            case 'S':
-                return 'Spades';
-            case 'C':
-                return 'Clubs';
-            case 'H':
-                return 'Hearts';
-            case 'D':
-                return 'Diamonds';
+    }, {
+        key: 'Contains',
+        value: function Contains(mx, my) {
+            // All we have to do is make sure the Mouse X,Y fall in the area between
+            // the shape's X and (X + Width) and its Y and (Y + Height)
+            return this.x <= mx && this.x + this.w >= mx && this.y <= my && this.y + this.h >= my;
         }
-    };
-
-    this.GetValueString = function () {
-        switch (_value) {
-            case 1:
-                return 'Ace';
-            case 11:
-                return 'Jack';
-            case 12:
-                return 'Queen';
-            case 13:
-                return 'King';
-            default:
-                return _value;
+    }, {
+        key: 'GetSuitString',
+        value: function GetSuitString() {
+            switch (this._suit) {
+                case 'S':
+                    return 'Spades';
+                case 'C':
+                    return 'Clubs';
+                case 'H':
+                    return 'Hearts';
+                case 'D':
+                    return 'Diamonds';
+            }
         }
-    };
+    }, {
+        key: 'GetValueString',
+        value: function GetValueString() {
+            switch (this._value) {
+                case 1:
+                    return 'Ace';
+                case 11:
+                    return 'Jack';
+                case 12:
+                    return 'Queen';
+                case 13:
+                    return 'King';
+                default:
+                    return this._value;
+            }
+        }
+    }, {
+        key: 'ToString',
+        value: function ToString() {
+            return 'The ' + this.GetValueString() + ' of ' + this.GetSuitString() + '.';
+        }
+    }, {
+        key: 'SuitValue',
+        value: function SuitValue() {
+            return this._suit + this._value;
+        }
+    }]);
 
-    this.ToString = function () {
-        return 'The ' + _this.GetValueString() + ' of ' + _this.GetSuitString() + '.';
-    };
-
-    this.SuitValue = function () {
-        return _suit + _value;
-    };
-}
+    return Card;
+}();
 
 exports.default = Card;
 
@@ -4453,6 +4473,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _Card = __webpack_require__(32);
 
 var _Card2 = _interopRequireDefault(_Card);
@@ -4463,16 +4485,20 @@ var _constants2 = _interopRequireDefault(_constants);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function DeckOfCards() {
-    var _this = this;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    var _cardCount = 52;
-    var _cardsUsed = 0;
+var DeckOfCards = function () {
+    function DeckOfCards() {
+        _classCallCheck(this, DeckOfCards);
 
-    this.deckDict = {};
+        this._cardCount = 52;
+        this._cardsUsed = 0;
 
-    var cards = CreateDeck(this.deckDict);
-    var discardPile = [];
+        this.deckDict = {};
+
+        this.cards = CreateDeck(this.deckDict);
+        this.discardPile = [];
+    }
 
     // for (let i = 0; i < CONST.SUITS().length; i++)
     // {           
@@ -4483,59 +4509,71 @@ function DeckOfCards() {
     // }
 
 
-    this.Shuffle = function () {
-        for (var i = 0; i < cards.length; i++) {
-            var k = Math.floor(Math.random() * cards.length);
-            var temp = cards[i];
-            cards[i] = cards[k];
-            cards[k] = temp;
-        }
-    };
-
-    this.Cards = function () {
-        return cards;
-    };
-
-    this.Deal = function () {
-        if (_cardsUsed >= cards.length) {
-            throw new Error("No cards left in the deck!");
-        }
-        return cards[_cardsUsed++];
-    };
-
-    this.CardsUsed = function () {
-        return _cardsUsed;
-    };
-
-    this.CardsLeft = function () {
-        return cards.length;
-    };
-
-    this.PutInDiscardPile = function (theCard) {
-        discardPile.push(theCard);
-    };
-
-    this.TakeTopOfDiscardPile = function () {
-        if (discardPile.length > 0) {
-            return discardPile.pop();
-        } else {
-            console.log('Discard pile is empty!');
-            return null;
-        }
-    };
-
-    this.RemoveCard = function (card) {
-        for (var i = 0; i < _this.Cards().length; i++) {
-            if (card.SuitValue() == _this.Cards()[i].SuitValue()) {
-                _this.Cards().splice(i, 1);
-                break;
-            }
-            if (i == _this.Cards().length) {
-                console.log('Couldn\' find the card in the deck. Something probably went wrong');
+    _createClass(DeckOfCards, [{
+        key: 'Shuffle',
+        value: function Shuffle() {
+            for (var i = 0; i < this.cards.length; i++) {
+                var k = Math.floor(Math.random() * this.cards.length);
+                var temp = this.cards[i];
+                this.cards[i] = this.cards[k];
+                this.cards[k] = temp;
             }
         }
-    };
-}
+    }, {
+        key: 'Cards',
+        value: function Cards() {
+            return this.cards;
+        }
+    }, {
+        key: 'Deal',
+        value: function Deal() {
+            if (this._cardsUsed >= this.cards.length) {
+                throw new Error("No cards left in the deck!");
+            }
+            return this.cards[this._cardsUsed++];
+        }
+    }, {
+        key: 'CardsUsed',
+        value: function CardsUsed() {
+            return this._cardsUsed;
+        }
+    }, {
+        key: 'CardsLeft',
+        value: function CardsLeft() {
+            return this.cards.length;
+        }
+    }, {
+        key: 'PutInDiscardPile',
+        value: function PutInDiscardPile(theCard) {
+            this.discardPile.push(theCard);
+        }
+    }, {
+        key: 'TakeTopOfDiscardPile',
+        value: function TakeTopOfDiscardPile() {
+            if (this.discardPile.length > 0) {
+                return this.discardPile.pop();
+            } else {
+                console.log('Discard pile is empty!');
+                return null;
+            }
+        }
+    }, {
+        key: 'RemoveCard',
+        value: function RemoveCard(card) {
+            for (var i = 0; i < this.Cards().length; i++) {
+                if (card.SuitValue() == this.Cards()[i].SuitValue()) {
+                    this.Cards().splice(i, 1);
+                    break;
+                }
+                if (i == this.Cards().length) {
+                    console.log('Couldn\' find the card in the deck. Something probably went wrong');
+                }
+            }
+        }
+    }]);
+
+    return DeckOfCards;
+}();
 
 // function CreateDeck(deckDict) {
 //     let cards = [];
@@ -8920,6 +8958,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _Deck = __webpack_require__(48);
 
 var _Deck2 = _interopRequireDefault(_Deck);
@@ -8942,271 +8982,292 @@ var _GoFish2 = _interopRequireDefault(_GoFish);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function CanvasState(canvas, socket) {
-    this.canvas = canvas;
-    this.width = canvas.width;
-    this.height = canvas.height;
-    this.ctx = canvas.getContext('2d');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    this.valid = false;
+var CanvasState = function () {
+    function CanvasState(canvas, socket) {
+        _classCallCheck(this, CanvasState);
 
-    this.dragging = false;
+        this.canvas = canvas;
+        this.width = canvas.width;
+        this.height = canvas.height;
+        this.ctx = canvas.getContext('2d');
 
-    this.dragoffx = 0;
-    this.dragoffy = 0;
+        this.valid = false;
 
-    this.game = new _GoFish2.default(this, socket);
+        this.dragging = false;
 
-    this.socket = socket;
+        this.dragoffx = 0;
+        this.dragoffy = 0;
 
-    //-----------------------------------------------------------------------------
-    // Padding and border offets
-    //-----------------------------------------------------------------------------
-    var thisCanvasState = this;
+        this.game = new _GoFish2.default(this, socket);
 
-    this.selectionColor = '#CC0000';
-    this.selectionWidth = 2;
-    this.interval = 30;
-    setInterval(function () {
-        thisCanvasState.Draw();
-    }, thisCanvasState.interval);
+        this.socket = socket;
 
-    var html = document.body.parentNode;
-    this.htmlTop = html.offsetTop;
-    this.htmlLeft = html.offsetLeft;
+        //-----------------------------------------------------------------------------
+        // Padding and border offets
+        //-----------------------------------------------------------------------------
+        var thisCanvasState = this;
 
-    var stylePaddingLeft = void 0,
-        stylePaddingTop = void 0,
-        styleBorderLeft = void 0,
-        styleBorderTop = void 0;
-    if (document.defaultView && document.defaultView.getComputedStyle) {
-        this.stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingLeft'], 10) || 0;
-        this.stylePaddingTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10) || 0;
-        this.styleBorderLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10) || 0;
-        this.styleBorderTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10) || 0;
+        this.selectionColor = '#CC0000';
+        this.selectionWidth = 2;
+        this.interval = 30;
+        setInterval(function () {
+            thisCanvasState.Draw();
+        }, thisCanvasState.interval);
+
+        var html = document.body.parentNode;
+        this.htmlTop = html.offsetTop;
+        this.htmlLeft = html.offsetLeft;
+
+        var stylePaddingLeft = void 0,
+            stylePaddingTop = void 0,
+            styleBorderLeft = void 0,
+            styleBorderTop = void 0;
+        if (document.defaultView && document.defaultView.getComputedStyle) {
+            this.stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingLeft'], 10) || 0;
+            this.stylePaddingTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10) || 0;
+            this.styleBorderLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10) || 0;
+            this.styleBorderTop = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10) || 0;
+        }
+
+        //-----------------------------------------------------------------------------
+        // Event Listeners
+        //-----------------------------------------------------------------------------
+        canvas.addEventListener('selectstart', function (e) {
+            e.preventDefault();
+            return false;
+        }, false);
+
+        canvas.addEventListener('mousedown', function (e) {
+            thisCanvasState.HandleMouseDown(e);
+        }, false);
+
+        canvas.addEventListener('mouseup', function (e) {
+            thisCanvasState.HandleMouseUp(e);
+        }, false);
+
+        canvas.addEventListener('mousemove', function (e) {
+            thisCanvasState.HandleMouseMove(e);
+        }, false);
     }
 
-    //-----------------------------------------------------------------------------
-    // Event Listeners
-    //-----------------------------------------------------------------------------
-    canvas.addEventListener('selectstart', function (e) {
-        e.preventDefault();
-        return false;
-    }, false);
+    _createClass(CanvasState, [{
+        key: 'HandleMouseDown',
+        value: function HandleMouseDown(e) {
+            var mouse = this.GetMouse(e);
+            var mx = mouse.x;
+            var my = mouse.y;
 
-    canvas.addEventListener('mousedown', function (e) {
-        thisCanvasState.HandleMouseDown(e);
-    }, false);
+            var game = this.game;
 
-    this.HandleMouseDown = function (e) {
-        var mouse = this.GetMouse(e);
-        var mx = mouse.x;
-        var my = mouse.y;
+            var cards = this.game.cards;
 
-        var game = this.game;
+            console.log(this.game.playerTurn);
+            if (this.game.playerTurn) {
+                for (var i = cards.length - 1; i >= 0; i--) {
+                    if (cards[i].Contains(mx, my)) {
+                        console.log('start deal card client side');
+                        this.socket.emit('DealCard');
+                        this.game.EndTurn();
+                        return;
+                    }
+                }
+            }
 
-        var cards = this.game.cards;
+            var cardSelected = false;
+            for (var _i = game.playerHand.cards.length - 1; _i >= 0; _i--) {
+                if (game.playerHand.cards[_i].hovered) {
+                    var selectedCard = game.playerHand.cards[_i];
 
-        console.log(this.game.playerTurn);
-        if (this.game.playerTurn) {
-            for (var i = cards.length - 1; i >= 0; i--) {
-                if (cards[i].Contains(mx, my)) {
-                    console.log('start deal card client side');
-                    this.socket.emit('DealCard');
-                    this.game.EndTurn();
-                    return;
+                    // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
+                    this.dragoffx = mx - selectedCard.x;
+                    this.dragoffy = my - selectedCard.y;
+                    this.dragging = true;
+
+                    game.selectedCard = selectedCard;
+                    selectedCard.selected = true;
+                    cardSelected = true;
+
+                    game.SelectedCard();
+
+                    this.valid = false;
+                } else {
+                    game.playerHand.cards[_i].selected = false;
+                }
+            }
+
+            //TODO: Fix selected card bug when deselecting card from hand
+            //console.log(game.selectedCard);
+            //game.SelectedCard();
+
+            if (!cardSelected) {
+                game.selectedCard = null;
+                this.valid = false;
+            }
+        }
+    }, {
+        key: 'HandleMouseUp',
+        value: function HandleMouseUp(e) {
+            this.dragging = false;
+
+            var mouse = this.GetMouse(e);
+            var mx = mouse.x;
+            var my = mouse.y;
+
+            var game = this.game;
+
+            if (game.discardPile.Contains(mx, my) && game.selectedCard != null) {
+                game.DiscardSelectedCard();
+            }
+        }
+    }, {
+        key: 'HandleMouseMove',
+        value: function HandleMouseMove(e) {
+            var mouse = this.GetMouse(e);
+            var mx = mouse.x;
+            var my = mouse.y;
+
+            var game = this.game;
+
+            if (this.dragging) {
+                game.selectedCard.x = mouse.x - this.dragoffx;
+                game.selectedCard.y = mouse.y - this.dragoffy;
+                this.valid = false;
+            }
+
+            var hovering = false;
+
+            for (var i = game.playerHand.cards.length - 1; i >= 0; i--) {
+
+                if (!hovering && game.playerHand.cards[i].Contains(mx, my)) {
+                    hovering = true;
+                    game.playerHand.cards[i].hovered = true;
+                    this.valid = false;
+                } else if (game.playerHand.cards[i].hovered) {
+                    game.playerHand.cards[i].hovered = false;
+                    this.valid = false;
                 }
             }
         }
+    }, {
+        key: 'DeselectCard',
+        value: function DeselectCard() {
+            if (this.game.selectedCard !== null) {
+                this.game.selectedCard.selected = false;
+                this.game.selectedCard.hovered = false;
+                this.game.selectedCard = null;
+                this.valid = false;
+            }
+        }
+    }, {
+        key: 'GetMouse',
+        value: function GetMouse(e) {
+            var theCanvas = this.canvas;
+            var offsetX = 0;
+            var offsetY = 0;
+            var mx = void 0,
+                my = void 0;
 
-        var cardSelected = false;
-        for (var _i = game.playerHand.cards.length - 1; _i >= 0; _i--) {
-            if (game.playerHand.cards[_i].hovered) {
-                var selectedCard = game.playerHand.cards[_i];
+            if (theCanvas.offsetParent !== undefined) {
+                do {
+                    offsetX += theCanvas.offsetLeft;
+                    offsetY += theCanvas.offsetTop;
+                } while (theCanvas = theCanvas.offsetParent);
+            }
 
-                // Keep track of where in the object we clicked so we can move it smoothly (see mousemove)
-                this.dragoffx = mx - selectedCard.x;
-                this.dragoffy = my - selectedCard.y;
-                this.dragging = true;
+            offsetX += this.stylePaddingLeft + this.styleBorderLeft + this.htmlLeft;
+            offsetY += this.stylePaddingTop + this.styleBorderTop + this.htmlTop;
+            mx = e.pageX - offsetX;
+            my = e.pageY - offsetY;
 
-                game.selectedCard = selectedCard;
-                selectedCard.selected = true;
-                cardSelected = true;
+            return { x: mx, y: my };
+        }
+    }, {
+        key: 'Clear',
+        value: function Clear() {
+            this.ctx.clearRect(0, 0, this.width, this.height);
+        }
 
-                game.SelectedCard();
+        // TODO: Need to actually shuffle the deck server-side
 
+    }, {
+        key: 'StartGame',
+        value: function StartGame() {
+            this.game.StartGame();
+            this.Draw();
+        }
+    }, {
+        key: 'Draw',
+        value: function Draw() {
+            if (!this.valid) {
+                this.Clear();
+                this.game.Draw(this.ctx);
+                this.valid = true;
+            }
+        }
+    }, {
+        key: 'animateTo',
+        value: function animateTo(card, startTime, duration, destX, destY, startX, startY, endAnimCallback) {
+            var _this = this;
+
+            var canvas = this.canvas;
+            var ctx = this.ctx;
+            var isMoving = false;
+
+            var time = (new Date().getTime() - startTime) / 1000;
+            var t = Math.min(1, time / duration);
+
+            if (t < 1) {
+                card.x = startX * (1 - t) + destX * t;
+                card.y = startY * (1 - t) + destY * t;
+                isMoving = true;
                 this.valid = false;
             } else {
-                game.playerHand.cards[_i].selected = false;
-            }
-        }
-
-        //TODO: Fix selected card bug when deselecting card from hand
-        //console.log(game.selectedCard);
-        //game.SelectedCard();
-
-        if (!cardSelected) {
-            game.selectedCard = null;
-            this.valid = false;
-        }
-    };
-
-    canvas.addEventListener('mouseup', function (e) {
-        thisCanvasState.HandleMouseUp(e);
-    }, false);
-
-    this.HandleMouseUp = function (e) {
-        this.dragging = false;
-
-        var mouse = this.GetMouse(e);
-        var mx = mouse.x;
-        var my = mouse.y;
-
-        var game = this.game;
-
-        if (game.discardPile.Contains(mx, my) && game.selectedCard != null) {
-            game.DiscardSelectedCard();
-        }
-    };
-
-    canvas.addEventListener('mousemove', function (e) {
-        thisCanvasState.HandleMouseMove(e);
-    }, false);
-
-    this.HandleMouseMove = function (e) {
-        var mouse = this.GetMouse(e);
-        var mx = mouse.x;
-        var my = mouse.y;
-
-        var game = this.game;
-
-        if (this.dragging) {
-            game.selectedCard.x = mouse.x - this.dragoffx;
-            game.selectedCard.y = mouse.y - this.dragoffy;
-            this.valid = false;
-        }
-
-        var hovering = false;
-
-        for (var i = game.playerHand.cards.length - 1; i >= 0; i--) {
-
-            if (!hovering && game.playerHand.cards[i].Contains(mx, my)) {
-                hovering = true;
-                game.playerHand.cards[i].hovered = true;
+                card.x = destX;
+                card.y = destY;
                 this.valid = false;
-            } else if (game.playerHand.cards[i].hovered) {
-                game.playerHand.cards[i].hovered = false;
+                endAnimCallback();
+                return;
+            }
+
+            this.Clear();
+            this.Draw();
+
+            requestAnimationFrame(function () {
+                _this.animateTo(card, startTime, duration, destX, destY, startX, startY, endAnimCallback);
+            });
+        }
+    }, {
+        key: 'animate',
+        value: function animate(card, startTime) {
+            var _this2 = this;
+
+            var canvas = this.canvas;
+            var ctx = this.ctx;
+
+            var time = new Date().getTime() - startTime;
+
+            var linearSpeed = 10;
+            var newX = linearSpeed * time / 1000;
+
+            if (newX < canvas.width - card.w) {
+                card.x += newX;
                 this.valid = false;
             }
+
+            this.Clear();
+            this.Draw();
+
+            requestAnimationFrame(function () {
+                _this2.animate(card, startTime);
+            });
         }
-    };
+    }]);
 
-    //Add new shape on 'dblclick'
-}
+    return CanvasState;
+}();
 
-CanvasState.prototype.DeselectCard = function () {
-    if (this.game.selectedCard !== null) {
-        this.game.selectedCard.selected = false;
-        this.game.selectedCard.hovered = false;
-        this.game.selectedCard = null;
-        this.valid = false;
-    }
-};
-
-CanvasState.prototype.GetMouse = function (e) {
-    var theCanvas = this.canvas;
-    var offsetX = 0;
-    var offsetY = 0;
-    var mx = void 0,
-        my = void 0;
-
-    if (theCanvas.offsetParent !== undefined) {
-        do {
-            offsetX += theCanvas.offsetLeft;
-            offsetY += theCanvas.offsetTop;
-        } while (theCanvas = theCanvas.offsetParent);
-    }
-
-    offsetX += this.stylePaddingLeft + this.styleBorderLeft + this.htmlLeft;
-    offsetY += this.stylePaddingTop + this.styleBorderTop + this.htmlTop;
-    mx = e.pageX - offsetX;
-    my = e.pageY - offsetY;
-
-    return { x: mx, y: my };
-};
-
-CanvasState.prototype.Clear = function () {
-    this.ctx.clearRect(0, 0, this.width, this.height);
-};
-
-// TODO: Need to actually shuffle the deck server-side
-CanvasState.prototype.StartGame = function () {
-    this.game.StartGame();
-    this.Draw();
-};
-
-CanvasState.prototype.Draw = function () {
-    if (!this.valid) {
-        this.Clear();
-        this.game.Draw(this.ctx);
-        this.valid = true;
-    }
-};
-
-CanvasState.prototype.animateTo = function (card, startTime, duration, destX, destY, startX, startY, endAnimCallback) {
-    var _this = this;
-
-    var canvas = this.canvas;
-    var ctx = this.ctx;
-    var isMoving = false;
-
-    var time = (new Date().getTime() - startTime) / 1000;
-    var t = Math.min(1, time / duration);
-
-    if (t < 1) {
-        card.x = startX * (1 - t) + destX * t;
-        card.y = startY * (1 - t) + destY * t;
-        isMoving = true;
-        this.valid = false;
-    } else {
-        card.x = destX;
-        card.y = destY;
-        this.valid = false;
-        endAnimCallback();
-        return;
-    }
-
-    this.Clear();
-    this.Draw();
-
-    requestAnimationFrame(function () {
-        _this.animateTo(card, startTime, duration, destX, destY, startX, startY, endAnimCallback);
-    });
-};
-
-CanvasState.prototype.animate = function (card, startTime) {
-    var _this2 = this;
-
-    var canvas = this.canvas;
-    var ctx = this.ctx;
-
-    var time = new Date().getTime() - startTime;
-
-    var linearSpeed = 10;
-    var newX = linearSpeed * time / 1000;
-
-    if (newX < canvas.width - card.w) {
-        card.x += newX;
-        this.valid = false;
-    }
-
-    this.Clear();
-    this.Draw();
-
-    requestAnimationFrame(function () {
-        _this2.animate(card, startTime);
-    });
-};
 exports.default = CanvasState;
 
 /***/ }),
@@ -9220,40 +9281,54 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _Card = __webpack_require__(32);
 
 var _Card2 = _interopRequireDefault(_Card);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function Hand() {
-    this.cards = [];
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    this.AddCardToHand = function (card) {
-        this.cards.push(card);
-    };
+var Hand = function () {
+    function Hand() {
+        _classCallCheck(this, Hand);
 
-    this.ReorganiseHand = function () {
-        // let handAngle = 30;
-        // let halfHandAngle = handAngle / 2;
+        this.cards = [];
+    }
 
-        // let cardAngle = 0;
-        // if(this.cards.length == 1){
-        //     cardAngle = halfHandAngle;
-        // } else {
-        //     cardAngle = (handAngle / (this.cards.length - 1));
-        // }
-
-        // for(let i = 0; i < this.cards.length; i++){
-        //     console.log(-halfHandAngle + (cardAngle * i));
-        //     this.cards[i].rotation = (-halfHandAngle + (cardAngle * i)) * (Math.PI / 180);
-
-        // }
-        for (var i = 0; i < this.cards.length; i++) {
-            this.cards[i].x = 300 + i * 20;
+    _createClass(Hand, [{
+        key: 'AddCardToHand',
+        value: function AddCardToHand(card) {
+            this.cards.push(card);
         }
-    };
-}
+    }, {
+        key: 'ReorganiseHand',
+        value: function ReorganiseHand() {
+            // let handAngle = 30;
+            // let halfHandAngle = handAngle / 2;
+
+            // let cardAngle = 0;
+            // if(this.cards.length == 1){
+            //     cardAngle = halfHandAngle;
+            // } else {
+            //     cardAngle = (handAngle / (this.cards.length - 1));
+            // }
+
+            // for(let i = 0; i < this.cards.length; i++){
+            //     console.log(-halfHandAngle + (cardAngle * i));
+            //     this.cards[i].rotation = (-halfHandAngle + (cardAngle * i)) * (Math.PI / 180);
+
+            // }
+            for (var i = 0; i < this.cards.length; i++) {
+                this.cards[i].x = 300 + i * 20;
+            }
+        }
+    }]);
+
+    return Hand;
+}();
 
 exports.default = Hand;
 
@@ -9268,6 +9343,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _Card = __webpack_require__(32);
 
 var _Card2 = _interopRequireDefault(_Card);
@@ -9278,43 +9355,67 @@ var _Hand2 = _interopRequireDefault(_Hand);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function Player(socket, username) {
-    var _username = username;
-    var _socket = socket;
-    var _roomName = '';
-    var _hand = [];
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    this.isTurn = false;
+var Player = function () {
+    function Player(socket, username) {
+        _classCallCheck(this, Player);
+
+        this._username = username;
+        this._socket = socket;
+        this._roomName = '';
+        this._hand = [];
+
+        this.isTurn = false;
+    }
 
     // Getters and Setters
-    this.getSocket = function () {
-        return _socket;
-    };
-    this.setSocket = function (socket) {
-        _socket = socket;
-    };
 
-    this.getUsername = function () {
-        return _username;
-    };
-    this.setUsername = function (username) {
-        _username = username;
-    };
 
-    this.getRoomName = function () {
-        return _roomName;
-    };
-    this.setRoomName = function (roomName) {
-        _roomName = roomName;
-    };
+    _createClass(Player, [{
+        key: 'getSocket',
+        value: function getSocket() {
+            return this._socket;
+        }
+    }, {
+        key: 'setSocket',
+        value: function setSocket(socket) {
+            this._socket = socket;
+        }
+    }, {
+        key: 'getUsername',
+        value: function getUsername() {
+            return this._username;
+        }
+    }, {
+        key: 'setUsername',
+        value: function setUsername(username) {
+            this._username = username;
+        }
+    }, {
+        key: 'getRoomName',
+        value: function getRoomName() {
+            return this._roomName;
+        }
+    }, {
+        key: 'setRoomName',
+        value: function setRoomName(roomName) {
+            this._roomName = roomName;
+        }
+    }, {
+        key: 'getHand',
+        value: function getHand() {
+            return this._hand;
+        }
+    }, {
+        key: 'setHand',
+        value: function setHand(hand) {
+            this._hand = hand;
+        }
+    }]);
 
-    this.getHand = function () {
-        return _hand;
-    };
-    this.setHand = function (hand) {
-        _hand = hand;
-    };
-}
+    return Player;
+}();
 
 exports.default = Player;
 
@@ -13451,6 +13552,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _Card = __webpack_require__(32);
 
 var _Card2 = _interopRequireDefault(_Card);
@@ -13461,53 +13564,68 @@ var _constants2 = _interopRequireDefault(_constants);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function DiscardPile() {
-    this.x = 150;
-    this.y = 10;
-    this.w = 110;
-    this.h = 160;
-    this.lineWidth = 2;
-    this.selectionColor = '#c3c9c6';
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    this.cards = [];
+var DiscardPile = function () {
+    function DiscardPile() {
+        _classCallCheck(this, DiscardPile);
 
-    this.Draw = function (ctx) {
-        ctx.save();
-        ctx.strokeStyle = this.selectionColor;
-        ctx.lineWidth = this.lineWidth;
-        ctx.strokeRect(this.x, this.y, this.w, this.h);
-        ctx.restore();
+        this.x = 150;
+        this.y = 10;
+        this.w = 110;
+        this.h = 160;
+        this.lineWidth = 2;
+        this.selectionColor = '#c3c9c6';
 
-        //Draw Discarded Cards
-        for (var i = 0; i < this.cards.length; i++) {
-            var card = this.cards[i];
+        this.cards = [];
+    }
 
+    _createClass(DiscardPile, [{
+        key: 'Draw',
+        value: function Draw(ctx) {
             ctx.save();
-            if (card.rotation != 0) {
-                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
-                ctx.rotate(card.rotation);
-                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
-            }
-
-            card.DrawOnLoad(ctx);
-
+            ctx.strokeStyle = this.selectionColor;
+            ctx.lineWidth = this.lineWidth;
+            ctx.strokeRect(this.x, this.y, this.w, this.h);
             ctx.restore();
+
+            //Draw Discarded Cards
+            for (var i = 0; i < this.cards.length; i++) {
+                var card = this.cards[i];
+
+                ctx.save();
+                if (card.rotation != 0) {
+                    ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
+                    ctx.rotate(card.rotation);
+                    ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
+                }
+
+                card.DrawOnLoad(ctx);
+
+                ctx.restore();
+            }
         }
-    };
+    }, {
+        key: 'DiscardCard',
+        value: function DiscardCard(card) {
+            card.x = this.x + 5;
+            card.y = this.y + 5;
+            this.cards.push(card);
+        }
 
-    this.DiscardCard = function (card) {
-        card.x = this.x + 5;
-        card.y = this.y + 5;
-        this.cards.push(card);
-    };
+        // Determine if a point is inside the shape's bounds
 
-    // Determine if a point is inside the shape's bounds
-    this.Contains = function (mx, my) {
-        // All we have to do is make sure the Mouse X,Y fall in the area between
-        // the shape's X and (X + Width) and its Y and (Y + Height)
-        return this.x <= mx && this.x + this.w >= mx && this.y <= my && this.y + this.h >= my;
-    };
-}
+    }, {
+        key: 'Contains',
+        value: function Contains(mx, my) {
+            // All we have to do is make sure the Mouse X,Y fall in the area between
+            // the shape's X and (X + Width) and its Y and (Y + Height)
+            return this.x <= mx && this.x + this.w >= mx && this.y <= my && this.y + this.h >= my;
+        }
+    }]);
+
+    return DiscardPile;
+}();
 
 exports.default = DiscardPile;
 
@@ -13521,6 +13639,8 @@ exports.default = DiscardPile;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _Card = __webpack_require__(32);
 
@@ -13548,218 +13668,238 @@ var _Hand2 = _interopRequireDefault(_Hand);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function Game(canvasState, socket) {
-    this.socket = socket;
-    this.canvasState = canvasState;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    this.theDeck = new _Deck2.default();
-    this.discardPile = new _DiscardPile2.default();
+var Game = function () {
+    function Game(canvasState, socket) {
+        _classCallCheck(this, Game);
 
-    this.cards = [];
-    this.selectedCard = null;
-    this.gameStarted = false;
+        this.socket = socket;
+        this.canvasState = canvasState;
 
-    this.players = [];
+        this.theDeck = new _Deck2.default();
+        this.discardPile = new _DiscardPile2.default();
 
-    this.playerTurn = false;
-    this.playerHand = new _Hand2.default();
+        this.cards = [];
+        this.selectedCard = null;
+        this.gameStarted = false;
 
-    this.oppPlayerTurn = false;
-    this.oppPlayerHand = new _Hand2.default();
+        this.players = [];
 
-    this.AddCardToGame = function (card) {
-        card.x += this.cards.length / 4;
-        card.y += this.cards.length / 4;
-        this.cards.push(card);
-        this.canvasState.valid = false;
-    };
+        this.playerTurn = false;
+        this.playerHand = new _Hand2.default();
 
-    this.Draw = function (ctx) {
-        var cards = this.cards;
-        var canvasState = this.canvasState;
-        var discardPile = this.discardPile;
-
-        //Draw Discard Pile
-        if (this.gameStarted) {
-            this.discardPile.Draw(ctx);
-        }
-
-        //Draw Each card
-        for (var i = 0; i < cards.length; i++) {
-            var card = cards[i];
-
-            if (card.x > canvasState.width || card.y > canvasState.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
-
-            //ctx.rotate(90 * Math.PI / 180);
-            ctx.save();
-            if (card.rotation != 0) {
-                ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
-                ctx.rotate(card.rotation);
-                ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
-            }
-
-            card.DrawOnLoad(ctx);
-
-            ctx.restore();
-            //console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
-        }
-
-        // Draw Opponents Hand
-        for (var _i = 0; _i < this.oppPlayerHand.cards.length; _i++) {
-            var _card = this.oppPlayerHand.cards[_i];
-
-            if (_card.x > canvasState.width || _card.y > canvasState.height || _card.x + _card.w < 0 || _card.y + _card.h < 0) continue;
-
-            //ctx.rotate(90 * Math.PI / 180);
-            ctx.save();
-            if (_card.rotation != 0) {
-                ctx.translate(_card.x + _card.w / 2, _card.y + _card.h / 2);
-                ctx.rotate(_card.rotation);
-                ctx.translate(-_card.x - _card.w / 2, -_card.y - _card.h / 2);
-            }
-
-            _card.DrawOnLoad(ctx);
-
-            ctx.restore();
-        }
-
-        //Draw Player Hand
-        for (var _i2 = 0; _i2 < this.playerHand.cards.length; _i2++) {
-            var _card2 = this.playerHand.cards[_i2];
-
-            if (_card2.x > canvasState.width || _card2.y > canvasState.height || _card2.x + _card2.w < 0 || _card2.y + _card2.h < 0) continue;
-
-            //ctx.rotate(90 * Math.PI / 180);
-            ctx.save();
-            if (_card2.rotation != 0) {
-                ctx.translate(_card2.x + _card2.w / 2, _card2.y + _card2.h / 2);
-                ctx.rotate(_card2.rotation);
-                ctx.translate(-_card2.x - _card2.w / 2, -_card2.y - _card2.h / 2);
-            }
-
-            _card2.DrawOnLoad(ctx);
-
-            ctx.restore();
-        }
-
-        //Draw Selected Card Outline
-        if (this.selectedCard != null) {
-            ctx.strokeStyle = canvasState.selectionColor;
-            ctx.lineWidth = canvasState.selectionWidth;
-            var myCard = this.selectedCard;
-            ctx.strokeRect(myCard.x, myCard.y - 10, myCard.w, myCard.h);
-        }
-    };
-}
-
-Game.prototype.StartGame = function () {
-    this.gameStarted = true;
-    console.log(this);
-    if (!this.playerTurn) {
-        this.oppPlayerTurn = true;
+        this.oppPlayerTurn = false;
+        this.oppPlayerHand = new _Hand2.default();
     }
 
-    this.theDeck.Shuffle();
-    for (var i = 0; i < this.theDeck.Cards().length; i++) {
-        this.AddCardToGame(this.theDeck.Cards()[i]);
-    }
-};
-
-Game.prototype.DiscardSelectedCard = function () {
-    var cardToDiscard = this.selectedCard;
-    for (var i = 0; i < this.playerHand.cards.length; i++) {
-        if (cardToDiscard.SuitValue() == this.playerHand.cards[i].SuitValue()) {
-            this.playerHand.cards.splice(i, 1);
-            this.playerHand.ReorganiseHand();
-            this.discardPile.DiscardCard(cardToDiscard);
-            this.selectedCard = null;
+    _createClass(Game, [{
+        key: 'AddCardToGame',
+        value: function AddCardToGame(card) {
+            card.x += this.cards.length / 4;
+            card.y += this.cards.length / 4;
+            this.cards.push(card);
             this.canvasState.valid = false;
-            this.socket.emit('DiscardCard', cardToDiscard.SuitValue());
-            break;
         }
-        if (i == this.playerHand.cards.length) {
-            console.log('Couldn\'t find the card in the deck. Something probably went wrong');
-        }
-    }
-};
+    }, {
+        key: 'Draw',
+        value: function Draw(ctx) {
+            var cards = this.cards;
+            var canvasState = this.canvasState;
+            var discardPile = this.discardPile;
 
-Game.prototype.OppPlayerDiscardedCard = function (discardedcardSV) {
-    var cardToDiscard = this.theDeck.deckDict[discardedcardSV];
-    for (var i = 0; i < this.oppPlayerHand.cards.length; i++) {
-        if (cardToDiscard.SuitValue() == this.oppPlayerHand.cards[i].SuitValue()) {
-            this.oppPlayerHand.cards.splice(i, 1);
-            cardToDiscard.displayImage = cardToDiscard.faceImage;
+            //Draw Discard Pile
+            if (this.gameStarted) {
+                this.discardPile.Draw(ctx);
+            }
+
+            //Draw Each card
+            for (var i = 0; i < cards.length; i++) {
+                var card = cards[i];
+
+                if (card.x > canvasState.width || card.y > canvasState.height || card.x + card.w < 0 || card.y + card.h < 0) continue;
+
+                //ctx.rotate(90 * Math.PI / 180);
+                ctx.save();
+                if (card.rotation != 0) {
+                    ctx.translate(card.x + card.w / 2, card.y + card.h / 2);
+                    ctx.rotate(card.rotation);
+                    ctx.translate(-card.x - card.w / 2, -card.y - card.h / 2);
+                }
+
+                card.DrawOnLoad(ctx);
+
+                ctx.restore();
+                //console.log('Card is here: ' + card.x + ' ' + card.y + ' ' + card.rotation);
+            }
+
+            // Draw Opponents Hand
+            for (var _i = 0; _i < this.oppPlayerHand.cards.length; _i++) {
+                var _card = this.oppPlayerHand.cards[_i];
+
+                if (_card.x > canvasState.width || _card.y > canvasState.height || _card.x + _card.w < 0 || _card.y + _card.h < 0) continue;
+
+                //ctx.rotate(90 * Math.PI / 180);
+                ctx.save();
+                if (_card.rotation != 0) {
+                    ctx.translate(_card.x + _card.w / 2, _card.y + _card.h / 2);
+                    ctx.rotate(_card.rotation);
+                    ctx.translate(-_card.x - _card.w / 2, -_card.y - _card.h / 2);
+                }
+
+                _card.DrawOnLoad(ctx);
+
+                ctx.restore();
+            }
+
+            //Draw Player Hand
+            for (var _i2 = 0; _i2 < this.playerHand.cards.length; _i2++) {
+                var _card2 = this.playerHand.cards[_i2];
+
+                if (_card2.x > canvasState.width || _card2.y > canvasState.height || _card2.x + _card2.w < 0 || _card2.y + _card2.h < 0) continue;
+
+                //ctx.rotate(90 * Math.PI / 180);
+                ctx.save();
+                if (_card2.rotation != 0) {
+                    ctx.translate(_card2.x + _card2.w / 2, _card2.y + _card2.h / 2);
+                    ctx.rotate(_card2.rotation);
+                    ctx.translate(-_card2.x - _card2.w / 2, -_card2.y - _card2.h / 2);
+                }
+
+                _card2.DrawOnLoad(ctx);
+
+                ctx.restore();
+            }
+
+            //Draw Selected Card Outline
+            if (this.selectedCard != null) {
+                ctx.strokeStyle = canvasState.selectionColor;
+                ctx.lineWidth = canvasState.selectionWidth;
+                var myCard = this.selectedCard;
+                ctx.strokeRect(myCard.x, myCard.y - 10, myCard.w, myCard.h);
+            }
+        }
+    }, {
+        key: 'StartGame',
+        value: function StartGame() {
+            this.gameStarted = true;
+            console.log(this);
+            if (!this.playerTurn) {
+                this.oppPlayerTurn = true;
+            }
+
+            this.theDeck.Shuffle();
+            for (var i = 0; i < this.theDeck.Cards().length; i++) {
+                this.AddCardToGame(this.theDeck.Cards()[i]);
+            }
+        }
+    }, {
+        key: 'DiscardSelectedCard',
+        value: function DiscardSelectedCard() {
+            var cardToDiscard = this.selectedCard;
+            for (var i = 0; i < this.playerHand.cards.length; i++) {
+                if (cardToDiscard.SuitValue() == this.playerHand.cards[i].SuitValue()) {
+                    this.playerHand.cards.splice(i, 1);
+                    this.playerHand.ReorganiseHand();
+                    this.discardPile.DiscardCard(cardToDiscard);
+                    this.selectedCard = null;
+                    this.canvasState.valid = false;
+                    this.socket.emit('DiscardCard', cardToDiscard.SuitValue());
+                    break;
+                }
+                if (i == this.playerHand.cards.length) {
+                    console.log('Couldn\'t find the card in the deck. Something probably went wrong');
+                }
+            }
+        }
+    }, {
+        key: 'OppPlayerDiscardedCard',
+        value: function OppPlayerDiscardedCard(discardedcardSV) {
+            var cardToDiscard = this.theDeck.deckDict[discardedcardSV];
+            for (var i = 0; i < this.oppPlayerHand.cards.length; i++) {
+                if (cardToDiscard.SuitValue() == this.oppPlayerHand.cards[i].SuitValue()) {
+                    this.oppPlayerHand.cards.splice(i, 1);
+                    cardToDiscard.displayImage = cardToDiscard.faceImage;
+                    var reorganiseHand = function () {
+                        this.oppPlayerHand.ReorganiseHand();
+                    }.bind(this);
+                    this.canvasState.animateTo(cardToDiscard, new Date().getTime(), 0.5, this.discardPile.x + 5, this.discardPile.y + 5, cardToDiscard.x, cardToDiscard.y, reorganiseHand);
+                    this.discardPile.cards.push(cardToDiscard);
+                    this.canvasState.valid = false;
+                    break;
+                }
+                if (i == this.oppPlayerHand.cards.length) {
+                    console.log('Couldn\'t find the card in the deck. Something probably went wrong');
+                }
+            }
+            console.log(discardedcardSV);
+        }
+    }, {
+        key: 'DealCardToPlayer',
+        value: function DealCardToPlayer(cardSV, openingHand) {
+            console.log('client side attempting to deal card ' + cardSV);
+            if (!openingHand) {
+                this.EndTurn();
+            }
+
+            var card = this.theDeck.deckDict[cardSV];
+            this.theDeck.RemoveCard(card);
+
+            this.cards = this.theDeck.Cards();
+
+            card.displayImage = card.faceImage;
+            card.isFaceDown = false;
+
+            var reorganiseHand = function () {
+                this.playerHand.ReorganiseHand();
+            }.bind(this);
+
+            this.canvasState.valid = false;
+            this.playerHand.AddCardToHand(card);
+
+            this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + (this.playerHand.cards.length - 1) * 20, 300, card.x, card.y, reorganiseHand);
+        }
+    }, {
+        key: 'DealCardToOppPlayer',
+        value: function DealCardToOppPlayer(cardSV, openingHand) {
+            console.log('Dealing opp: ' + cardSV);
+            if (!openingHand) {
+                this.StartTurn();
+            }
+
+            var card = this.theDeck.deckDict[cardSV];
+            this.theDeck.RemoveCard(card);
+            this.cards = this.theDeck.Cards();
+
             var reorganiseHand = function () {
                 this.oppPlayerHand.ReorganiseHand();
             }.bind(this);
-            this.canvasState.animateTo(cardToDiscard, new Date().getTime(), 0.5, this.discardPile.x + 5, this.discardPile.y + 5, cardToDiscard.x, cardToDiscard.y, reorganiseHand);
-            this.discardPile.cards.push(cardToDiscard);
-            this.canvasState.valid = false;
-            break;
+
+            this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + this.oppPlayerHand.cards.length * 20, 100, card.x, card.y, reorganiseHand);
+
+            this.oppPlayerHand.AddCardToHand(card);
         }
-        if (i == this.oppPlayerHand.cards.length) {
-            console.log('Couldn\'t find the card in the deck. Something probably went wrong');
+    }, {
+        key: 'StartTurn',
+        value: function StartTurn() {
+            this.playerTurn = true;
+            this.oppPlayerTurn = false;
         }
-    }
-    console.log(discardedcardSV);
-};
+    }, {
+        key: 'EndTurn',
+        value: function EndTurn() {
+            this.playerTurn = false;
+            this.oppPlayerTurn = true;
+        }
+    }, {
+        key: 'SelectedCard',
+        value: function SelectedCard() {
+            //Virtual and empty for now
+        }
+    }]);
 
-Game.prototype.DealCardToPlayer = function (cardSV, openingHand) {
-    console.log('client side attempting to deal card ' + cardSV);
-    if (!openingHand) {
-        this.EndTurn();
-    }
-
-    var card = this.theDeck.deckDict[cardSV];
-    this.theDeck.RemoveCard(card);
-
-    this.cards = this.theDeck.Cards();
-
-    card.displayImage = card.faceImage;
-    card.isFaceDown = false;
-
-    var reorganiseHand = function () {
-        this.playerHand.ReorganiseHand();
-    }.bind(this);
-
-    this.canvasState.valid = false;
-    this.playerHand.AddCardToHand(card);
-
-    this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + (this.playerHand.cards.length - 1) * 20, 300, card.x, card.y, reorganiseHand);
-};
-
-Game.prototype.DealCardToOppPlayer = function (cardSV, openingHand) {
-    console.log('Dealing opp: ' + cardSV);
-    if (!openingHand) {
-        this.StartTurn();
-    }
-
-    var card = this.theDeck.deckDict[cardSV];
-    this.theDeck.RemoveCard(card);
-    this.cards = this.theDeck.Cards();
-
-    var reorganiseHand = function () {
-        this.oppPlayerHand.ReorganiseHand();
-    }.bind(this);
-
-    this.canvasState.animateTo(card, new Date().getTime(), 0.75, 300 + this.oppPlayerHand.cards.length * 20, 100, card.x, card.y, reorganiseHand);
-
-    this.oppPlayerHand.AddCardToHand(card);
-};
-
-Game.prototype.StartTurn = function () {
-    this.playerTurn = true;
-    this.oppPlayerTurn = false;
-};
-
-Game.prototype.EndTurn = function () {
-    this.playerTurn = false;
-    this.oppPlayerTurn = true;
-};
-
-Game.prototype.SelectedCard = function () {
-    //Virtual and empty for now
-};
+    return Game;
+}();
 
 exports.default = Game;
 
@@ -23406,6 +23546,10 @@ Object.defineProperty(exports, "__esModule", {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 var _Card = __webpack_require__(32);
 
 var _Card2 = _interopRequireDefault(_Card);
@@ -23422,296 +23566,335 @@ var _Hand = __webpack_require__(96);
 
 var _Hand2 = _interopRequireDefault(_Hand);
 
-var _Game = __webpack_require__(150);
+var _Game2 = __webpack_require__(150);
 
-var _Game2 = _interopRequireDefault(_Game);
+var _Game3 = _interopRequireDefault(_Game2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function GoFishGame(canvasState, socket) {
-    var game = this;
-    socket.on('OppAskedForCard', function (cardQuestion, cardSV) {
-        game.OppAskedForCard(cardQuestion, cardSV);
-    });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    socket.on('PassedCard', function (cardSV) {
-        game.OppPassedCard(cardSV);
-    });
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-    socket.on('ToldGoFish', function () {
-        game.OppToldGoFish();
-    });
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-    socket.on('OppLaidDownCard', function (cardSV) {
-        console.log('Opp laid down ' + cardSV);
-        game.OppLaidDownCard(cardSV);
-    });
+var GoFishGame = function (_Game) {
+    _inherits(GoFishGame, _Game);
 
-    socket.on('OppLaidDownBook', function (cardValue) {
-        console.log('Opp laid down ' + cardValue);
-        game.OppLaidDownBook(cardValue);
-    });
+    function GoFishGame(canvasState, socket) {
+        _classCallCheck(this, GoFishGame);
 
-    _Game2.default.call(this, canvasState, socket);
-    this.askedForCard = false;
-    this.laidDownBooks = [];
-    this.oppLaidDownBooks = [];
+        var _this = _possibleConstructorReturn(this, (GoFishGame.__proto__ || Object.getPrototypeOf(GoFishGame)).call(this, canvasState, socket));
 
-    canvasState.canvas.addEventListener('dblclick', function (e) {
-        game.HandleDblClick();
-    }, false);
-}
+        var game = _this;
+        socket.on('OppAskedForCard', function (cardQuestion, cardSV) {
+            game.OppAskedForCard(cardQuestion, cardSV);
+        });
 
-GoFishGame.prototype = Object.create(_Game2.default.prototype);
-GoFishGame.prototype.constructor = GoFishGame;
+        socket.on('PassedCard', function (cardSV) {
+            game.OppPassedCard(cardSV);
+        });
 
-GoFishGame.prototype.HandleDblClick = function () {
-    this.canvasState.DeselectCard();
+        socket.on('ToldGoFish', function () {
+            game.OppToldGoFish();
+        });
 
-    if (this.askedForCard && !this.playerTurn) {
-        PassCards(this);
-    }
-};
+        socket.on('OppLaidDownCard', function (cardSV) {
+            console.log('Opp laid down ' + cardSV);
+            game.OppLaidDownCard(cardSV);
+        });
 
-GoFishGame.prototype.CreateUI = function () {
-    CreateBtnAskCard(this);
-    CreateBtnGoFish(this);
-    CreateBtnLayDownBook(this);
+        socket.on('OppLaidDownBook', function (cardValue) {
+            console.log('Opp laid down ' + cardValue);
+            game.OppLaidDownBook(cardValue);
+        });
 
-    CreateDivCardQuesion(this);
-};
+        _this.askedForCard = false;
+        _this.laidDownBooks = [];
+        _this.oppLaidDownBooks = [];
 
-GoFishGame.prototype.SelectedCard = function () {
-    if (this.selectedCard == null) {
-        this.btnAskCard.innerHTML = 'Ask for Cards';
-    } else {
-        this.CheckForBook();
-        this.btnAskCard.innerHTML = 'Any ' + this.selectedCard.GetValueString() + 's?';
-    }
-};
-
-GoFishGame.prototype.StartGame = function () {
-    _Game2.default.prototype.StartGame.call(this);
-
-    this.CreateUI();
-};
-
-GoFishGame.prototype.DiscardSelectedCard = function () {
-    console.log('test1');
-    _Game2.default.prototype.DiscardSelectedCard.call(this);
-};
-
-GoFishGame.prototype.DealCardToPlayer = function (cardSV, openingHand) {
-
-    if (!openingHand) {
-        this.btnAskCard.disabled = true;
-    }
-    this.btnGoFish.disabled = true;
-
-    this.divCardQuestionText.innerHTML = '';
-    this.divCardQuestion.classList.add('hide');
-
-    if (this.selectedCard != null) {
-        this.selectedCard.selected = false;
-        this.selectedCard = null;
+        canvasState.canvas.addEventListener('dblclick', function (e) {
+            game.HandleDblClick();
+        }, false);
+        return _this;
     }
 
-    _Game2.default.prototype.DealCardToPlayer.call(this, cardSV, openingHand);
-};
+    _createClass(GoFishGame, [{
+        key: 'HandleDblClick',
+        value: function HandleDblClick() {
+            this.canvasState.DeselectCard();
 
-GoFishGame.prototype.DealCardToOppPlayer = function (cardSV, openingHand) {
-    if (!openingHand) {
-        this.btnAskCard.disabled = false;
-    }
-
-    this.divCardQuestionText.innerHTML = '';
-    this.divCardQuestion.classList.add('hide');
-
-    _Game2.default.prototype.DealCardToOppPlayer.call(this, cardSV, openingHand);
-};
-
-GoFishGame.prototype.StartTurn = function () {
-    _Game2.default.prototype.StartTurn.call(this);
-    this.btnAskCard.disabled = false;
-    this.btnGoFish.disabled = true;
-};
-
-GoFishGame.prototype.EndTurn = function () {
-    _Game2.default.prototype.EndTurn.call(this);
-    this.btnAskCard.disabled = true;
-};
-
-GoFishGame.prototype.AskForCard = function () {
-    if (this.selectedCard != null && this.playerTurn) {
-        console.log(this.selectedCard);
-        this.socket.emit('AskForCard', this.btnAskCard.innerHTML, this.selectedCard.SuitValue());
-        this.btnAskCard.disabled = true;
-    }
-};
-
-GoFishGame.prototype.OppAskedForCard = function (cardQuestion, cardSV) {
-    this.divCardQuestion.classList.remove('hide');
-    this.divCardQuestionText.innerHTML = cardQuestion;
-
-    CheckHandForCard(this, cardSV);
-    this.askedForCard = true;
-
-    this.btnGoFish.disabled = false;
-};
-
-GoFishGame.prototype.GoFish = function () {
-    this.socket.emit('GoFish');
-    this.btnGoFish.disabled = true;
-    this.askedForCard = false;
-};
-
-GoFishGame.prototype.LayDownBook = function () {
-    console.log('laying down book');
-    var hand = this.playerHand.cards;
-    var laidDownCards = [];
-
-    for (var i = hand.length - 1; i >= 0; i--) {
-        if (this.selectedCard.GetValueString() == hand[i].GetValueString()) {
-            var laidDownCard = hand[i];
-            //this.socket.emit('LayDownCard', laidDownCard.SuitValue());
-
-            //console.log('passing card ' + hand[i].SuitValue());
-            laidDownCards.push(laidDownCard);
-            this.discardPile.cards.push(laidDownCard);
-            this.playerHand.cards.splice(i, 1);
-
-            var reorganiseHand = function () {
-                //passedCard.displayImage = passedCard.backImage;
-                this.playerHand.ReorganiseHand();
-            }.bind(this);
-
-            this.canvasState.animateTo(laidDownCard, new Date().getTime(), 0.75, 700 + this.laidDownBooks.length * 20, 300, laidDownCard.x, laidDownCard.y, reorganiseHand);
+            if (this.askedForCard && !this.playerTurn) {
+                PassCards(this);
+            }
         }
-    }
+    }, {
+        key: 'CreateUI',
+        value: function CreateUI() {
+            CreateBtnAskCard(this);
+            CreateBtnGoFish(this);
+            CreateBtnLayDownBook(this);
 
-    this.socket.emit('LayDownBook', laidDownCards[0].GetValueString());
-    this.laidDownBooks[this.laidDownBooks.length] = laidDownCards;
-    console.log(this.laidDownBooks);
-
-    CheckWinCondition(this);
-
-    this.canvasState.DeselectCard();
-};
-
-//NOT BEING USED - OppLaidDownBook used instead
-GoFishGame.prototype.OppLaidDownCard = function (cardSV) {
-    var _this = this;
-
-    console.log(cardSV);
-    var oppHand = this.oppPlayerHand.cards;
-
-    for (var i = oppHand.length - 1; i >= 0; i--) {
-        if (oppHand[i].SuitValue() == cardSV) {
-            (function () {
-                var laidDownCard = oppHand[i];
-                laidDownCard.displayImage = laidDownCard.faceImage;
-
-                console.log('opp laying down card ' + oppHand[i].SuitValue());
-                _this.discardPile.cards.push(laidDownCard);
-                _this.oppPlayerHand.cards.splice(i, 1);
-
-                //let reorganiseHand = (function() {this.oppPlayerHand.ReorganiseHand()}).bind(this);
-
-                _this.canvasState.animateTo(laidDownCard, new Date().getTime(), 0.75, 700, 100, laidDownCard.x, laidDownCard.y, function () {
-                    console.log('animation for ' + laidDownCard.SuitValue() + ' complete');
-                });
-            })();
+            CreateDivCardQuesion(this);
         }
-    }
-
-    this.oppPlayerHand.ReorganiseHand();
-    //this.EndTurn();
-};
-
-GoFishGame.prototype.OppLaidDownBook = function (cardValue) {
-    var _this2 = this;
-
-    console.log(cardValue);
-    var oppHand = this.oppPlayerHand.cards;
-    var laidDownCards = [];
-
-    for (var i = oppHand.length - 1; i >= 0; i--) {
-        if (oppHand[i].GetValueString() == cardValue) {
-            (function () {
-                var laidDownCard = oppHand[i];
-                laidDownCard.displayImage = laidDownCard.faceImage;
-
-                console.log('opp laying down card ' + oppHand[i].SuitValue());
-                laidDownCards.push(laidDownCard);
-                _this2.discardPile.cards.push(laidDownCard);
-                _this2.oppPlayerHand.cards.splice(i, 1);
-
-                //let reorganiseHand = (function() {this.oppPlayerHand.ReorganiseHand()}).bind(this);
-
-                _this2.canvasState.animateTo(laidDownCard, new Date().getTime(), 0.75, 700 + _this2.oppLaidDownBooks.length * 20, 100, laidDownCard.x, laidDownCard.y, function () {
-                    console.log('animation for ' + laidDownCard.SuitValue() + ' complete');
-                });
-            })();
+    }, {
+        key: 'SelectedCard',
+        value: function SelectedCard() {
+            if (this.selectedCard == null) {
+                this.btnAskCard.innerHTML = 'Ask for Cards';
+            } else {
+                this.CheckForBook();
+                this.btnAskCard.innerHTML = 'Any ' + this.selectedCard.GetValueString() + 's?';
+            }
         }
-    }
+    }, {
+        key: 'StartGame',
+        value: function StartGame() {
+            _get(GoFishGame.prototype.__proto__ || Object.getPrototypeOf(GoFishGame.prototype), 'StartGame', this).call(this);
 
-    this.oppPlayerHand.ReorganiseHand();
-    this.oppLaidDownBooks[this.oppLaidDownBooks.length] = laidDownCards;
-    console.log(this.oppLaidDownBooks);
-    CheckWinCondition(this);
-    //this.EndTurn();
-};
-
-GoFishGame.prototype.OppToldGoFish = function () {
-    this.divCardQuestion.classList.remove('hide');
-    this.divCardQuestionText.innerHTML = 'Go fish!';
-};
-
-GoFishGame.prototype.OppPassedCard = function (cardSV) {
-    console.log(cardSV);
-    var oppHand = this.oppPlayerHand.cards;
-
-    for (var i = 0; i < oppHand.length; i++) {
-        if (oppHand[i].SuitValue() == cardSV) {
-            var passedCard = oppHand[i];
-            passedCard.displayImage = passedCard.faceImage;
-
-            console.log('passing card ' + oppHand[i].SuitValue());
-            this.oppPlayerHand.cards.splice(i, 1);
-
-            var reorganiseHand = function () {
-                this.playerHand.ReorganiseHand();
-            }.bind(this);
-
-            this.canvasState.animateTo(passedCard, new Date().getTime(), 0.75, 300 + this.playerHand.cards.length * 20, 300, passedCard.x, passedCard.y, reorganiseHand);
-
-            this.playerHand.AddCardToHand(passedCard);
-
-            this.OppPassedCard(cardSV);
-            return;
+            this.CreateUI();
         }
-    }
-
-    this.oppPlayerHand.ReorganiseHand();
-    this.EndTurn();
-};
-
-GoFishGame.prototype.CheckForBook = function () {
-    var hand = this.playerHand.cards;
-    var matchCount = 0;
-
-    for (var i = 0; i < hand.length; i++) {
-        if (this.selectedCard.GetValueString() == hand[i].GetValueString()) {
-            matchCount++;
+    }, {
+        key: 'DiscardSelectedCard',
+        value: function DiscardSelectedCard() {
+            console.log('test1');
+            _get(GoFishGame.prototype.__proto__ || Object.getPrototypeOf(GoFishGame.prototype), 'DiscardSelectedCard', this).call(this);
         }
-    }
+    }, {
+        key: 'DealCardToPlayer',
+        value: function DealCardToPlayer(cardSV, openingHand) {
 
-    if (matchCount == 4) {
-        this.btnLayDownBook.disabled = false;
-    } else {
-        this.btnLayDownBook.disabled = true;
-    }
-};
+            if (!openingHand) {
+                this.btnAskCard.disabled = true;
+            }
+            this.btnGoFish.disabled = true;
+
+            this.divCardQuestionText.innerHTML = '';
+            this.divCardQuestion.classList.add('hide');
+
+            if (this.selectedCard != null) {
+                this.selectedCard.selected = false;
+                this.selectedCard = null;
+            }
+
+            _get(GoFishGame.prototype.__proto__ || Object.getPrototypeOf(GoFishGame.prototype), 'DealCardToPlayer', this).call(this, cardSV, openingHand);
+        }
+    }, {
+        key: 'DealCardToOppPlayer',
+        value: function DealCardToOppPlayer(cardSV, openingHand) {
+            if (!openingHand) {
+                this.btnAskCard.disabled = false;
+            }
+
+            this.divCardQuestionText.innerHTML = '';
+            this.divCardQuestion.classList.add('hide');
+
+            _get(GoFishGame.prototype.__proto__ || Object.getPrototypeOf(GoFishGame.prototype), 'DealCardToOppPlayer', this).call(this, cardSV, openingHand);
+        }
+    }, {
+        key: 'StartTurn',
+        value: function StartTurn() {
+            _get(GoFishGame.prototype.__proto__ || Object.getPrototypeOf(GoFishGame.prototype), 'StartTurn', this).call(this);
+            this.btnAskCard.disabled = false;
+            this.btnGoFish.disabled = true;
+        }
+    }, {
+        key: 'EndTurn',
+        value: function EndTurn() {
+            _get(GoFishGame.prototype.__proto__ || Object.getPrototypeOf(GoFishGame.prototype), 'EndTurn', this).call(this);
+            this.btnAskCard.disabled = true;
+        }
+    }, {
+        key: 'AskForCard',
+        value: function AskForCard() {
+            if (this.selectedCard != null && this.playerTurn) {
+                console.log(this.selectedCard);
+                this.socket.emit('AskForCard', this.btnAskCard.innerHTML, this.selectedCard.SuitValue());
+                this.btnAskCard.disabled = true;
+            }
+        }
+    }, {
+        key: 'OppAskedForCard',
+        value: function OppAskedForCard(cardQuestion, cardSV) {
+            this.divCardQuestion.classList.remove('hide');
+            this.divCardQuestionText.innerHTML = cardQuestion;
+
+            CheckHandForCard(this, cardSV);
+            this.askedForCard = true;
+
+            this.btnGoFish.disabled = false;
+        }
+    }, {
+        key: 'GoFish',
+        value: function GoFish() {
+            this.socket.emit('GoFish');
+            this.btnGoFish.disabled = true;
+            this.askedForCard = false;
+        }
+    }, {
+        key: 'LayDownBook',
+        value: function LayDownBook() {
+            console.log('laying down book');
+            var hand = this.playerHand.cards;
+            var laidDownCards = [];
+
+            for (var i = hand.length - 1; i >= 0; i--) {
+                if (this.selectedCard.GetValueString() == hand[i].GetValueString()) {
+                    var laidDownCard = hand[i];
+                    //this.socket.emit('LayDownCard', laidDownCard.SuitValue());
+
+                    //console.log('passing card ' + hand[i].SuitValue());
+                    laidDownCards.push(laidDownCard);
+                    this.discardPile.cards.push(laidDownCard);
+                    this.playerHand.cards.splice(i, 1);
+
+                    var reorganiseHand = function () {
+                        //passedCard.displayImage = passedCard.backImage;
+                        this.playerHand.ReorganiseHand();
+                    }.bind(this);
+
+                    this.canvasState.animateTo(laidDownCard, new Date().getTime(), 0.75, 700 + this.laidDownBooks.length * 20, 300, laidDownCard.x, laidDownCard.y, reorganiseHand);
+                }
+            }
+
+            this.socket.emit('LayDownBook', laidDownCards[0].GetValueString());
+            this.laidDownBooks[this.laidDownBooks.length] = laidDownCards;
+            console.log(this.laidDownBooks);
+
+            CheckWinCondition(this);
+
+            this.canvasState.DeselectCard();
+        }
+
+        //NOT BEING USED - OppLaidDownBook used instead
+
+    }, {
+        key: 'OppLaidDownCard',
+        value: function OppLaidDownCard(cardSV) {
+            var _this2 = this;
+
+            console.log(cardSV);
+            var oppHand = this.oppPlayerHand.cards;
+
+            for (var i = oppHand.length - 1; i >= 0; i--) {
+                if (oppHand[i].SuitValue() == cardSV) {
+                    (function () {
+                        var laidDownCard = oppHand[i];
+                        laidDownCard.displayImage = laidDownCard.faceImage;
+
+                        console.log('opp laying down card ' + oppHand[i].SuitValue());
+                        _this2.discardPile.cards.push(laidDownCard);
+                        _this2.oppPlayerHand.cards.splice(i, 1);
+
+                        //let reorganiseHand = (function() {this.oppPlayerHand.ReorganiseHand()}).bind(this);
+
+                        _this2.canvasState.animateTo(laidDownCard, new Date().getTime(), 0.75, 700, 100, laidDownCard.x, laidDownCard.y, function () {
+                            console.log('animation for ' + laidDownCard.SuitValue() + ' complete');
+                        });
+                    })();
+                }
+            }
+
+            this.oppPlayerHand.ReorganiseHand();
+            //this.EndTurn();
+        }
+    }, {
+        key: 'OppLaidDownBook',
+        value: function OppLaidDownBook(cardValue) {
+            var _this3 = this;
+
+            console.log(cardValue);
+            var oppHand = this.oppPlayerHand.cards;
+            var laidDownCards = [];
+
+            for (var i = oppHand.length - 1; i >= 0; i--) {
+                if (oppHand[i].GetValueString() == cardValue) {
+                    (function () {
+                        var laidDownCard = oppHand[i];
+                        laidDownCard.displayImage = laidDownCard.faceImage;
+
+                        console.log('opp laying down card ' + oppHand[i].SuitValue());
+                        laidDownCards.push(laidDownCard);
+                        _this3.discardPile.cards.push(laidDownCard);
+                        _this3.oppPlayerHand.cards.splice(i, 1);
+
+                        //let reorganiseHand = (function() {this.oppPlayerHand.ReorganiseHand()}).bind(this);
+
+                        _this3.canvasState.animateTo(laidDownCard, new Date().getTime(), 0.75, 700 + _this3.oppLaidDownBooks.length * 20, 100, laidDownCard.x, laidDownCard.y, function () {
+                            console.log('animation for ' + laidDownCard.SuitValue() + ' complete');
+                        });
+                    })();
+                }
+            }
+
+            this.oppPlayerHand.ReorganiseHand();
+            this.oppLaidDownBooks[this.oppLaidDownBooks.length] = laidDownCards;
+            console.log(this.oppLaidDownBooks);
+            CheckWinCondition(this);
+            //this.EndTurn();
+        }
+    }, {
+        key: 'OppToldGoFish',
+        value: function OppToldGoFish() {
+            this.divCardQuestion.classList.remove('hide');
+            this.divCardQuestionText.innerHTML = 'Go fish!';
+        }
+    }, {
+        key: 'OppPassedCard',
+        value: function OppPassedCard(cardSV) {
+            console.log(cardSV);
+            var oppHand = this.oppPlayerHand.cards;
+
+            for (var i = 0; i < oppHand.length; i++) {
+                if (oppHand[i].SuitValue() == cardSV) {
+                    var passedCard = oppHand[i];
+                    passedCard.displayImage = passedCard.faceImage;
+
+                    console.log('passing card ' + oppHand[i].SuitValue());
+                    this.oppPlayerHand.cards.splice(i, 1);
+
+                    var reorganiseHand = function () {
+                        this.playerHand.ReorganiseHand();
+                    }.bind(this);
+
+                    this.canvasState.animateTo(passedCard, new Date().getTime(), 0.75, 300 + this.playerHand.cards.length * 20, 300, passedCard.x, passedCard.y, reorganiseHand);
+
+                    this.playerHand.AddCardToHand(passedCard);
+
+                    this.OppPassedCard(cardSV);
+                    return;
+                }
+            }
+
+            this.oppPlayerHand.ReorganiseHand();
+            this.EndTurn();
+        }
+    }, {
+        key: 'CheckForBook',
+        value: function CheckForBook() {
+            var hand = this.playerHand.cards;
+            var matchCount = 0;
+
+            for (var i = 0; i < hand.length; i++) {
+                if (this.selectedCard.GetValueString() == hand[i].GetValueString()) {
+                    matchCount++;
+                }
+            }
+
+            if (matchCount == 4) {
+                this.btnLayDownBook.disabled = false;
+            } else {
+                this.btnLayDownBook.disabled = true;
+            }
+        }
+    }]);
+
+    return GoFishGame;
+}(_Game3.default);
+
+//GoFishGame.prototype = Object.create(Game.prototype);
+//GoFishGame.prototype.constructor = GoFishGame;
+
 
 function PassCards(game) {
     var hand = game.playerHand.cards;
@@ -24099,7 +24282,7 @@ var GameScreen = function (_Component) {
             this.state.socket.emit('StartGame');
             this.state.gameCanvas.game.playerTurn = true;
 
-            this.state.socket.emit('DealHands', 26);
+            this.state.socket.emit('DealHands', 10);
             this.setState({
                 isGameStarted: true
             });

@@ -1,41 +1,46 @@
 import Card from './Card'
 import Hand from './Hand'
 
-function Player(socket, username) {
-    let _username = username;
-    let _socket = socket;
-    let _roomName = '';
-    let _hand = [];
+class Player {
+    constructor(socket, username){
+        this._username = username;
+        this._socket = socket;
+        this._roomName = '';
+        this._hand = [];
 
-    this.isTurn = false;
+        this.isTurn = false;
+    }
+    
+
+    
 
     // Getters and Setters
-    this.getSocket = () => {
-        return  _socket;
+    getSocket() {
+        return  this._socket;
     }
-    this.setSocket = (socket) => {
-        _socket = socket;
-    }
-
-    this.getUsername = () => {
-        return  _username;
-    }
-    this.setUsername = (username) => {
-        _username = username;
+    setSocket(socket) {
+        this._socket = socket;
     }
 
-    this.getRoomName = () => {
-        return  _roomName;
+    getUsername(){
+        return  this._username;
     }
-    this.setRoomName = (roomName) => {
-        _roomName = roomName;
+    setUsername(username) {
+        this._username = username;
     }
 
-    this.getHand = () => {
-        return _hand;
+    getRoomName() {
+        return  this._roomName;
     }
-    this.setHand = (hand) => {
-        _hand = hand;
+    setRoomName(roomName){
+        this._roomName = roomName;
+    }
+
+    getHand() {
+        return this._hand;
+    }
+    setHand(hand) {
+        this._hand = hand;
     }
 }
 

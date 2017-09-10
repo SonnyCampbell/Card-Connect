@@ -1,13 +1,16 @@
 import Card from './Card'
 
-function Hand(){
-    this.cards = [];
+class Hand{
+    constructor(){
+        this.cards = [];
+    }
+    
 
-    this.AddCardToHand = function(card){
+    AddCardToHand(card){
         this.cards.push(card);
     }
 
-    this.ReorganiseHand = function(){
+    ReorganiseHand(){
         // let handAngle = 30;
         // let halfHandAngle = handAngle / 2;
         

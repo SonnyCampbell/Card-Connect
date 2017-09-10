@@ -5,33 +5,36 @@ import DiscardPile from './DiscardPile'
 import Player from './Player'
 import Hand from './Hand'
 
-function Game(canvasState, socket){
-    this.socket = socket;
-    this.canvasState = canvasState;
+class Game{
+    constructor(canvasState, socket){
+        this.socket = socket;
+        this.canvasState = canvasState;
+    
+        this.theDeck = new Deck();
+        this.discardPile = new DiscardPile();
+    
+        this.cards = [];
+        this.selectedCard = null;
+        this.gameStarted = false;
+    
+        this.players = [];
+    
+        this.playerTurn = false;
+        this.playerHand = new Hand();
+    
+        this.oppPlayerTurn = false;
+        this.oppPlayerHand = new Hand();
+    }
 
-    this.theDeck = new Deck();
-    this.discardPile = new DiscardPile();
 
-    this.cards = [];
-    this.selectedCard = null;
-    this.gameStarted = false;
-
-    this.players = [];
-
-    this.playerTurn = false;
-    this.playerHand = new Hand();
-
-    this.oppPlayerTurn = false;
-    this.oppPlayerHand = new Hand();
-
-    this.AddCardToGame = function(card){
+    AddCardToGame(card){
         card.x += this.cards.length / 4;
         card.y += this.cards.length / 4;
         this.cards.push(card);
         this.canvasState.valid = false;
     }
 
-    this.Draw = function(ctx){
+    Draw(ctx){
         let cards = this.cards;
         let canvasState = this.canvasState;
         let discardPile = this.discardPile;
@@ -110,126 +113,126 @@ function Game(canvasState, socket){
             ctx.strokeRect(myCard.x, myCard.y-10, myCard.w, myCard.h);
         }
     }
-}
 
-Game.prototype.StartGame = function(){
-    this.gameStarted = true;
-    console.log(this);
-    if(!this.playerTurn){
+    StartGame(){
+        this.gameStarted = true;
+        console.log(this);
+        if(!this.playerTurn){
+            this.oppPlayerTurn = true;
+        } 
+    
+        this.theDeck.Shuffle();
+        for(let i = 0; i < this.theDeck.Cards().length; i++){
+            this.AddCardToGame(this.theDeck.Cards()[i]);
+        }
+    }
+
+    DiscardSelectedCard(){
+        let cardToDiscard = this.selectedCard;
+        for(let i = 0; i < this.playerHand.cards.length; i++){
+            if (cardToDiscard.SuitValue() == this.playerHand.cards[i].SuitValue()){
+                this.playerHand.cards.splice(i, 1);
+                this.playerHand.ReorganiseHand();
+                this.discardPile.DiscardCard(cardToDiscard);
+                this.selectedCard = null;
+                this.canvasState.valid = false;
+                this.socket.emit('DiscardCard', cardToDiscard.SuitValue());
+                break;
+            }
+            if (i == this.playerHand.cards.length){
+                console.log('Couldn\'t find the card in the deck. Something probably went wrong');
+            }
+        }
+    }
+
+    OppPlayerDiscardedCard(discardedcardSV){
+        let cardToDiscard = this.theDeck.deckDict[discardedcardSV];
+        for(let i = 0; i < this.oppPlayerHand.cards.length; i++){
+            if (cardToDiscard.SuitValue() == this.oppPlayerHand.cards[i].SuitValue()){
+                this.oppPlayerHand.cards.splice(i, 1);
+                cardToDiscard.displayImage = cardToDiscard.faceImage;
+                let reorganiseHand = (function() {this.oppPlayerHand.ReorganiseHand()}).bind(this);
+                this.canvasState.animateTo(cardToDiscard,(new Date()).getTime(), 0.5, this.discardPile.x + 5, this.discardPile.y + 5, cardToDiscard.x, cardToDiscard.y, reorganiseHand);
+                this.discardPile.cards.push(cardToDiscard);
+                this.canvasState.valid = false;
+                break;
+            }
+            if (i == this.oppPlayerHand.cards.length){
+                console.log('Couldn\'t find the card in the deck. Something probably went wrong');
+            }
+        }
+        console.log(discardedcardSV);
+    }
+
+    DealCardToPlayer(cardSV, openingHand){
+        console.log('client side attempting to deal card ' + cardSV);
+        if(!openingHand){
+            this.EndTurn();
+        }
+    
+    
+        let card = this.theDeck.deckDict[cardSV];
+        this.theDeck.RemoveCard(card);
+    
+        this.cards = this.theDeck.Cards();
+        
+        card.displayImage = card.faceImage;
+        card.isFaceDown = false;
+    
+        let reorganiseHand = (function() {this.playerHand.ReorganiseHand()}).bind(this);
+    
+        this.canvasState.valid = false;
+        this.playerHand.AddCardToHand(card);
+    
+        this.canvasState.animateTo(card, 
+                                (new Date()).getTime(), 
+                                0.75, 
+                                300 + ((this.playerHand.cards.length-1) * 20), 
+                                300, 
+                                card.x, 
+                                card.y,
+                                reorganiseHand);
+        
+        
+    }
+
+    DealCardToOppPlayer(cardSV, openingHand){
+        console.log('Dealing opp: ' + cardSV);
+        if(!openingHand){
+            this.StartTurn();
+        }
+    
+        let card = this.theDeck.deckDict[cardSV];
+        this.theDeck.RemoveCard(card);
+        this.cards = this.theDeck.Cards();
+    
+        let reorganiseHand = (function() {this.oppPlayerHand.ReorganiseHand()}).bind(this);
+    
+        this.canvasState.animateTo(card, 
+                                (new Date()).getTime(), 
+                                0.75, 
+                                300 + (this.oppPlayerHand.cards.length * 20), 
+                                100, 
+                                card.x, 
+                                card.y,
+                                reorganiseHand);
+    
+        this.oppPlayerHand.AddCardToHand(card);
+    }
+
+    StartTurn(){
+        this.playerTurn = true;
+        this.oppPlayerTurn = false;
+    }
+
+    EndTurn(){
+        this.playerTurn = false;
         this.oppPlayerTurn = true;
-    } 
-
-    this.theDeck.Shuffle();
-    for(let i = 0; i < this.theDeck.Cards().length; i++){
-        this.AddCardToGame(this.theDeck.Cards()[i]);
-    }
-}
-
-Game.prototype.DiscardSelectedCard = function(){
-    let cardToDiscard = this.selectedCard;
-    for(let i = 0; i < this.playerHand.cards.length; i++){
-        if (cardToDiscard.SuitValue() == this.playerHand.cards[i].SuitValue()){
-            this.playerHand.cards.splice(i, 1);
-            this.playerHand.ReorganiseHand();
-            this.discardPile.DiscardCard(cardToDiscard);
-            this.selectedCard = null;
-            this.canvasState.valid = false;
-            this.socket.emit('DiscardCard', cardToDiscard.SuitValue());
-            break;
-        }
-        if (i == this.playerHand.cards.length){
-            console.log('Couldn\'t find the card in the deck. Something probably went wrong');
-        }
-    }
-}
-
-Game.prototype.OppPlayerDiscardedCard = function(discardedcardSV){
-    let cardToDiscard = this.theDeck.deckDict[discardedcardSV];
-    for(let i = 0; i < this.oppPlayerHand.cards.length; i++){
-        if (cardToDiscard.SuitValue() == this.oppPlayerHand.cards[i].SuitValue()){
-            this.oppPlayerHand.cards.splice(i, 1);
-            cardToDiscard.displayImage = cardToDiscard.faceImage;
-            let reorganiseHand = (function() {this.oppPlayerHand.ReorganiseHand()}).bind(this);
-            this.canvasState.animateTo(cardToDiscard,(new Date()).getTime(), 0.5, this.discardPile.x + 5, this.discardPile.y + 5, cardToDiscard.x, cardToDiscard.y, reorganiseHand);
-            this.discardPile.cards.push(cardToDiscard);
-            this.canvasState.valid = false;
-            break;
-        }
-        if (i == this.oppPlayerHand.cards.length){
-            console.log('Couldn\'t find the card in the deck. Something probably went wrong');
-        }
-    }
-    console.log(discardedcardSV);
-}
-
-Game.prototype.DealCardToPlayer = function(cardSV, openingHand){
-    console.log('client side attempting to deal card ' + cardSV);
-    if(!openingHand){
-        this.EndTurn();
     }
 
-
-    let card = this.theDeck.deckDict[cardSV];
-    this.theDeck.RemoveCard(card);
-
-    this.cards = this.theDeck.Cards();
-    
-    card.displayImage = card.faceImage;
-    card.isFaceDown = false;
-
-    let reorganiseHand = (function() {this.playerHand.ReorganiseHand()}).bind(this);
-
-    this.canvasState.valid = false;
-    this.playerHand.AddCardToHand(card);
-
-    this.canvasState.animateTo(card, 
-                            (new Date()).getTime(), 
-                            0.75, 
-                            300 + ((this.playerHand.cards.length-1) * 20), 
-                            300, 
-                            card.x, 
-                            card.y,
-                            reorganiseHand);
-    
-    
-}
-
-Game.prototype.DealCardToOppPlayer = function(cardSV, openingHand){
-    console.log('Dealing opp: ' + cardSV);
-    if(!openingHand){
-        this.StartTurn();
+    SelectedCard(){
+        //Virtual and empty for now
     }
-
-    let card = this.theDeck.deckDict[cardSV];
-    this.theDeck.RemoveCard(card);
-    this.cards = this.theDeck.Cards();
-
-    let reorganiseHand = (function() {this.oppPlayerHand.ReorganiseHand()}).bind(this);
-
-    this.canvasState.animateTo(card, 
-                            (new Date()).getTime(), 
-                            0.75, 
-                            300 + (this.oppPlayerHand.cards.length * 20), 
-                            100, 
-                            card.x, 
-                            card.y,
-                            reorganiseHand);
-
-    this.oppPlayerHand.AddCardToHand(card);
-}
-
-Game.prototype.StartTurn = function(){
-    this.playerTurn = true;
-    this.oppPlayerTurn = false;
-}
-
-Game.prototype.EndTurn = function(){
-    this.playerTurn = false;
-    this.oppPlayerTurn = true;
-}
-
-Game.prototype.SelectedCard = function(){
-    //Virtual and empty for now
 }
 
 export default Game;

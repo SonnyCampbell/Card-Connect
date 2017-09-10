@@ -69,7 +69,9 @@ class RoomSelect extends Component {
                         onClick={this.handleSelectRoom.bind(this, k)}
                         onDoubleClick={this.handleJoinRoom.bind(this, 'Player' + k , room.roomName, room.gameType)}
                         key={k}
-                    >Room: {room.roomName} | Game: {room.gameType} | Players: {room.playerCount}/2</div>
+                        >Room: {room.roomName} | Game: {room.gameType} | Players: {room.playerCount}/2
+                    </div>
+                    
                 )) }
                 
             </div>

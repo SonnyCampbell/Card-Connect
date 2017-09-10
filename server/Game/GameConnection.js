@@ -1,34 +1,36 @@
 import Player from './ServerPlayer'
 import Game from './Game'
 
-function GameConnection(io) {
-    let _io = io;
+class GameConnection {
+    constructor(io){
+        //privates
+        this._io = io;
+        this._players = {}; // { socket.id : Player() }
+        this._games = {}; // { roomName : Game() }
+        this._roomsPlayers = {}; // { roomName: [Player1(), Player2(), ...]}
+        this._rooms = [];
+    }
 
-    let _players = {}; // { socket.id : Player() }
-    let _games = {}; // { roomName : Game() }
-    let _roomsPlayers = {}; // { roomName: [Player1(), Player2(), ...]}
-    let _rooms = [];
 
-    this.JoinRoom = (socket, username, roomName, gameType) => {
+    JoinRoom(socket, username, roomName, gameType) {
 
-
-        if(_games.hasOwnProperty(roomName) && _games[roomName].hasStarted){
+        if(this._games.hasOwnProperty(roomName) && this._games[roomName].hasStarted){
             //Block player from joining
             console.log('Game already in progress in ' + roomName);
             socket.emit('joinRoomError', 'Game already in progress in ' + roomName  );
             return;
         }
 
-        if(_roomsPlayers.hasOwnProperty(roomName)){
-            if(_roomsPlayers[roomName].length >= 2){
+        if(this._roomsPlayers.hasOwnProperty(roomName)){
+            if(this._roomsPlayers[roomName].length >= 2){
                 //Block player from joining
                 console.log('Maximum player number reached in ' + roomName);
                 socket.emit('joinRoomError', 'Maximum player number reached in ' + roomName);
                 return;
             }
 
-            for(let i = 0; i < _roomsPlayers[roomName].length; i++){
-                if(_roomsPlayers[roomName][i].getUsername() === username){
+            for(let i = 0; i < this._roomsPlayers[roomName].length; i++){
+                if(this._roomsPlayers[roomName][i].GetUsername() === username){
                     console.log('Username ' + username + ' already in use.');
                     socket.emit('joinRoomError', 'Username ' + username + ' already in use.');
                     return;
@@ -41,91 +43,92 @@ function GameConnection(io) {
 
         let player = new Player(socket, username, gameType);
 
-        _players[socket.id]  = player;
-        player.setRoomName(roomName);
-        if(!_rooms.includes(roomName)){
-            _rooms.push(roomName);
+        this._players[socket.id]  = player;
+
+        player.SetRoomName(roomName);
+        if(!this._rooms.includes(roomName)){
+            this._rooms.push(roomName);
         }
         
 
 
-        if(!_roomsPlayers.hasOwnProperty(roomName)){
-            _roomsPlayers[roomName] = [player];
+        if(!this._roomsPlayers.hasOwnProperty(roomName)){
+            this._roomsPlayers[roomName] = [player];
         } else {
-            _roomsPlayers[roomName].push(player);
+            this._roomsPlayers[roomName].push(player);
         }
         //console.log(_roomsPlayers[roomName]);
         socket.emit('joinRoomSuccess', 'You successfully joined the room ' + roomName);
 
         socket.join(roomName, function() {
-            socket.to(roomName).emit('PlayerJoinedGame', player.getUsername() + ' joined the room ' + roomName + '.');
+            socket.to(roomName).emit('PlayerJoinedGame', player.GetUsername() + ' joined the room ' + roomName + '.');
         });
 
     }
 
 
-    this.GetRoomListUpdate = function(socket){
+    GetRoomListUpdate(socket) {
         let roomList = [];
 
-        for(let i = 0; i < _rooms.length; i++){
+        for(let i = 0; i < this._rooms.length; i++){
             roomList.push({
-                roomName: _rooms[i],
-                playerCount: _roomsPlayers[_rooms[i]].length,
-                gameType: _roomsPlayers[_rooms[i]][0].gameType
+                roomName: this._rooms[i],
+                playerCount: this._roomsPlayers[this._rooms[i]].length,
+                gameType: this._roomsPlayers[this._rooms[i]][0].gameType
             });
         }
-        console.log(socket.id + ' ' + roomList);
+        //console.log(socket.id + ' ' + roomList);
         socket.emit('RoomListUpdate', roomList);
     }
 
 
-    this.StartGame = (socket) => {
-        let player = _players[socket.id];
-        _games[player.getRoomName()] = new Game(player.gameType);
-        _games[player.getRoomName()].hasStarted = true;
+    StartGame(socket) {
+        let player = this._players[socket.id];
+        this._games[player.GetRoomName()] = new Game(player.gameType);
+        this._games[player.GetRoomName()].hasStarted = true;
 
-        console.log(player.getUsername() + ' started the game.');
-        this.EmitToRoom(player.getRoomName(), 'StartGame', player.getUsername() + ' started the game.');
+        console.log(player.GetUsername() + ' started the game.');
+        this.EmitToRoom(player.GetRoomName(), 'StartGame', player.GetUsername() + ' started the game.');
     }
 
-    this.DealHands = (socket, numOfCards) => {
-        let player = _players[socket.id];
-        let game = _games[player.getRoomName()];
+    DealHands(socket, numOfCards) {
+        let player = this._players[socket.id];
+        let game = this._games[player.GetRoomName()];
         
-        io.in(player.getRoomName()).clients(function(error, clients){
+        this._io.in(player.GetRoomName()).clients((error, clients) => {
             for(let i = 0; i < clients.length; i++){
-                game.players.push(_players[clients[i]]);
+                game.players.push(this._players[clients[i]]);
             }
 
             game.DealHands(numOfCards);           
         });
     }
 
-    this.ShuffleDeck = (socket) => {
-        let player = _players[socket.id];
-        let game = _games[player.getRoomName()];
+    ShuffleDeck(socket) {
+        let player = this._players[socket.id];
+        let game = this._games[player.GetRoomName()];
         game.ShuffleDeck();
 
-        this.EmitToRoom(player.getRoomName(), 'ShuffleDeck', player.getUsername() + ' shuffled the deck.');
+        this.EmitToRoom(player.GetRoomName(), 'ShuffleDeck', player.GetUsername() + ' shuffled the deck.');
     }
 
-    this.DealCard = (socket) => {
-        let player = _players[socket.id];
-        let game = _games[player.getRoomName()];
+    DealCard(socket) {
+        let player = this._players[socket.id];
+        let game = this._games[player.GetRoomName()];
         let dealtCard = game.DealCard();
         socket.emit('DealCard', dealtCard.SuitValue(), false);
-        socket.to(player.getRoomName()).emit('OppPlayerDealtCard', dealtCard.SuitValue());
+        socket.to(player.GetRoomName()).emit('OppPlayerDealtCard', dealtCard.SuitValue());
 
     }
 
-    this.DiscardCard = (socket, discardCardSV) => {
-        let player = _players[socket.id];
-        let game = _games[player.getRoomName()];
-        socket.to(player.getRoomName()).emit('OppPlayerDiscardedCard', discardCardSV);
+    DiscardCard(socket, discardCardSV) {
+        let player = this._players[socket.id];
+        let game = this._games[player.GetRoomName()];
+        socket.to(player.GetRoomName()).emit('OppPlayerDiscardedCard', discardCardSV);
     }
 
-    this.EmitToRoom = (room, event, msg) => {
-        io.to(room).emit(event, msg);
+    EmitToRoom(room, event, msg) {
+        this._io.to(room).emit(event, msg);
     }
 
 
@@ -134,30 +137,30 @@ function GameConnection(io) {
 // Go Fish Functions
 // ---------------------------------------------------------------------------------
 
-    this.AskForCard = (socket, cardQuestion, cardSV) => {
-        let player = _players[socket.id];
-        socket.to(player.getRoomName()).emit('OppAskedForCard', cardQuestion, cardSV);
+    AskForCard(socket, cardQuestion, cardSV) {
+        let player = this._players[socket.id];
+        socket.to(player.GetRoomName()).emit('OppAskedForCard', cardQuestion, cardSV);
     }
 
-    this.GoFish = (socket) => {
-        let player = _players[socket.id];
-        socket.to(player.getRoomName()).emit('ToldGoFish');
+    GoFish(socket) {
+        let player = this._players[socket.id];
+        socket.to(player.GetRoomName()).emit('ToldGoFish');
     }
 
-    this.PassingCard = (socket, cardSV) => {
-        let player = _players[socket.id];
-        socket.to(player.getRoomName()).emit('PassedCard', cardSV);
+    PassingCard(socket, cardSV) {
+        let player = this._players[socket.id];
+        socket.to(player.GetRoomName()).emit('PassedCard', cardSV);
     }
 
     //NOT BEING USED - LayDownBook used instead
-    this.LayDownCard = (socket, cardSV) => {
-        let player = _players[socket.id];
-        socket.to(player.getRoomName()).emit('OppLaidDownCard', cardSV); 
+    LayDownCard(socket, cardSV) {
+        let player = this._players[socket.id];
+        socket.to(player.GetRoomName()).emit('OppLaidDownCard', cardSV); 
     }
 
-    this.LayDownBook = (socket, cardValue) => {
-        let player = _players[socket.id];
-        socket.to(player.getRoomName()).emit('OppLaidDownBook', cardValue); 
+    LayDownBook(socket, cardValue) {
+        let player = this._players[socket.id];
+        socket.to(player.GetRoomName()).emit('OppLaidDownBook', cardValue); 
     }
 }
 
